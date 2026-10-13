@@ -137,7 +137,7 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.2-experimental'));
+ assert.ok(report.content.includes('0.1.3-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{
@@ -158,4 +158,27 @@ test('manual diagnosis logs and offers the exact summary for notification copy',
  assert.equal(notified[3].clipboard,completed.content);
  assert.equal(logged,completed.content);
  assert.ok(completed.content.includes('接管 2 次 / 放行 1 次'));
+});
+for(const placeholder of [undefined,null,{}, {url:''}, {url:'https://example.com/dummy'}])test(`standalone diagnosis outputs a summary with request placeholder ${JSON.stringify(placeholder)}`,()=>{
+ let logged,notified,finished=0;
+ const ctx={Uint8Array,Date,$request:placeholder,
+  console:{log:v=>{logged=v;}},$persistentStore:{read:()=>'{"diagnostics":{"accelerated":3,"passed":1}}'},
+  $notification:{post:(...args)=>{notified=args;}},$done:()=>{finished++;}};
+ vm.runInNewContext(readFileSync('dist/diagnose.bundle.js','utf8'),ctx);
+ assert.equal(finished,1);assert.ok(logged.includes('接管 3 次 / 放行 1 次'));
+ assert.equal(notified[3].clipboard,logged);
+});
+test('standalone diagnosis logs a result even when notification permission fails',()=>{
+ let logged,finished=0;
+ const ctx={console:{log:v=>{logged=v;}},$persistentStore:{read:()=>null},
+  $notification:{post:()=>{throw Error('disabled');}},$done:()=>{finished++;}};
+ vm.runInNewContext(readFileSync('dist/diagnose.bundle.js','utf8'),ctx);
+ assert.ok(logged.includes('暂无请求'));assert.equal(finished,1);
+});
+test('manual placeholder in the full adapter does not silently run the download path',()=>{
+ let logged,finished;
+ const ctx={Uint8Array,Date,$request:{},$argument:null,
+  console:{log:v=>{logged=v;}},$persistentStore:{read:()=>null},$done:v=>{finished=v;}};
+ vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ assert.ok(logged.includes('暂无请求'));assert.ok(finished.content);
 });

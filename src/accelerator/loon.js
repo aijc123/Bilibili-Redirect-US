@@ -9,7 +9,7 @@
   if (typeof $argument === 'string') { try { arg = JSON.parse($argument); } catch { if ($argument === 'Action=reset') arg = { Action: 'reset' }; } }
   const epoch = state.epoch || 0;
   const save = () => $persistentStore.write(JSON.stringify(state), KEY);
-  if (typeof $request === 'undefined') {
+  if (arg.Action === 'reset' || typeof $request === 'undefined' || !$request || typeof $request.url !== 'string' || !$request.url) {
     if (arg.Action === 'reset') { state.hosts = {}; state.epoch = epoch + 1; save(); $done({}); return; }
     const scores = Object.entries(state.hosts || {}).map(([h, v]) => `${h}: ${(Number(v.bps || 0) * 8 / 1e6).toFixed(1)} Mbps`);
     const summary = diagnostics.report(state) + '\n' + scores.join('\n');

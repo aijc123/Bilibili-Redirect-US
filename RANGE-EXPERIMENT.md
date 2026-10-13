@@ -21,7 +21,9 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 0.1.2 起，手动运行 **Bili Range 诊断** 会输出摘要到脚本日志，并发出一条通知。点击通知会把摘要复制到剪贴板，随后回到聊天输入框长按、粘贴、发送。如果未显示通知，请检查 Loon 的通知设置及 iOS 通知权限；也可从该脚本的运行日志复制摘要或截取摘要区域。
 
-诊断是插件内的 Generic 手动脚本，可在 Loon 的脚本管理中查找其名称。它不在 Bilibili App 内，也不会随播放自动弹出。普通固定 CDN 的 Redirect 插件不包含此入口，需要安装本页的 Range 实验订阅。更新订阅与远程脚本后，摘要应显示 `0.1.2-experimental`；不同 Loon 版本的入口文字和远程脚本刷新方式可能不同。
+诊断是插件内的 Generic 手动脚本，可在 Loon 的脚本管理中查找其名称。它不在 Bilibili App 内，也不会随播放自动弹出。普通固定 CDN 的 Redirect 插件不包含此入口，需要安装本页的 Range 实验订阅。更新订阅与远程脚本后，摘要应显示 `0.1.3-experimental`；不同 Loon 版本的入口文字和远程脚本刷新方式可能不同。
+
+0.1.3 起诊断使用独立的 `diagnose.bundle.js`，不加载下载内核，也不根据手动运行时的 `$request` 占位对象决定是否显示结果。无统计时也必须输出「暂无请求」。若只有 `Script done`，不是有效诊断摘要；应核对脚本文件名和版本，旧的 `range.bundle.js` 诊断入口应刷新。
 
 ### 必须包含原有 CDN 重定向的对照
 
