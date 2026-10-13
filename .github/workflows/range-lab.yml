@@ -1,16 +1,17 @@
-name: Range lab validation
+name: Bili Range checks
 on:
   push:
     branches: [main]
-    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
+    paths: ['src/loon/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/check-docs.mjs', 'package.json', '**/*.md', 'icons/**', '.github/ISSUE_TEMPLATE/**', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
   pull_request:
-    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
+    paths: ['src/loon/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/check-docs.mjs', 'package.json', '**/*.md', 'icons/**', '.github/ISSUE_TEMPLATE/**', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

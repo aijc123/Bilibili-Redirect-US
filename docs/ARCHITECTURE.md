@@ -1,19 +1,20 @@
 # 代码结构与维护
 
-当前用户入口为README与USAGE；自动策略说明在LAB-EXPERIMENT；旧手动调参过程放入history。保留上游fork代码和已发布URL，不为目录美观删除历史文件。
+当前用户入口为README与USAGE，自动策略在AUTOMATIC，证据在EVIDENCE，旧版本在legacy/history。根目录旧说明是兼容入口。参考BTR的源码/适配/生成产物划分，Loon源码集中到src/loon，固定原模块在vendor，产物在dist；原Biliverse的其他源码与构建文件作为fork基础保留。
 
 ## 各模块负责什么
 
 | 路径 | 职责 |
 | --- | --- |
-| src/accelerator/policy.js | 自动参数及保留的研发参数解析；与传输、统计分离 |
-| src/accelerator/candidates.js | 从统一JSON清单生成节点组，不重复硬编码15节点 |
-| src/accelerator/range-core.js | Loon范围资格、安全校验、同节点并发；调用BTR基础工具 |
-| src/accelerator/loon-http.js | Loon回调、二进制和严格重定向处理 |
-| src/accelerator/budget.js | 尽力共享的任务/请求/缓冲租约；存储无原子CAS，不保证严格全局上限 |
-| src/accelerator/measurements.js | 有界传输样本、时间区间和观察对照 |
-| src/accelerator/diagnostics.js | 累计计数、有限事件、请求版本标记、短摘要与完整报告 |
-| src/accelerator/loon.js | 接入请求、调度、持久化与完成回调 |
+| src/loon/policy.js | 自动参数及保留的研发参数解析；与传输、统计分离 |
+| src/loon/candidates.js | 从统一JSON清单生成节点组，不重复硬编码15节点 |
+| src/loon/range-download.js | Loon范围资格、安全校验、同节点并发；调用BTR基础工具 |
+| src/loon/loon-http.js | Loon回调、二进制和严格重定向处理 |
+| src/loon/budget.js | 尽力共享的任务/请求/缓冲租约；存储无原子CAS，不保证严格全局上限 |
+| src/loon/measurements.js | 有界传输样本、时间区间和观察对照 |
+| src/loon/diagnostics.js | 累计计数、有限事件、请求版本标记、短摘要与完整报告 |
+| src/loon/loon.js | 接入请求、调度、持久化与完成回调 |
+| src/loon/bundle.json | 下载/诊断/网络模块顺序、入口和自动/对照profile的声明清单 |
 | vendor/btr-0302b345 | 固定MIT模块、许可、SHA及来源；不修改原核心 |
 | data/cdn-candidates.json | 自动版和对照工具及GitHub健康探测共同的主机清单 |
 | scripts/build-range.mjs | 同一模块集合生成自动版与对照工具；只有入口profile及参数菜单不同 |
@@ -24,9 +25,11 @@
 
 ## 构建与验证
 
-使用Node24，运行 `node scripts/check-range.mjs`。该入口构建手机版及已有中转产物，再运行167项检查。CI使用 `node scripts/check-range.mjs --check-generated`，额外验证已提交产物可复现。无需安装原上游npm私有依赖；不宣称上游全部测试通过。
+使用Node24，`npm run build`生成手机版，`npm test`调用scripts/check-range.mjs检查文档链接、构建手机版及已有中转产物，再运行167项检查。`npm run check`与CI额外验证已提交产物可复现。无需安装原上游npm私有依赖；原命令另存build:upstream/test:upstream，不宣称全部上游测试通过。
 
 修改版本时更新diagnostics.js中的VERSION，重新生成并验证，再提交源码与dist/lab，发布对应不可变tag。主订阅在main，运行脚本在tag；不能在发布后移动tag。检查所有插件script-path均返回HTTP200且内容与本地一致。README效果描述只能依据真实证据，不把合成检查当作无卡顿或倍数结论。
+
+打包顺序来自bundle.json，构建器只负责读模块、校验固定SHA、注入profile及生成插件；两个入口共用一套模块。版本仍从诊断源码的唯一VERSION读出，不因目录或文档改动重新发布手机运行版本。提交说明先写进[CHANGELOG](../CHANGELOG.md)，运行版本变化才创建新tag；本次维护的产物与0.1.14逐一一致。
 
 电脑中转0.1.1的构建另外固定在vendor/loon-range-0.1.12，SHA与来源可查，避免手机自动策略升级意外改变已发布中转。它仍默认关闭、未验证iPhone实际效果。
 

@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
 const ctx={Uint8Array,Date};
 vm.runInNewContext(readFileSync('vendor/btr-0302b345/range-core.js','utf8'),ctx);
-vm.runInNewContext(readFileSync('src/accelerator/range-core.js','utf8'),ctx);
+vm.runInNewContext(readFileSync('src/loon/range-download.js','utf8'),ctx);
 const core=ctx.BiliRange, size=2*1024*1024;
 const bytes=Buffer.alloc(size);for(let i=0;i<size;i++)bytes[i]=i%251;
 let active=0,peak=0;

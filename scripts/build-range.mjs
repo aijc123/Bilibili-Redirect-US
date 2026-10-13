@@ -9,30 +9,29 @@ const btr = `/* BTR range-core.js, upstream commit ${provenance.commit}\n${licen
 const sidxBytes=readFileSync(vendorPath+'sidx.js'),sidxProvenance=JSON.parse(readFileSync(vendorPath+'sidx-provenance.json','utf8'));
 if(createHash('sha256').update(sidxBytes).digest('hex')!==sidxProvenance.sha256)throw new Error('Vendored BTR SIDX integrity mismatch');
 const sidx=`/* BTR sidx.js, unchanged ${sidxProvenance.commit}; MIT license above. */\n`+sidxBytes.toString('utf8');
-const core = readFileSync('src/accelerator/range-core.js', 'utf8');
-const adapter = readFileSync('src/accelerator/loon.js', 'utf8');
-const diagnostics = readFileSync('src/accelerator/diagnostics.js', 'utf8');
-const http = readFileSync('src/accelerator/loon-http.js','utf8');
-const measurements = readFileSync('src/accelerator/measurements.js','utf8');
-const budget=readFileSync('src/accelerator/budget.js','utf8');
-const trials=readFileSync('src/accelerator/trials.js','utf8');
-const media=readFileSync('src/accelerator/media-info.js','utf8');
+const sourceRoot='src/loon/',manifest=JSON.parse(readFileSync(sourceRoot+'bundle.json','utf8'));
+if(manifest.schema!==1)throw new Error('Unsupported Loon bundle manifest');
+const cache=new Map([['btr',btr],['sidx',sidx]]);
+function readModule(name){
+ if(cache.has(name))return cache.get(name);
+ if(typeof name!=='string'||!/^[a-z0-9-]+\.js$/.test(name))throw new Error('Invalid Loon module name');
+ let text=readFileSync(sourceRoot+name,'utf8');
+ if(name==='candidates.js')text=text.replace('__BILI_CDN_INVENTORY__',JSON.stringify(inventory));
+ cache.set(name,text);return text;
+}
+const diagnostics=readModule(manifest.versionSource);
 const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8'));
 if(!Array.isArray(inventory.hosts)||inventory.hosts.length>16||inventory.hosts.some(h=>typeof h!=='string'||!/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(h)))throw new Error('Invalid CDN menu inventory');
 const preferred='upos-sz-mirror08c.bilivideo.com';
 if(!inventory.groups||['baseline','mainland','overseas'].some(key=>!Array.isArray(inventory.groups[key])||!inventory.groups[key].length||inventory.groups[key].some(h=>!inventory.hosts.includes(h))))throw new Error('Invalid CDN groups');
-const candidates=readFileSync('src/accelerator/candidates.js','utf8').replace('__BILI_CDN_INVENTORY__',JSON.stringify(inventory));
 const candidateOptions=[preferred,...inventory.hosts.filter(h=>h!==preferred)].map(h=>JSON.stringify(h)).join(',');
 const out='dist/lab',version=/const VERSION = '([^']+)'/.exec(diagnostics)[1];
 const base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v'+version+'/'+out+'/';
 mkdirSync(out,{recursive:true});
-const policy=readFileSync('src/accelerator/policy.js','utf8');
 const isolate=text=>text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.lab.v1');
 const profileFlag=profile=>'globalThis.BiliRangeProfile='+JSON.stringify(profile)+';';
-const modules=[btr,sidx,core,candidates,http,budget,measurements,trials,media,diagnostics,policy];
-const diagnosticModules=[btr,core,measurements,trials,media,diagnostics];
-const profiles=[{mode:'automatic',suffix:'',plugin:'BiliBili.Range.Lab.plugin',title:'BiliBili Range 自动版 · aijc123'},
- {mode:'advanced',suffix:'-advanced',plugin:'BiliBili.Range.Advanced.plugin',title:'BiliBili Range 对照工具 · aijc123'}];
+const modules=manifest.download.map(readModule),diagnosticModules=manifest.diagnostics.map(readModule),networkModules=manifest.network.map(readModule);
+const profiles=manifest.profiles;
 const advancedArguments=[
  'Connections = select,4,6,8,16,32,2,1,type=number,tag=并发上限（实际受块大小约束）',
  'MinChunkKiB = select,128,64,32,type=number,tag=最小分片 KiB',
@@ -50,9 +49,9 @@ const requestPattern='^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\
 const argumentsFor=keys=>'argument=['+keys.map(k=>'{'+k+'}').join(',')+']';
 for(const p of profiles){
  const automatic=p.mode==='automatic',flag=profileFlag(p.mode),range='range'+p.suffix+'.bundle.js',diagnose='diagnose'+p.suffix+'.bundle.js',network='network-reset'+p.suffix+'.bundle.js';
- writeFileSync(out+'/'+range,isolate([...modules,flag,adapter].join('\n')));
- writeFileSync(out+'/'+diagnose,isolate([...diagnosticModules,flag,readFileSync('src/accelerator/manual-diagnose.js','utf8')].join('\n')));
- writeFileSync(out+'/'+network,isolate([btr,core,candidates,flag,readFileSync('src/accelerator/network-reset.js','utf8')].join('\n')));
+ writeFileSync(out+'/'+range,isolate([...modules,flag,readModule(manifest.entries.download)].join('\n')));
+ writeFileSync(out+'/'+diagnose,isolate([...diagnosticModules,flag,readModule(manifest.entries.diagnostics)].join('\n')));
+ writeFileSync(out+'/'+network,isolate([...networkModules,flag,readModule(manifest.entries.network)].join('\n')));
  const requestKeys=automatic?['Enabled']:['Enabled',...advancedArguments.map(line=>line.split(' = ')[0])];
  const networkKeys=automatic?['Enabled']:['Enabled','WarmDNS','PreferredCDN','CDNGroup'];
  const lines=['#!name = '+p.title,
@@ -69,5 +68,5 @@ for(const p of profiles){
   '','[MITM]','hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net',''];
  writeFileSync(out+'/'+p.plugin,lines.join('\n'));
 }
-writeFileSync(out+'/dns-diagnose.bundle.js',readFileSync('src/accelerator/dns-diagnose.js','utf8'));
+writeFileSync(out+'/dns-diagnose.bundle.js',readModule(manifest.entries.dns));
 console.log('Built one-switch automatic subscription and separate comparison tool; frozen releases unchanged.');

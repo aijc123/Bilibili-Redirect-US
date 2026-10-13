@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 const context={Uint8Array,Date};
-for(const p of ['vendor/btr-0302b345/range-core.js','src/accelerator/range-core.js'])vm.runInNewContext(readFileSync(p,'utf8'),context);
+for(const p of ['vendor/btr-0302b345/range-core.js','src/loon/range-download.js'])vm.runInNewContext(readFileSync(p,'utf8'),context);
 const small=process.argv.includes('--small'),minChunkKiB=small?32:128;
 const core=context.BiliRange,size=(small?1:4)*1024*1024,entity=Buffer.alloc(size);
 for(let i=0;i<size;i++)entity[i]=i%251;

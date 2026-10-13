@@ -32,7 +32,7 @@
     "dev:workers": "npx wrangler dev -c wrangler.workers.jsonc",
     "deploy:pages": "npx wrangler pages deploy",
     "deploy:workers": "npx wrangler deploy --minify -c wrangler.workers.jsonc",
-    "build": "npm-run-all --serial build:args build:scripts",
+    "build": "node scripts/build-range.mjs",
     "build:scripts": "rollup -c",
     "build:dev": "rollup -c rollup.dev.config.mjs",
     "build:dev-args": "arguments-builder build -c arguments-builder.dev.config.ts",
@@ -40,8 +40,11 @@
     "build:full-args": "arguments-builder boxjs -c arguments-builder.full.config.ts",
     "build:args:rewrite": "arguments-builder build -c arguments-builder.rewrite.config.ts",
     "build:args": "npm-run-all --serial build:release-args build:full-args",
-    "test": "node --test tests/*.test.mjs",
-    "dts": "arguments-builder dts -c arguments-builder.full.config.ts"
+    "test": "node scripts/check-range.mjs",
+    "dts": "arguments-builder dts -c arguments-builder.full.config.ts",
+    "build:upstream": "npm-run-all --serial build:args build:scripts",
+    "test:upstream": "node --test tests/*.test.mjs",
+    "check": "node scripts/check-range.mjs --check-generated"
   },
   "browserslist": [
     "iOS >= 15"

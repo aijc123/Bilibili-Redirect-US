@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const ctx={Uint8Array,Date,console};
-for(const p of ['vendor/btr-0302b345/range-core.js','src/accelerator/range-core.js','src/accelerator/loon-http.js'])vm.runInNewContext(readFileSync(p,'utf8'),ctx);
+for(const p of ['vendor/btr-0302b345/range-core.js','src/loon/range-download.js','src/loon/loon-http.js'])vm.runInNewContext(readFileSync(p,'utf8'),ctx);
 const api=ctx.BiliRangeHTTP;
 const url='https://upos-sz-mirror08c.bilivideo.com/upgcxcode/a.m4s?upsig=private';
 const options={url,headers:{Range:'bytes=0-262143','Accept-Encoding':'identity','x-bili-range-internal':'1'},timeout:2500};

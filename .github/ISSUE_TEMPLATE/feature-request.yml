@@ -1,0 +1,16 @@
+name: "功能或体验建议"
+description: "说明使用场景和希望改善的体验"
+title: "[建议] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "现在遇到什么不便"
+      description: "描述使用场景、频率及希望达到的效果。"
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: "你的建议（可选）"
+      description: "可以描述效果，不需要设计实现方案或增加设置项。"

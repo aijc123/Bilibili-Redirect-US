@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const context={Date,console};
-for(const path of ['vendor/btr-0302b345/range-core.js','src/accelerator/range-core.js','src/gateway/core.js'])vm.runInNewContext(readFileSync(path,'utf8'),context);
+for(const path of ['vendor/btr-0302b345/range-core.js','src/loon/range-download.js','src/gateway/core.js'])vm.runInNewContext(readFileSync(path,'utf8'),context);
 const gateway=context.BiliGateway,arg={Enabled:true,GatewayBase:'http://192.168.0.50:9190',GatewayToken:'fixture_key_12345678901234567890',Connections:32,MinChunkKiB:32};
 const request={method:'GET',url:'https://upos-sz-mirrorakam.akamaized.net/upgcxcode/test.m4s?upsig=private-example&deadline=2999999999',headers:{Range:'bytes=0-1048575',Referer:'https://www.bilibili.com',Host:'upos-sz-mirrorakam.akamaized.net'}};
 function fixture(healthy=true){let calls=0,saved='';const client={get(options,callback){calls++;assert.equal(options.node,'DIRECT');assert.equal(options['auto-cookie'],false);assert.equal(options['auto-redirect'],false);callback(null,{status:200},JSON.stringify({service:'aijc123-bili-range-gateway',ready:healthy}));}};

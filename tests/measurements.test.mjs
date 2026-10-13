@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const context={Uint8Array,Date,console};
-for(const p of ['vendor/btr-0302b345/range-core.js','src/accelerator/range-core.js','src/accelerator/measurements.js','src/accelerator/diagnostics.js'])vm.runInNewContext(readFileSync(p,'utf8'),context);
+for(const p of ['vendor/btr-0302b345/range-core.js','src/loon/range-download.js','src/loon/measurements.js','src/loon/diagnostics.js'])vm.runInNewContext(readFileSync(p,'utf8'),context);
 const api=context.BiliRangeMeasurements;
 const req={method:'GET',url:'https://upos-sz-mirroraliov.bilivideo.com/upgcxcode/private-video.m4s?upsig=secret',headers:{Range:'bytes=0-1048575'}};
 const result=(from,at,mode=4)=>({kind:'response',metrics:{host:'upos-sz-mirror08c.bilivideo.com',bytes:1048576,startedAt:from,finishedAt:at,elapsedMs:at-from,connections:mode}});

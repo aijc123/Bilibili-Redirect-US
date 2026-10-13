@@ -11,8 +11,8 @@ function fixed(name,hash){const bytes=readFileSync(new URL(name,vendor));if(crea
 vm.runInNewContext(fixed('range-core.js',rangeProvenance.sha256),context);
 vm.runInNewContext(fixed('cdn-resolver.js',provenance.files['cdn-resolver.js']),context);
 // The redirect gate is shared with the tested Loon adapter, not another implementation.
-vm.runInNewContext(readFileSync(new URL('../src/accelerator/range-core.js',import.meta.url),'utf8'),context);
-vm.runInNewContext(readFileSync(new URL('../src/accelerator/loon-http.js',import.meta.url),'utf8'),context);
+vm.runInNewContext(readFileSync(new URL('../src/loon/range-download.js',import.meta.url),'utf8'),context);
+vm.runInNewContext(readFileSync(new URL('../src/loon/loon-http.js',import.meta.url),'utf8'),context);
 const idm=fixed('idm-downloader.js',provenance.files['idm-downloader.js']);
 const end=idm.indexOf('  // 自动线程数.');if(end<0)throw Error('Reviewed Semaphore boundary missing');
 vm.runInNewContext(idm.slice(0,end)+'\nroot.__BILI_GATEWAY_PRIMITIVES__={Semaphore};\n})(globalThis);',context);

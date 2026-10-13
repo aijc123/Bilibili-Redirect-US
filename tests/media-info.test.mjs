@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 const ctx={Uint8Array,Date,console};
-for(const p of ['vendor/btr-0302b345/range-core.js','vendor/btr-0302b345/sidx.js','src/accelerator/range-core.js','src/accelerator/measurements.js','src/accelerator/media-info.js'])vm.runInNewContext(readFileSync(p,'utf8'),ctx);
+for(const p of ['vendor/btr-0302b345/range-core.js','vendor/btr-0302b345/sidx.js','src/loon/range-download.js','src/loon/measurements.js','src/loon/media-info.js'])vm.runInNewContext(readFileSync(p,'utf8'),ctx);
 const api=ctx.BiliRangeMedia;
 const request={url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/private-video.m4s?upsig=secret',headers:{Range:'bytes=0-262143'}};
 function body(duration=2000){

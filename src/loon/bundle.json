@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "versionSource": "diagnostics.js",
+  "download": ["btr", "sidx", "range-download.js", "candidates.js", "loon-http.js", "budget.js", "measurements.js", "trials.js", "media-info.js", "diagnostics.js", "policy.js"],
+  "diagnostics": ["btr", "range-download.js", "measurements.js", "trials.js", "media-info.js", "diagnostics.js"],
+  "network": ["btr", "range-download.js", "candidates.js"],
+  "entries": {"download": "loon.js", "diagnostics": "manual-diagnose.js", "network": "network-reset.js", "dns": "dns-diagnose.js"},
+  "profiles": [
+    {"mode": "automatic", "suffix": "", "plugin": "BiliBili.Range.Lab.plugin", "title": "BiliBili Range 自动版 · aijc123"},
+    {"mode": "advanced", "suffix": "-advanced", "plugin": "BiliBili.Range.Advanced.plugin", "title": "BiliBili Range 对照工具 · aijc123"}
+  ]
+}

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const context = { Uint8Array, Date, console };
 vm.runInNewContext(readFileSync('vendor/btr-0302b345/range-core.js','utf8'),context);
-vm.runInNewContext(readFileSync('src/accelerator/range-core.js','utf8'),context);
+vm.runInNewContext(readFileSync('src/loon/range-download.js','utf8'),context);
 const core = context.BiliRange;
 const request = { method: 'GET', url: 'https://upos-sz-mirroraliov.bilivideo.com/upgcxcode/test.m4s?upsig=abc&deadline=2999999999',
   headers: { Range: 'bytes=32768-1081343', Referer: 'https://www.bilibili.com', 'Accept-Encoding': 'gzip' } };
@@ -121,7 +121,7 @@ test('Loon adapter actually delegates parsing, splitting and concatenation to BT
  vm.runInNewContext(readFileSync('vendor/btr-0302b345/range-core.js','utf8'),ctx);
  const original=ctx.__BILI_RANGE_CORE__;
  ctx.__BILI_RANGE_CORE__=Object.fromEntries(Object.entries(original).map(([key,fn])=>[key,(...args)=>{calls[key]=(calls[key]||0)+1;return fn(...args);} ]));
- vm.runInNewContext(readFileSync('src/accelerator/range-core.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('src/loon/range-download.js','utf8'),ctx);
  const r=await ctx.BiliRange.accelerate({request,fetchRange:good});
  assert.equal(r.kind,'response');
  for(const name of ['parseRangeHeader','parseContentRange','splitRange','concatChunks'])assert.ok(calls[name]>0,name);

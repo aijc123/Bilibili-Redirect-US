@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
-const source=readFileSync('src/accelerator/dns-diagnose.js','utf8'),ctx={Date,console};vm.runInNewContext(source,ctx);
+const source=readFileSync('src/loon/dns-diagnose.js','utf8'),ctx={Date,console};vm.runInNewContext(source,ctx);
 const api=ctx.BiliRangeDNS;
 test('DNS probe limits concurrency, queries only public CDN names and preserves resolver settings',async()=>{
  let active=0,peak=0,calls=0;const result=await api.run(async o=>{

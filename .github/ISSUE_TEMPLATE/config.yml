@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "安装与诊断说明"
+    url: "https://github.com/aijc123/Bilibili-Redirect-US/blob/main/docs/USAGE.md"
+    about: "导入、更新和复制短诊断摘要的方法"

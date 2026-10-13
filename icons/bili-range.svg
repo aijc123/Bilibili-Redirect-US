@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Bili Range</title>
+  <desc id="desc">Three media byte ranges join into a play button. Original aijc123 project mark.</desc>
+  <rect x="4" y="4" width="152" height="152" rx="38" fill="#111827"/>
+  <rect x="25" y="38" width="47" height="13" rx="6.5" fill="#67e8f9"/>
+  <rect x="25" y="74" width="58" height="13" rx="6.5" fill="#67e8f9"/>
+  <rect x="25" y="110" width="47" height="13" rx="6.5" fill="#67e8f9"/>
+  <path d="M83 44 L131 80 L83 116 Z" fill="#fb7299"/>
+  <circle cx="126" cy="125" r="7" fill="#67e8f9"/>
+</svg>

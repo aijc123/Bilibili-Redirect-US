@@ -1,0 +1,37 @@
+name: "卡顿、加载或安装问题"
+description: "提供短诊断和实际现象，帮助定位手机播放问题"
+title: "[问题] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        播放出问题的视频30–60秒后，立即运行“Bili Range 诊断”，复制短摘要。
+        不需要修改线程或节点。安装阶段无法运行诊断时，在下方说明即可。
+        请勿粘贴Cookie、账号信息或完整签名视频地址。
+  - type: input
+    id: versions
+    attributes:
+      label: "插件、Loon与iOS版本"
+      placeholder: "例如：0.1.14-experimental；Loon版本/Build；iOS版本"
+    validations:
+      required: true
+  - type: textarea
+    id: symptoms
+    attributes:
+      label: "实际现象与播放条件"
+      description: "首开慢、连续播放卡、拖动后卡或安装失败；说明清晰度、倍速及复现步骤。"
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostic
+    attributes:
+      label: "短诊断摘要"
+      description: "无法运行时请说明停在哪一步；需要详细统计时维护者会再要求。"
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: network
+    attributes:
+      label: "网络环境（可选）"
+      placeholder: "地区、运营商、Wi-Fi/蜂窝、直连或代理；无需具体地址或SSID"

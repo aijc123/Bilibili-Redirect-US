@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const ctx={Uint8Array,Date,console};
-for(const path of ['vendor/btr-0302b345/range-core.js','src/accelerator/range-core.js','src/accelerator/budget.js'])vm.runInNewContext(readFileSync(path,'utf8'),ctx);
+for(const path of ['vendor/btr-0302b345/range-core.js','src/loon/range-download.js','src/loon/budget.js'])vm.runInNewContext(readFileSync(path,'utf8'),ctx);
 const budget=ctx.BiliRangeBudget;
 const MiB=1024*1024;
 test('four 1MiB requests can use 32 total jobs without making 32 tiny pieces each',()=>{
