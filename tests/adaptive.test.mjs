@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const bundle=readFileSync('dist/candidate/range.bundle.js','utf8');
+const version=JSON.parse(readFileSync('src/loon/adaptive.json','utf8')).version;
 const host='upos-sz-mirror08c.bilivideo.com',MiB=1024*1024;
 const req=bytes=>({method:'GET',url:'https://upos-hz-mirrorakam.akamaized.net/upgcxcode/private-representation.m4s?upsig=private-token',headers:{Range:`bytes=0-${bytes-1}`}});
 function harness({bytes=MiB,initial={}}={}){
@@ -36,7 +37,7 @@ async function warm(h,elapsed){for(let i=0;i<8;i++)assert.equal((await h.run({el
 test('candidate retains one switch, pinned own scripts, independent state and unchanged cold start',async()=>{
  const p=readFileSync('dist/candidate/BiliBili.Range.Adaptive.plugin','utf8');
  assert.equal(p.split('[Argument]')[1].split('[General]')[0].trim().split('\n').length,1);
- assert.ok(p.includes('range-v0.1.15-experimental/dist/candidate/'));
+ assert.ok(p.includes('range-v'+version+'/dist/candidate/'));
  assert.ok(bundle.includes('aijc123.BiliRange.adaptive.v1'));assert.ok(!bundle.includes('aijc123.BiliRange.lab.v1'));
  const h=harness();await warm(h,()=>500);
  assert.equal(h.state().trials,undefined);assert.ok(!JSON.stringify(h.state()).includes('private-token'));
@@ -164,4 +165,16 @@ test('recent same-node server429 holds4 without learning, then expires',async()=
 
 test('candidate full download does not require Array.at in an older JavaScript runtime',async()=>{
  const h=harness();const result=await h.run({noAt:true});assert.equal(result.count,8);assert.equal(result.result.response.status,206);
+});
+
+test('a solo learned16 preference is not reused for a competing live request',async()=>{
+ const h=harness({bytes:2*MiB}),time=n=>n===4?800:n===8?500:300;
+ await warm(h,time);for(let i=0;i<40;i++)await h.run({elapsed:time});
+ const selected=await h.run({elapsed:time});assert.equal(selected.count,16);
+ const s=h.state();s.leases.other={expires:selected.clock+7000,jobs:2,bytes:256*1024};h.set(s);
+ const busy=await h.run({elapsed:time});assert.equal(busy.count,8);
+ assert.equal(busy.state.adaptive.last.reason,'busy');assert.equal(busy.state.measurements.samples.at(-1).trial,undefined);
+ assert.equal(busy.state.leases.other.jobs,2);
+ const restored=busy.state;delete restored.leases.other;h.set(restored);
+ const quiet=await h.run({elapsed:time});assert.equal(quiet.count,16);assert.equal(quiet.state.adaptive.last.reason,'learned');
 });

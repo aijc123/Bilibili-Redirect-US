@@ -70,6 +70,11 @@
       policy.options.connections=4;ctx.choice=4;ctx.reason='pushback';return;
     }
     if(policy.reason!=='baseline'){ctx.reason=policy.reason;ctx.choice=policy.options.connections;return;}
+    // Learned throughput and tails were measured with no competing takeover.
+    // Apply that preference only in the same load condition, including rest recovery.
+    if(Object.keys(root.BiliRangeBudget.active(state.leases,at)).length){
+      ctx.reason='busy';ctx.choice=policy.options.connections;return;
+    }
     if(previous?.pausedUntil>at){ctx.reason='rest';ctx.choice=previous.choice;policy.options.connections=previous.choice;return;}
     // Keep cold start unchanged, and don't compare naturally size-capped arms.
     if(bytes<1024*1024){ctx.reason='size-cap';return;}
@@ -103,7 +108,6 @@
     }
     if(samples.some(x=>x.trial&&goodTime(x.at,at,C.probeGapMs))){ctx.reason='probe-spacing';return;}
     // Existing completed requests only, idle admission, bounded exploration.
-    if(Object.keys(root.BiliRangeBudget.active(state.leases,at)).length){ctx.reason='busy';return;}
     const groupKey=epoch+'|'+s.token+'|'+stage;
     const group=state.trials?.groups?.[groupKey];
     const counter=group&&goodTime(group.at,at,15*60*1000)?group.counter:0;

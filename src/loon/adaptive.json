@@ -1,5 +1,5 @@
 {
-  "version": "0.1.15-experimental",
+  "version": "0.1.16-experimental",
   "warmSamples": 8,
   "cleanBlocks": 5,
   "maxProbeRequests": 20,

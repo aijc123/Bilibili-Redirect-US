@@ -801,7 +801,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.15-experimental';
+  const VERSION = '0.1.16-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -954,7 +954,7 @@ SOFTWARE.
  * Does not invent BTR buffer/stall/progress signals or issue extra media GETs. */
 (function(root){
   'use strict';
-  const C={"version":"0.1.15-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
+  const C={"version":"0.1.16-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
   const M=()=>root.BiliRangeMeasurements,T=()=>root.BiliRangeTrials;
   const last=values=>values?.[values.length-1];
   const median=values=>M().quantile(values,0.5);
@@ -1020,6 +1020,11 @@ SOFTWARE.
       policy.options.connections=4;ctx.choice=4;ctx.reason='pushback';return;
     }
     if(policy.reason!=='baseline'){ctx.reason=policy.reason;ctx.choice=policy.options.connections;return;}
+    // Learned throughput and tails were measured with no competing takeover.
+    // Apply that preference only in the same load condition, including rest recovery.
+    if(Object.keys(root.BiliRangeBudget.active(state.leases,at)).length){
+      ctx.reason='busy';ctx.choice=policy.options.connections;return;
+    }
     if(previous?.pausedUntil>at){ctx.reason='rest';ctx.choice=previous.choice;policy.options.connections=previous.choice;return;}
     // Keep cold start unchanged, and don't compare naturally size-capped arms.
     if(bytes<1024*1024){ctx.reason='size-cap';return;}
@@ -1053,7 +1058,6 @@ SOFTWARE.
     }
     if(samples.some(x=>x.trial&&goodTime(x.at,at,C.probeGapMs))){ctx.reason='probe-spacing';return;}
     // Existing completed requests only, idle admission, bounded exploration.
-    if(Object.keys(root.BiliRangeBudget.active(state.leases,at)).length){ctx.reason='busy';return;}
     const groupKey=epoch+'|'+s.token+'|'+stage;
     const group=state.trials?.groups?.[groupKey];
     const counter=group&&goodTime(group.at,at,15*60*1000)?group.counter:0;

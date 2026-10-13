@@ -1,9 +1,9 @@
 {
   "scope": "Real loopback HTTP candidate evaluation only. NOT Bilibili, iPhone or playback evidence.",
-  "generatedAt": "2026-10-13T18:29:30.359Z",
-  "version": "0.1.15-experimental",
+  "generatedAt": "2026-10-13T18:46:42.365Z",
+  "version": "0.1.16-experimental",
   "bytes": 1048576,
-  "artifactSHA256": "ca532a6e1e9aea3c68378f0217c26d4c45a933679730244f80569eeb6a886b67",
+  "artifactSHA256": "b281a1d41f58d265430d7091c90fe4228b285d510cc1393d8c14eba73e8bdb74",
   "environment": {
     "node": "v24.12.0",
     "platform": "win32"
@@ -23,7 +23,7 @@
         {
           "request": 1,
           "bytes": 1048576,
-          "elapsedMs": 270,
+          "elapsedMs": 314,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -39,7 +39,7 @@
         {
           "request": 3,
           "bytes": 1048576,
-          "elapsedMs": 328,
+          "elapsedMs": 297,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -47,7 +47,7 @@
         {
           "request": 4,
           "bytes": 1048576,
-          "elapsedMs": 327,
+          "elapsedMs": 343,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -55,7 +55,7 @@
         {
           "request": 5,
           "bytes": 1048576,
-          "elapsedMs": 358,
+          "elapsedMs": 360,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -63,7 +63,7 @@
         {
           "request": 6,
           "bytes": 1048576,
-          "elapsedMs": 340,
+          "elapsedMs": 360,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -71,7 +71,7 @@
         {
           "request": 7,
           "bytes": 1048576,
-          "elapsedMs": 290,
+          "elapsedMs": 338,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -79,7 +79,7 @@
         {
           "request": 8,
           "bytes": 1048576,
-          "elapsedMs": 328,
+          "elapsedMs": 364,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -87,7 +87,7 @@
         {
           "request": 9,
           "bytes": 1048576,
-          "elapsedMs": 329,
+          "elapsedMs": 356,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -95,7 +95,7 @@
         {
           "request": 10,
           "bytes": 1048576,
-          "elapsedMs": 605,
+          "elapsedMs": 556,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -103,7 +103,7 @@
         {
           "request": 11,
           "bytes": 1048576,
-          "elapsedMs": 567,
+          "elapsedMs": 615,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -111,7 +111,7 @@
         {
           "request": 12,
           "bytes": 1048576,
-          "elapsedMs": 339,
+          "elapsedMs": 354,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -119,7 +119,7 @@
         {
           "request": 13,
           "bytes": 1048576,
-          "elapsedMs": 340,
+          "elapsedMs": 323,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -127,7 +127,7 @@
         {
           "request": 14,
           "bytes": 1048576,
-          "elapsedMs": 576,
+          "elapsedMs": 563,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -135,7 +135,7 @@
         {
           "request": 15,
           "bytes": 1048576,
-          "elapsedMs": 575,
+          "elapsedMs": 570,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -143,7 +143,7 @@
         {
           "request": 16,
           "bytes": 1048576,
-          "elapsedMs": 358,
+          "elapsedMs": 382,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -151,7 +151,7 @@
         {
           "request": 17,
           "bytes": 1048576,
-          "elapsedMs": 552,
+          "elapsedMs": 551,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -159,7 +159,7 @@
         {
           "request": 18,
           "bytes": 1048576,
-          "elapsedMs": 396,
+          "elapsedMs": 340,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -167,7 +167,7 @@
         {
           "request": 19,
           "bytes": 1048576,
-          "elapsedMs": 340,
+          "elapsedMs": 360,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -175,7 +175,7 @@
         {
           "request": 20,
           "bytes": 1048576,
-          "elapsedMs": 547,
+          "elapsedMs": 520,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -183,7 +183,7 @@
         {
           "request": 21,
           "bytes": 1048576,
-          "elapsedMs": 385,
+          "elapsedMs": 368,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -191,7 +191,7 @@
         {
           "request": 22,
           "bytes": 1048576,
-          "elapsedMs": 571,
+          "elapsedMs": 530,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -199,7 +199,7 @@
         {
           "request": 23,
           "bytes": 1048576,
-          "elapsedMs": 586,
+          "elapsedMs": 583,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -207,7 +207,7 @@
         {
           "request": 24,
           "bytes": 1048576,
-          "elapsedMs": 349,
+          "elapsedMs": 314,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -215,39 +215,39 @@
         {
           "request": 25,
           "bytes": 1048576,
-          "elapsedMs": 584,
-          "actualJobs": 4,
+          "elapsedMs": 370,
+          "actualJobs": 8,
           "reason": "compare",
-          "trial": "A"
+          "trial": "B"
         },
         {
           "request": 26,
           "bytes": 1048576,
-          "elapsedMs": 379,
-          "actualJobs": 8,
-          "reason": "compare",
-          "trial": "B"
-        },
-        {
-          "request": 27,
-          "bytes": 1048576,
-          "elapsedMs": 364,
-          "actualJobs": 8,
-          "reason": "compare",
-          "trial": "B"
-        },
-        {
-          "request": 28,
-          "bytes": 1048576,
-          "elapsedMs": 507,
+          "elapsedMs": 630,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
         },
         {
+          "request": 27,
+          "bytes": 1048576,
+          "elapsedMs": 542,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 28,
+          "bytes": 1048576,
+          "elapsedMs": 336,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
           "request": 29,
           "bytes": 1048576,
-          "elapsedMs": 338,
+          "elapsedMs": 386,
           "actualJobs": 8,
           "reason": "learned",
           "trial": null
@@ -255,7 +255,7 @@
         {
           "request": 30,
           "bytes": 1048576,
-          "elapsedMs": 363,
+          "elapsedMs": 329,
           "actualJobs": 8,
           "reason": "learned",
           "trial": null
@@ -270,7 +270,7 @@
         {
           "request": 1,
           "bytes": 1048576,
-          "elapsedMs": 585,
+          "elapsedMs": 631,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -278,7 +278,7 @@
         {
           "request": 2,
           "bytes": 1048576,
-          "elapsedMs": 594,
+          "elapsedMs": 544,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -286,7 +286,7 @@
         {
           "request": 3,
           "bytes": 1048576,
-          "elapsedMs": 536,
+          "elapsedMs": 576,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -294,7 +294,7 @@
         {
           "request": 4,
           "bytes": 1048576,
-          "elapsedMs": 620,
+          "elapsedMs": 605,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -302,7 +302,7 @@
         {
           "request": 5,
           "bytes": 1048576,
-          "elapsedMs": 586,
+          "elapsedMs": 566,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -310,7 +310,7 @@
         {
           "request": 6,
           "bytes": 1048576,
-          "elapsedMs": 611,
+          "elapsedMs": 591,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -318,7 +318,7 @@
         {
           "request": 7,
           "bytes": 1048576,
-          "elapsedMs": 545,
+          "elapsedMs": 601,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -326,7 +326,7 @@
         {
           "request": 8,
           "bytes": 1048576,
-          "elapsedMs": 528,
+          "elapsedMs": 550,
           "actualJobs": 8,
           "reason": "warmup",
           "trial": null
@@ -334,7 +334,7 @@
         {
           "request": 9,
           "bytes": 1048576,
-          "elapsedMs": 560,
+          "elapsedMs": 604,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -342,7 +342,7 @@
         {
           "request": 10,
           "bytes": 1048576,
-          "elapsedMs": 557,
+          "elapsedMs": 581,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -350,7 +350,7 @@
         {
           "request": 11,
           "bytes": 1048576,
-          "elapsedMs": 576,
+          "elapsedMs": 600,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -358,7 +358,7 @@
         {
           "request": 12,
           "bytes": 1048576,
-          "elapsedMs": 496,
+          "elapsedMs": 540,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -366,7 +366,7 @@
         {
           "request": 13,
           "bytes": 1048576,
-          "elapsedMs": 584,
+          "elapsedMs": 591,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -374,7 +374,7 @@
         {
           "request": 14,
           "bytes": 1048576,
-          "elapsedMs": 549,
+          "elapsedMs": 558,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -382,7 +382,7 @@
         {
           "request": 15,
           "bytes": 1048576,
-          "elapsedMs": 595,
+          "elapsedMs": 570,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
@@ -390,7 +390,7 @@
         {
           "request": 16,
           "bytes": 1048576,
-          "elapsedMs": 547,
+          "elapsedMs": 603,
           "actualJobs": 4,
           "reason": "compare",
           "trial": "A"
@@ -398,103 +398,103 @@
         {
           "request": 17,
           "bytes": 1048576,
-          "elapsedMs": 568,
+          "elapsedMs": 525,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 18,
+          "bytes": 1048576,
+          "elapsedMs": 615,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
         },
         {
-          "request": 18,
-          "bytes": 1048576,
-          "elapsedMs": 604,
-          "actualJobs": 4,
-          "reason": "compare",
-          "trial": "A"
-        },
-        {
           "request": 19,
           "bytes": 1048576,
-          "elapsedMs": 484,
-          "actualJobs": 4,
+          "elapsedMs": 598,
+          "actualJobs": 8,
           "reason": "compare",
-          "trial": "A"
+          "trial": "B"
         },
         {
           "request": 20,
           "bytes": 1048576,
           "elapsedMs": 568,
-          "actualJobs": 8,
+          "actualJobs": 4,
           "reason": "compare",
-          "trial": "B"
+          "trial": "A"
         },
         {
           "request": 21,
           "bytes": 1048576,
-          "elapsedMs": 566,
-          "actualJobs": 8,
+          "elapsedMs": 545,
+          "actualJobs": 4,
           "reason": "compare",
-          "trial": "B"
+          "trial": "A"
         },
         {
           "request": 22,
           "bytes": 1048576,
-          "elapsedMs": 583,
-          "actualJobs": 4,
+          "elapsedMs": 585,
+          "actualJobs": 8,
           "reason": "compare",
-          "trial": "A"
+          "trial": "B"
         },
         {
           "request": 23,
           "bytes": 1048576,
-          "elapsedMs": 535,
-          "actualJobs": 4,
+          "elapsedMs": 599,
+          "actualJobs": 8,
           "reason": "compare",
-          "trial": "A"
+          "trial": "B"
         },
         {
           "request": 24,
           "bytes": 1048576,
-          "elapsedMs": 535,
-          "actualJobs": 8,
+          "elapsedMs": 567,
+          "actualJobs": 4,
           "reason": "compare",
-          "trial": "B"
+          "trial": "A"
         },
         {
           "request": 25,
           "bytes": 1048576,
-          "elapsedMs": 591,
-          "actualJobs": 8,
+          "elapsedMs": 614,
+          "actualJobs": 4,
           "reason": "compare",
-          "trial": "B"
+          "trial": "A"
         },
         {
           "request": 26,
           "bytes": 1048576,
-          "elapsedMs": 557,
-          "actualJobs": 4,
-          "reason": "compare",
-          "trial": "A"
-        },
-        {
-          "request": 27,
-          "bytes": 1048576,
-          "elapsedMs": 507,
-          "actualJobs": 4,
-          "reason": "compare",
-          "trial": "A"
-        },
-        {
-          "request": 28,
-          "bytes": 1048576,
-          "elapsedMs": 583,
+          "elapsedMs": 582,
           "actualJobs": 8,
           "reason": "compare",
           "trial": "B"
         },
         {
+          "request": 27,
+          "bytes": 1048576,
+          "elapsedMs": 538,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 28,
+          "bytes": 1048576,
+          "elapsedMs": 594,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
           "request": 29,
           "bytes": 1048576,
-          "elapsedMs": 508,
+          "elapsedMs": 558,
           "actualJobs": 4,
           "reason": "learned",
           "trial": null
@@ -502,7 +502,7 @@
         {
           "request": 30,
           "bytes": 1048576,
-          "elapsedMs": 577,
+          "elapsedMs": 621,
           "actualJobs": 4,
           "reason": "learned",
           "trial": null
