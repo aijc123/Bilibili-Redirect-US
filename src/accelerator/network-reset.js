@@ -18,9 +18,7 @@
   if(!arg||typeof arg!=='object'||Array.isArray(arg))arg={};
   if(saved===false||arg.Enabled===false||arg.WarmDNS!==true){finish(message);return;}
   if(typeof $dns==='undefined'||typeof $dns.query!=='function'){const skipped='DNS预热未执行：当前运行环境没有DNS API。';console.log(skipped);finish(message+'\n'+skipped);return;}
-  const defaults=['upos-sz-mirrorhwo1.bilivideo.com','upos-sz-mirror08c.bilivideo.com','upos-sz-mirrorhw.bilivideo.com','upos-sz-mirrorali.bilivideo.com'];
-  const preferred=typeof arg.PreferredCDN==='string'&&/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(arg.PreferredCDN)?arg.PreferredCDN:null;
-  const hosts=(preferred?[preferred,...defaults.filter(h=>h!==preferred)]:defaults).slice(0,4);
+  const hosts=globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup).slice(0,4);
   let cursor=0,success=0,cached=0;const started=Date.now();
   const query=host=>new Promise(resolve=>{
     try{$dns.query({domain:host,timeout:1500},(error,result)=>{

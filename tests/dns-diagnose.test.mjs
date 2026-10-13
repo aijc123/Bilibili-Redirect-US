@@ -33,3 +33,9 @@ test('manual entry waits for all DNS callbacks and never invokes HTTP or config 
   $httpClient:{get(){throw Error('Unexpected media GET');}},$config:{setRunningModel(){throw Error('Unexpected mutation');}}}));
  assert.equal(queries,24);assert.equal(finished,1);assert.ok(result.content.includes('不能据此自动切换'));
 });
+
+test('near timeout successful replies remain successful and do not imply an AAAA cause',async()=>{
+ let clock=0;const data=await api.run(async()=>{clock+=1505;return {result:{answers:[{type:'A'}],fromCache:false}};},()=>clock);
+ assert.ok(data.rows.every(r=>r.ok&&r.code==='OK'));const report=api.report(data);
+ assert.ok(report.includes('timeout=1500 ms'));assert.ok(report.includes('成功回调仍算成功'));assert.ok(report.includes('无法仅凭接近上限判断'));
+});

@@ -18,14 +18,17 @@ const budget=readFileSync('src/accelerator/budget.js','utf8');
 const trials=readFileSync('src/accelerator/trials.js','utf8');
 const media=readFileSync('src/accelerator/media-info.js','utf8');
 const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8'));
-if(!Array.isArray(inventory.hosts)||inventory.hosts.length>12||inventory.hosts.some(h=>!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(h)))throw new Error('Invalid CDN menu inventory');
-const candidateOptions=inventory.hosts.map(h=>JSON.stringify(h)).join(',');
+if(!Array.isArray(inventory.hosts)||inventory.hosts.length>16||inventory.hosts.some(h=>typeof h!=='string'||!/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(h)))throw new Error('Invalid CDN menu inventory');
+const preferred='upos-sz-mirror08c.bilivideo.com';
+if(!inventory.groups||['baseline','mainland','overseas'].some(key=>!Array.isArray(inventory.groups[key])||!inventory.groups[key].length||inventory.groups[key].some(h=>!inventory.hosts.includes(h))))throw new Error('Invalid CDN groups');
+const candidates=readFileSync('src/accelerator/candidates.js','utf8').replace('__BILI_CDN_INVENTORY__',JSON.stringify(inventory));
+const candidateOptions=[preferred,...inventory.hosts.filter(h=>h!==preferred)].map(h=>JSON.stringify(h)).join(',');
 const out = 'dist/lab';
 mkdirSync(out,{recursive:true});
 const isolate = text => text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.lab.v1');
-writeFileSync(out + '/range.bundle.js', isolate(btr + '\n' + sidx + '\n' + core + '\n' + http + '\n' + budget + '\n' + measurements + '\n' + trials + '\n' + media + '\n' + diagnostics + '\n' + adapter));
-writeFileSync(out + '/diagnose.bundle.js', isolate(measurements+'\n'+trials+'\n'+media+'\n'+diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8')));
-writeFileSync(out + '/network-reset.bundle.js',isolate(readFileSync('src/accelerator/network-reset.js','utf8')));
+writeFileSync(out + '/range.bundle.js', isolate(btr + '\n' + sidx + '\n' + core + '\n' + candidates + '\n' + http + '\n' + budget + '\n' + measurements + '\n' + trials + '\n' + media + '\n' + diagnostics + '\n' + adapter));
+writeFileSync(out + '/diagnose.bundle.js', isolate(btr+'\n'+core+'\n'+measurements+'\n'+trials+'\n'+media+'\n'+diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8')));
+writeFileSync(out + '/network-reset.bundle.js',isolate(btr+'\n'+core+'\n'+candidates+'\n'+readFileSync('src/accelerator/network-reset.js','utf8')));
 writeFileSync(out + '/dns-diagnose.bundle.js',readFileSync('src/accelerator/dns-diagnose.js','utf8'));
 const version = /const VERSION = '([^']+)'/.exec(diagnostics)[1];
 const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/lab/`;
@@ -49,16 +52,17 @@ WarmDNS = switch,true,tag=切换网络后预热候选 DNS
 MaxMiB = select,4,2,8,type=number,tag=接管范围上限 MiB
 AutoCDN = switch,true,tag=根据本机传输选择 CDN
 PreferredCDN = select,${candidateOptions},tag=初始候选 CDN
+CDNGroup = select,"baseline","mainland","overseas","all",tag=备用组（保留首选）,desc=基础4个 / BTR大陆8个 / 海外4个 / 全部15个；按传输结果回退
 Debug = switch,false,tag=诊断日志
 
 [General]
 force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:80, upos-*-mirrorakam.akamaized.net:80
 
 [Script]
-http-request ^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/ script-path=${base}range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MinChunkKiB},{GlobalJobs},{TrialMode},{HTTPProtocol},{PlaybackRate},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
+http-request ^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/ script-path=${base}range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MinChunkKiB},{GlobalJobs},{TrialMode},{HTTPProtocol},{PlaybackRate},{MaxMiB},{AutoCDN},{PreferredCDN},{CDNGroup},{Debug}]
 generic script-path=${base}diagnose.bundle.js, tag=Bili Range 诊断
 generic script-path=${base}dns-diagnose.bundle.js, timeout=20, tag=Bili DNS 诊断
-network-changed script-path=${base}network-reset.bundle.js, timeout=20, tag=Bili Range 网络变化, argument=[{Enabled},{WarmDNS},{PreferredCDN}]
+network-changed script-path=${base}network-reset.bundle.js, timeout=20, tag=Bili Range 网络变化, argument=[{Enabled},{WarmDNS},{PreferredCDN},{CDNGroup}]
 
 [MITM]
 hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net

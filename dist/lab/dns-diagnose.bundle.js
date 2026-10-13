@@ -27,8 +27,11 @@
     return {at:now(),elapsedMs:now()-started,planned:tasks.length,completed:rows.length,skipped:tasks.length-rows.length,rows};
   }
   function report(data){
+    const nearLimit=data.rows.filter(r=>r.elapsedMs>=1425).length;
     const lines=[`Bili DNS 诊断：${data.completed}/${data.planned} 查询，未开始 ${data.skipped}，总耗时 ${data.elapsedMs} ms`,
-      '只查询4个公开CDN域名；并发最多3；不修改全局DNS、不清空缓存、不下载视频。'];
+      '只查询4个公开CDN域名；并发最多3；不修改全局DNS、不清空缓存、不下载视频。',
+      `每轮查询设置timeout=1500 ms；接近或超过该值（≥1425 ms）的回调 ${nearLimit} 次。成功回调仍算成功，不标成TIMEOUT。`,
+      'API同时查询A与AAAA；没有阶段耗时，无法仅凭接近上限判断AAAA等待、重试或回落。'];
     for(const host of HOSTS)for(const resolver of RESOLVERS){
       const rows=data.rows.filter(r=>r.host===host&&r.resolver===resolver.label),uncached=rows.filter(r=>r.ok&&!r.cached);
       const cached=rows.filter(r=>r.cached).length,errors=rows.filter(r=>!r.ok).map(r=>r.code);

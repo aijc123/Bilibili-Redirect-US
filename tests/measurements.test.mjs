@@ -119,6 +119,16 @@ test('old warm callbacks cannot replace a newer network epoch reset',async()=>{
  for(let i=0;i<4;i++){callbacks[i](null,{answers:[{type:'A'}]});await Promise.resolve();await Promise.resolve();}
  await result;assert.equal(JSON.parse(stored).lastNetworkReset.warm,undefined);assert.equal(JSON.parse(stored).epoch,2);
 });
+
+test('network warming follows the selected overseas group including a Hong Kong preferred host',async()=>{
+ let stored='{}';const domains=[];
+ await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+  $argument:{WarmDNS:true,CDNGroup:'overseas',PreferredCDN:'cn-hk-eq-01-03.bilivideo.com'},
+  $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
+  $httpClient:{get(){throw Error('No media probing');}},$dns:{query(o,cb){domains.push(o.domain);cb(null,{answers:[{type:'A',value:'private-ip'}]});}}}));
+ assert.deepEqual(domains,['cn-hk-eq-01-03.bilivideo.com','upos-sz-mirrorcosov.bilivideo.com','upos-sz-mirroraliov.bilivideo.com','cn-hk-eq-01-01.bilivideo.com']);
+ assert.equal(JSON.parse(stored).lastNetworkReset.warm.success,4);assert.ok(!stored.includes('private-ip'));
+});
 test('network-change script handles a null JSON argument and keeps a successful synchronous reset',()=>{
  let done=0;vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},$argument:'null',
   $persistentStore:{read:()=>'{}',write:()=>true},$done(){done++;}});assert.equal(done,1);

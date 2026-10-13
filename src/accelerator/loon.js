@@ -27,11 +27,16 @@
     alpn:arg.HTTPProtocol==='h2'?'h2':'h1',
     minChunkKiB:[32,64,128].includes(Number(arg.MinChunkKiB))?Number(arg.MinChunkKiB):128,
     connections: [1,2,4,6,8,16,32].includes(Number(arg.Connections)) ? Number(arg.Connections) : 4, maxBytes: Math.min(8,Number(arg.MaxMiB) || 4) * 1024 * 1024,
-    timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
+    timeout: 2500, hosts: globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup) };
   const plan=core.eligible($request,options);
   const parsed=plan.range;
-  const trialPlan=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
+  const trialPermission=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.permission(state,$request,arg.TrialMode,options.hosts[0]):null;
+  const trialPlan=trialPermission?.allowed?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
   if(trialPlan){options.connections=trialPlan.connections;options.auto=false;}
+  else if(trialPermission?.recovery){
+    options.connections=trialPermission.baseline;options.minChunkKiB=128;options.auto=true;
+    if(trialPermission.excludePreferred)options.hosts=options.hosts.slice(1);
+  }
   const leases = globalThis.BiliRangeBudget.active(state.leases,Date.now());
   let inflight=Object.keys(leases).length;
   let lease;
@@ -67,7 +72,9 @@
     if(globalThis.BiliRangeMedia)globalThis.BiliRangeMedia.observe(state,$request,result,{epoch});
     state.lastNetworkReset=latest.lastNetworkReset;
     state.trials=latest.trials;
+    state.trialSafety=latest.trialSafety;
     state.epoch = latest.epoch || 0;
+    globalThis.BiliRangeTrials?.recordSafety(state,$request,result,{mode:arg.TrialMode,trial:trialPlan?.trial,epoch});
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];
     if (result.metrics?.host && state.epoch === epoch) state.hosts = { ...(latest.hosts || {}), [result.metrics.host]: state.hosts[result.metrics.host] };

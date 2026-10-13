@@ -3,6 +3,38 @@
 (function(root){
   'use strict';
   const MODES=root.BiliRangeMeasurements.TRIAL_MODES;
+  const SAFETY_TTL=10*60*1000;
+  function safetyKey(state,request,mode,host){
+    if(!Array.isArray(MODES[mode])||!root.BiliRange.isTargetHost(host))return null;
+    const identity=root.BiliRangeMeasurements.identity(state,request,true);return identity?[Number(state.epoch)||0,identity,mode,host].join('|'):null;
+  }
+  function safetyEntries(state,at=Date.now()){
+    return Object.fromEntries(Object.entries(state.trialSafety||{}).filter(([key,value])=>
+      /^\d+\|[0-9a-f]{8}\|(?:4vs(?:8|16|32)|8vs(?:16|32))\|[^|]+$/.test(key)&&root.BiliRange.isTargetHost(key.split('|')[3])&&
+      key.startsWith((Number(state.epoch)||0)+'|')&&value&&Number.isFinite(value.at)&&value.at<=at&&at-value.at<SAFETY_TTL&&
+      (root.BiliRangeDiagnostics?.allowedReasons?.includes(value.reason)||/^status-\d{3}$/.test(value.reason||''))).slice(-8));
+  }
+  function permission(state,request,mode,host,at=Date.now()){
+    const key=safetyKey(state,request,mode,host);if(!key)return {allowed:false,recovery:false};
+    const entries=safetyEntries(state,at),pause=entries[key],cooling=Number(state.hosts?.[host]?.blockedUntil)>at;
+    const excludePreferred=Boolean(pause&&pause.reason!=='transport');
+    return {allowed:!pause&&!cooling,recovery:Boolean(pause||cooling),baseline:MODES[mode][0],excludePreferred};
+  }
+  function recordSafety(state,request,result,{mode,trial,epoch}={},at=Date.now()){
+    if(!trial||result.kind==='response'||!result.metrics?.host||Number(state.epoch||0)!==Number(epoch||0))return;
+    const key=safetyKey(state,request,mode,result.metrics.host);if(!key)return;
+    const reason=root.BiliRangeDiagnostics?.allowedReasons?.includes(result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'transport';
+    state.trialSafety={...safetyEntries(state,at),[key]:{at,reason}};
+    state.trialSafety=Object.fromEntries(Object.entries(state.trialSafety).slice(-8));
+    // Resume with a new balanced block; never splice the paused partial block.
+    const groupKey=trial.block.slice(0,trial.block.lastIndexOf('|')),group=state.trials?.groups?.[groupKey];
+    if(group&&Number.isSafeInteger(group.counter))group.counter=Math.ceil(group.counter/4)*4;
+  }
+  function safetyReport(state,at=Date.now()){
+    const entries=Object.entries(safetyEntries(state,at));if(!entries.length)return '';
+    return '对照安全暂停：'+entries.map(([key,value])=>key.split('|')[3]+' / '+value.reason).join('，')+
+      '\n当前节点/签名地址/对照组合失败后暂停10分钟；期间使用4/8路与128 KiB普通自动选CDN恢复，不纳入并发对照。更换节点、地址签名、另一对照模式或网络轮次可重新检查。';
+  }
   function plan(state,request,mode,at=Date.now(),random=Math.random){
     const arms=MODES[mode];if(!Array.isArray(arms))return null;
     const identity=root.BiliRangeMeasurements.identity(state,request);if(!identity)return null;
@@ -57,5 +89,5 @@
       interval:empiricalInterval(g.logRatios),equivalent:g.actualA===g.actualB,
       caveat:'原有流量交替；不是完整播放实验；缓存、负载和依赖仍可混杂。区间是块重采样经验范围。'}))};
   }
-  root.BiliRangeTrials={plan,analyze,empiricalInterval};
+  root.BiliRangeTrials={plan,analyze,empiricalInterval,permission,recordSafety,safetyReport};
 })(globalThis);

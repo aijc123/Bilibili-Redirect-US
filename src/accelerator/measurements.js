@@ -18,10 +18,10 @@
   function rangeBucket(bytes) {
     return bytes<256*1024?'small':bytes<768*1024?'256-768KiB':bytes<=1280*1024?'near-1MiB':bytes<=2*1024*1024?'1.25-2MiB':'over-2MiB';
   }
-  function identity(state,request){
+  function identity(state,request,includeQuery=false){
     const u=root.BiliRange.parseURL(request.url);if(!u)return null;
     const m=state.measurements ||= {salt:Math.random().toString(36).slice(2),samples:[]};
-    return hash(u.path,m.salt);
+    return hash(u.path+(includeQuery?u.query:''),m.salt);
   }
   function record(state, request, result, context={}) {
     const at=Number(result.metrics?.finishedAt)||Date.now();
@@ -42,7 +42,7 @@
       inflight:Number(context.inflight)||0,redirects:Number(r.redirects)||0,
       maxPieceMs:Number(r.maxPieceMs)||0,minPieceMs:Number(r.minPieceMs)||0};
     // Restrict the only stored hostname field. Invalid metrics cannot introduce other text.
-    if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
+    if(!root.BiliRange.isTargetHost(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
     const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
@@ -74,7 +74,7 @@
       bytes:ok.reduce((n,s)=>n+s.bytes,0),noise:ok.length<8?'样本不足':rates.length&&quantile(rates,0.9)/Math.max(0.001,quantile(rates,0.1))>2?'波动较大':'仍有缓存与时间噪音'};
   }
   function analyze(state, at=Date.now()) {
-    const valid=s=>s&&typeof s==='object'&&/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(s.host||'')&&/^[0-9a-f]{8}$/.test(s.content||'')&&
+    const valid=s=>s&&typeof s==='object'&&root.BiliRange.isTargetHost(s.host)&&/^[0-9a-f]{8}$/.test(s.content||'')&&
       ['small','256-768KiB','near-1MiB','1.25-2MiB','over-2MiB'].includes(s.bucket)&&
       [s.at,s.from,s.bytes,s.elapsedMs,s.mode,s.epoch,s.inflight].every(Number.isFinite);
     const samples=(Array.isArray(state.measurements?.samples)?state.measurements.samples:[]).filter(s=>valid(s)&&at-s.at<RETAIN_MS&&at>=s.at).slice(-MAX_SAMPLES);

@@ -7,6 +7,7 @@
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
+  function isTargetHost(value){return typeof value==='string'&&/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(value);}
   function headers(h) {
     const out = {};
     for (const k of Object.keys(h || {})) out[k.toLowerCase()] = String(h[k]);
@@ -38,6 +39,10 @@
     const stats = state.hosts || {};
     const valid = candidates.filter(h => !(stats[h]?.blockedUntil > now));
     if (!valid.length) return null;
+    // Retain a recently proven node before exploring unknown/stale candidates.
+    // Loon cannot hide a cold probe behind streaming/hedging or cancel losers.
+    const proven=valid.filter(h=>Number(stats[h]?.bps)>0&&!(stats[h]?.failures>0)&&stats[h]?.at&&now-stats[h].at<10*60*1000);
+    if(proven.length)return proven.reduce((best,h)=>stats[h].bps>stats[best].bps*1.2?h:best,proven[0]);
     const fresh = valid.filter(h => !stats[h]?.at || now - stats[h].at > 10 * 60 * 1000);
     if (fresh.length) return fresh[0];
     return valid.reduce((best, h) => (stats[h].bps || 0) > (stats[best].bps || 0) * 1.2 ? h : best, valid[0]);
@@ -62,7 +67,7 @@
     const planned=eligible(request,options,now());
     if(planned.kind!=='eligible')return planned;
     const {h,u,range,at}=planned;
-    const pool = (options.hosts || DEFAULT_HOSTS).filter(host => /^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(host)).slice(0, 8);
+    const pool = (options.hosts || DEFAULT_HOSTS).filter(isTargetHost).slice(0, 16);
     const target = options.auto === false ? pool[0] : chooseHost(state, pool, at);
     if (!target) return {kind:'pass',reason:'cooldown'};
     const count = [1, 2, 4, 6, 8, 16, 32].includes(Number(options.connections)) ? Number(options.connections) : 4;
@@ -129,5 +134,5 @@
       return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
     }
   }
-  root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };
+  root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, isTargetHost,DEFAULT_HOSTS, INTERNAL };
 })(globalThis);

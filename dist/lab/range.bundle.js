@@ -288,6 +288,7 @@ SOFTWARE.
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
+  function isTargetHost(value){return typeof value==='string'&&/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(value);}
   function headers(h) {
     const out = {};
     for (const k of Object.keys(h || {})) out[k.toLowerCase()] = String(h[k]);
@@ -319,6 +320,10 @@ SOFTWARE.
     const stats = state.hosts || {};
     const valid = candidates.filter(h => !(stats[h]?.blockedUntil > now));
     if (!valid.length) return null;
+    // Retain a recently proven node before exploring unknown/stale candidates.
+    // Loon cannot hide a cold probe behind streaming/hedging or cancel losers.
+    const proven=valid.filter(h=>Number(stats[h]?.bps)>0&&!(stats[h]?.failures>0)&&stats[h]?.at&&now-stats[h].at<10*60*1000);
+    if(proven.length)return proven.reduce((best,h)=>stats[h].bps>stats[best].bps*1.2?h:best,proven[0]);
     const fresh = valid.filter(h => !stats[h]?.at || now - stats[h].at > 10 * 60 * 1000);
     if (fresh.length) return fresh[0];
     return valid.reduce((best, h) => (stats[h].bps || 0) > (stats[best].bps || 0) * 1.2 ? h : best, valid[0]);
@@ -343,7 +348,7 @@ SOFTWARE.
     const planned=eligible(request,options,now());
     if(planned.kind!=='eligible')return planned;
     const {h,u,range,at}=planned;
-    const pool = (options.hosts || DEFAULT_HOSTS).filter(host => /^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(host)).slice(0, 8);
+    const pool = (options.hosts || DEFAULT_HOSTS).filter(isTargetHost).slice(0, 16);
     const target = options.auto === false ? pool[0] : chooseHost(state, pool, at);
     if (!target) return {kind:'pass',reason:'cooldown'};
     const count = [1, 2, 4, 6, 8, 16, 32].includes(Number(options.connections)) ? Number(options.connections) : 4;
@@ -410,7 +415,22 @@ SOFTWARE.
       return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
     }
   }
-  root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };
+  root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, isTargetHost,DEFAULT_HOSTS, INTERNAL };
+})(globalThis);
+
+/* aijc123 Loon candidate adapter. Regional host facts from BTR cdn-resolver.js;
+ * BTR's streaming races/cancellation are not emulated by this callback runtime. */
+(function(root){
+  'use strict';
+  const inventory={"schema":1,"purpose":"Public candidate inventory; not a fastest-CDN or DNS recommendation.","sources":["https://github.com/chrisliu298/bilibili-cdn-fix/blob/main/benchmarks.md","https://github.com/chrisliu298/bilibili-cdn-fix/blob/main/cdn-reference.md","https://github.com/MrTangLuyao/Bilibili-thread-ripper"],"groups":{"baseline":["upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com"],"mainland":["upos-sz-mirrorali.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorbos.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorbd.bilivideo.com","upos-sz-mirror14b.bilivideo.com","upos-sz-estgoss.bilivideo.com","upos-sz-mirrorcos.bilivideo.com"],"overseas":["upos-sz-mirrorcosov.bilivideo.com","upos-sz-mirroraliov.bilivideo.com","cn-hk-eq-01-01.bilivideo.com","cn-hk-eq-01-03.bilivideo.com"]},"hosts":["upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com","upos-sz-mirror08h.bilivideo.com","upos-sz-mirrorbos.bilivideo.com","upos-sz-mirroralib.bilivideo.com","upos-sz-mirrorcos.bilivideo.com","upos-sz-mirrorbd.bilivideo.com","upos-sz-mirror14b.bilivideo.com","upos-sz-estgoss.bilivideo.com","upos-sz-mirrorcosov.bilivideo.com","upos-sz-mirroraliov.bilivideo.com","cn-hk-eq-01-01.bilivideo.com","cn-hk-eq-01-03.bilivideo.com"]};
+  const groups=Object.freeze(Object.fromEntries(Object.entries({...inventory.groups,all:inventory.hosts})
+    .map(([key,hosts])=>[key,Object.freeze(hosts.slice())])));
+  function pool(preferred,group='baseline'){
+    const selected=root.BiliRange.isTargetHost(preferred)?preferred:'upos-sz-mirror08c.bilivideo.com';
+    const hosts=Object.prototype.hasOwnProperty.call(groups,group)?groups[group]:groups.baseline;
+    return [selected,...hosts.filter(host=>host!==selected)].slice(0,16);
+  }
+  root.BiliRangeCandidates={pool,groups};
 })(globalThis);
 
 /* Loon HTTP adapter with a bounded, validated redirect chain. */
@@ -512,10 +532,10 @@ SOFTWARE.
   function rangeBucket(bytes) {
     return bytes<256*1024?'small':bytes<768*1024?'256-768KiB':bytes<=1280*1024?'near-1MiB':bytes<=2*1024*1024?'1.25-2MiB':'over-2MiB';
   }
-  function identity(state,request){
+  function identity(state,request,includeQuery=false){
     const u=root.BiliRange.parseURL(request.url);if(!u)return null;
     const m=state.measurements ||= {salt:Math.random().toString(36).slice(2),samples:[]};
-    return hash(u.path,m.salt);
+    return hash(u.path+(includeQuery?u.query:''),m.salt);
   }
   function record(state, request, result, context={}) {
     const at=Number(result.metrics?.finishedAt)||Date.now();
@@ -536,7 +556,7 @@ SOFTWARE.
       inflight:Number(context.inflight)||0,redirects:Number(r.redirects)||0,
       maxPieceMs:Number(r.maxPieceMs)||0,minPieceMs:Number(r.minPieceMs)||0};
     // Restrict the only stored hostname field. Invalid metrics cannot introduce other text.
-    if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
+    if(!root.BiliRange.isTargetHost(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
     const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
@@ -568,7 +588,7 @@ SOFTWARE.
       bytes:ok.reduce((n,s)=>n+s.bytes,0),noise:ok.length<8?'样本不足':rates.length&&quantile(rates,0.9)/Math.max(0.001,quantile(rates,0.1))>2?'波动较大':'仍有缓存与时间噪音'};
   }
   function analyze(state, at=Date.now()) {
-    const valid=s=>s&&typeof s==='object'&&/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(s.host||'')&&/^[0-9a-f]{8}$/.test(s.content||'')&&
+    const valid=s=>s&&typeof s==='object'&&root.BiliRange.isTargetHost(s.host)&&/^[0-9a-f]{8}$/.test(s.content||'')&&
       ['small','256-768KiB','near-1MiB','1.25-2MiB','over-2MiB'].includes(s.bucket)&&
       [s.at,s.from,s.bytes,s.elapsedMs,s.mode,s.epoch,s.inflight].every(Number.isFinite);
     const samples=(Array.isArray(state.measurements?.samples)?state.measurements.samples:[]).filter(s=>valid(s)&&at-s.at<RETAIN_MS&&at>=s.at).slice(-MAX_SAMPLES);
@@ -643,6 +663,38 @@ SOFTWARE.
 (function(root){
   'use strict';
   const MODES=root.BiliRangeMeasurements.TRIAL_MODES;
+  const SAFETY_TTL=10*60*1000;
+  function safetyKey(state,request,mode,host){
+    if(!Array.isArray(MODES[mode])||!root.BiliRange.isTargetHost(host))return null;
+    const identity=root.BiliRangeMeasurements.identity(state,request,true);return identity?[Number(state.epoch)||0,identity,mode,host].join('|'):null;
+  }
+  function safetyEntries(state,at=Date.now()){
+    return Object.fromEntries(Object.entries(state.trialSafety||{}).filter(([key,value])=>
+      /^\d+\|[0-9a-f]{8}\|(?:4vs(?:8|16|32)|8vs(?:16|32))\|[^|]+$/.test(key)&&root.BiliRange.isTargetHost(key.split('|')[3])&&
+      key.startsWith((Number(state.epoch)||0)+'|')&&value&&Number.isFinite(value.at)&&value.at<=at&&at-value.at<SAFETY_TTL&&
+      (root.BiliRangeDiagnostics?.allowedReasons?.includes(value.reason)||/^status-\d{3}$/.test(value.reason||''))).slice(-8));
+  }
+  function permission(state,request,mode,host,at=Date.now()){
+    const key=safetyKey(state,request,mode,host);if(!key)return {allowed:false,recovery:false};
+    const entries=safetyEntries(state,at),pause=entries[key],cooling=Number(state.hosts?.[host]?.blockedUntil)>at;
+    const excludePreferred=Boolean(pause&&pause.reason!=='transport');
+    return {allowed:!pause&&!cooling,recovery:Boolean(pause||cooling),baseline:MODES[mode][0],excludePreferred};
+  }
+  function recordSafety(state,request,result,{mode,trial,epoch}={},at=Date.now()){
+    if(!trial||result.kind==='response'||!result.metrics?.host||Number(state.epoch||0)!==Number(epoch||0))return;
+    const key=safetyKey(state,request,mode,result.metrics.host);if(!key)return;
+    const reason=root.BiliRangeDiagnostics?.allowedReasons?.includes(result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'transport';
+    state.trialSafety={...safetyEntries(state,at),[key]:{at,reason}};
+    state.trialSafety=Object.fromEntries(Object.entries(state.trialSafety).slice(-8));
+    // Resume with a new balanced block; never splice the paused partial block.
+    const groupKey=trial.block.slice(0,trial.block.lastIndexOf('|')),group=state.trials?.groups?.[groupKey];
+    if(group&&Number.isSafeInteger(group.counter))group.counter=Math.ceil(group.counter/4)*4;
+  }
+  function safetyReport(state,at=Date.now()){
+    const entries=Object.entries(safetyEntries(state,at));if(!entries.length)return '';
+    return '对照安全暂停：'+entries.map(([key,value])=>key.split('|')[3]+' / '+value.reason).join('，')+
+      '\n当前节点/签名地址/对照组合失败后暂停10分钟；期间使用4/8路与128 KiB普通自动选CDN恢复，不纳入并发对照。更换节点、地址签名、另一对照模式或网络轮次可重新检查。';
+  }
   function plan(state,request,mode,at=Date.now(),random=Math.random){
     const arms=MODES[mode];if(!Array.isArray(arms))return null;
     const identity=root.BiliRangeMeasurements.identity(state,request);if(!identity)return null;
@@ -697,7 +749,7 @@ SOFTWARE.
       interval:empiricalInterval(g.logRatios),equivalent:g.actualA===g.actualB,
       caveat:'原有流量交替；不是完整播放实验；缓存、负载和依赖仍可混杂。区间是块重采样经验范围。'}))};
   }
-  root.BiliRangeTrials={plan,analyze,empiricalInterval};
+  root.BiliRangeTrials={plan,analyze,empiricalInterval,permission,recordSafety,safetyReport};
 })(globalThis);
 
 /* Observe complete SIDX boxes already present in successful buffered responses.
@@ -741,7 +793,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.12-experimental';
+  const VERSION = '0.1.13-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -801,6 +853,7 @@ SOFTWARE.
       '\n重定向拒绝类别：'+JSON.stringify(d.redirectFields||{})+
       (root.BiliRangeMeasurements?'\n\n'+root.BiliRangeMeasurements.report(state):'')+
       (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
+      (root.BiliRangeTrials?.safetyReport(state)?'\n\n'+root.BiliRangeTrials.safetyReport(state):'')+
       '\n最近网络重置：'+JSON.stringify(state.lastNetworkReset||{});
   }
   const count=value=>Number.isSafeInteger(value)&&value>=0?value:0;
@@ -852,11 +905,16 @@ SOFTWARE.
     alpn:arg.HTTPProtocol==='h2'?'h2':'h1',
     minChunkKiB:[32,64,128].includes(Number(arg.MinChunkKiB))?Number(arg.MinChunkKiB):128,
     connections: [1,2,4,6,8,16,32].includes(Number(arg.Connections)) ? Number(arg.Connections) : 4, maxBytes: Math.min(8,Number(arg.MaxMiB) || 4) * 1024 * 1024,
-    timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
+    timeout: 2500, hosts: globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup) };
   const plan=core.eligible($request,options);
   const parsed=plan.range;
-  const trialPlan=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
+  const trialPermission=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.permission(state,$request,arg.TrialMode,options.hosts[0]):null;
+  const trialPlan=trialPermission?.allowed?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
   if(trialPlan){options.connections=trialPlan.connections;options.auto=false;}
+  else if(trialPermission?.recovery){
+    options.connections=trialPermission.baseline;options.minChunkKiB=128;options.auto=true;
+    if(trialPermission.excludePreferred)options.hosts=options.hosts.slice(1);
+  }
   const leases = globalThis.BiliRangeBudget.active(state.leases,Date.now());
   let inflight=Object.keys(leases).length;
   let lease;
@@ -892,7 +950,9 @@ SOFTWARE.
     if(globalThis.BiliRangeMedia)globalThis.BiliRangeMedia.observe(state,$request,result,{epoch});
     state.lastNetworkReset=latest.lastNetworkReset;
     state.trials=latest.trials;
+    state.trialSafety=latest.trialSafety;
     state.epoch = latest.epoch || 0;
+    globalThis.BiliRangeTrials?.recordSafety(state,$request,result,{mode:arg.TrialMode,trial:trialPlan?.trial,epoch});
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];
     if (result.metrics?.host && state.epoch === epoch) state.hosts = { ...(latest.hosts || {}), [result.metrics.host]: state.hosts[result.metrics.host] };

@@ -4,7 +4,7 @@ import https from 'node:https';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-const HOST=/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/;
+const HOST=/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/;
 const CODES=['ENOTFOUND','ENODATA','ETIMEOUT','ETIMEDOUT','ECANCELLED','ECONNRESET','ECONNREFUSED','ERR_TLS_CERT_ALTNAME_INVALID','CERT_HAS_EXPIRED','UNABLE_TO_VERIFY_LEAF_SIGNATURE'];
 const safeCode=error=>CODES.includes(error?.code)?error.code:'OTHER';
 export async function dnsHealth(host){
@@ -31,7 +31,7 @@ export function tlsHealth(host){
  });
 }
 export async function collect(hosts,{dns=dnsHealth,tls=tlsHealth,now=Date.now,context='manual-development'}={}){
- if(!Array.isArray(hosts)||hosts.length>12||hosts.some(h=>typeof h!=='string'||!HOST.test(h)))throw Error('invalid-candidate-inventory');
+ if(!Array.isArray(hosts)||hosts.length>16||hosts.some(h=>typeof h!=='string'||!HOST.test(h)))throw Error('invalid-candidate-inventory');
  const queue=[...new Set(hosts)],rows=[];let cursor=0;
  async function worker(){
   while(cursor<queue.length){const host=queue[cursor++];

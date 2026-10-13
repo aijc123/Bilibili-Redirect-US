@@ -72,7 +72,7 @@ test('one signed path refusal no longer disables a whole candidate for a minute'
 test('candidate bundle uses trusted redirect transport end to end',async()=>{
  const logs=[],seen=[];let stored='{}';
  const result=await new Promise(resolve=>{
-  const context={Uint8Array,Date,console:{log:s=>logs.push(s)},$argument:{AutoCDN:false,Connections:4},
+  const context={Uint8Array,Date,console:{log:s=>logs.push(s)},$argument:{AutoCDN:false,Connections:4,PreferredCDN:'upos-sz-mirrorhwo1.bilivideo.com'},
    $request:{method:'GET',url,headers:{Range:'bytes=0-1048575'}},
    $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
    $httpClient:{get(o,cb){seen.push(o);if(o.url.includes('mirrorhwo1')){cb(null,{status:302,headers:{Location:'https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s?upsig=private'}},null);return;}

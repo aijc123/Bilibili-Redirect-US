@@ -69,6 +69,8 @@ test('selection uses real throughput, expiry and cooldown',()=>{
  state.hosts[hosts[1]].blockedUntil=now+100;
  assert.equal(core.chooseHost(state,hosts,now),hosts[0]);
  state.hosts[hosts[2]].at=1;
+ assert.equal(core.chooseHost(state,hosts,now),hosts[0]);
+ state.hosts[hosts[0]].blockedUntil=now+100;state.hosts[hosts[3]].at=1;
  assert.equal(core.chooseHost(state,hosts,now),hosts[2]);
 });
 test('adapter accepts plugin object, binary response and reports no signed URLs',async()=>{
@@ -137,7 +139,7 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.12-experimental'));
+ assert.ok(report.content.includes('0.1.13-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{

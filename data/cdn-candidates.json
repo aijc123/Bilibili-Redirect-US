@@ -6,6 +6,11 @@
     "https://github.com/chrisliu298/bilibili-cdn-fix/blob/main/cdn-reference.md",
     "https://github.com/MrTangLuyao/Bilibili-thread-ripper"
   ],
+  "groups": {
+    "baseline": ["upos-sz-mirror08c.bilivideo.com", "upos-sz-mirrorhwo1.bilivideo.com", "upos-sz-mirrorhw.bilivideo.com", "upos-sz-mirrorali.bilivideo.com"],
+    "mainland": ["upos-sz-mirrorali.bilivideo.com", "upos-sz-mirrorhw.bilivideo.com", "upos-sz-mirrorbos.bilivideo.com", "upos-sz-mirror08c.bilivideo.com", "upos-sz-mirrorbd.bilivideo.com", "upos-sz-mirror14b.bilivideo.com", "upos-sz-estgoss.bilivideo.com", "upos-sz-mirrorcos.bilivideo.com"],
+    "overseas": ["upos-sz-mirrorcosov.bilivideo.com", "upos-sz-mirroraliov.bilivideo.com", "cn-hk-eq-01-01.bilivideo.com", "cn-hk-eq-01-03.bilivideo.com"]
+  },
   "hosts": [
     "upos-sz-mirrorhwo1.bilivideo.com",
     "upos-sz-mirror08c.bilivideo.com",
@@ -14,6 +19,13 @@
     "upos-sz-mirror08h.bilivideo.com",
     "upos-sz-mirrorbos.bilivideo.com",
     "upos-sz-mirroralib.bilivideo.com",
-    "upos-sz-mirrorcos.bilivideo.com"
+    "upos-sz-mirrorcos.bilivideo.com",
+    "upos-sz-mirrorbd.bilivideo.com",
+    "upos-sz-mirror14b.bilivideo.com",
+    "upos-sz-estgoss.bilivideo.com",
+    "upos-sz-mirrorcosov.bilivideo.com",
+    "upos-sz-mirroraliov.bilivideo.com",
+    "cn-hk-eq-01-01.bilivideo.com",
+    "cn-hk-eq-01-03.bilivideo.com"
   ]
 }
