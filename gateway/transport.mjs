@@ -13,17 +13,31 @@ export function mediaURL(value){
  const deadline=u.searchParams.get('deadline');if(deadline&&/^\d+$/.test(deadline)&&Number(deadline)*1000<Date.now()+15000)throw Error('expiring-media-url');
  return u;
 }
-export function makeTransport({threads=16,dial}={}){
+export function makeTransport({threads=16,dial,resolveDNS=lookup,createAgents}={}){
  const limit=[4,8,16,32].includes(threads)?threads:16,slots=new Semaphore(limit),cache=new Map();
+ const lookups=new Map(),meters={dnsQueries:0,dnsCacheHits:0,dnsCoalesced:0,dnsFailures:0,reusedRequests:0,retiredIdleConnections:0};let closed=false;
  const cachedLookup=(host,options,callback)=>{
   const key=host+'|'+String(options.family||0),known=cache.get(key);
   const answer=records=>{if(options.all)callback(null,records);else callback(null,records[0].address,records[0].family);};
-  if(known&&Date.now()-known.at<60000){queueMicrotask(()=>answer(known.records));return;}
-  lookup(host,{...options,all:true},(error,records)=>{if(error||!records?.length){callback(error||Error('dns'));return;}
-   if(cache.size>=64)cache.delete(cache.keys().next().value);cache.set(key,{at:Date.now(),records});answer(records);});
+  if(known&&Date.now()-known.at<60000){meters.dnsCacheHits++;queueMicrotask(()=>answer(known.records));return;}
+  const complete=(error,records)=>{if(error)callback(error);else answer(records);};
+  if(lookups.has(key)){meters.dnsCoalesced++;lookups.get(key).push(complete);return;}
+  lookups.set(key,[complete]);meters.dnsQueries++;
+  resolveDNS(host,{...options,all:true},(error,records)=>{
+   const waiting=lookups.get(key)||[];lookups.delete(key);
+   if(closed)error=Error('closed');else if(!records?.length&&!error)error=Error('dns');
+   if(error)meters.dnsFailures++;
+   else{if(cache.size>=64)cache.delete(cache.keys().next().value);cache.set(key,{at:Date.now(),records});}
+   for(const finish of waiting)finish(error,records);
+  });
  };
- const agentOptions={keepAlive:true,maxSockets:limit,maxTotalSockets:limit,maxFreeSockets:limit,lookup:cachedLookup};
- const agents={http:new http.Agent(agentOptions),https:new https.Agent(agentOptions)};
+ // The semaphore bounds active HTTP work. A total-socket cap also counts old
+ // idle origins and can strand a CDN switch; bound idle pools separately.
+ const agentOptions={keepAlive:true,maxSockets:limit,maxFreeSockets:limit,lookup:cachedLookup};
+ const agents=createAgents?createAgents(agentOptions):{http:new http.Agent(agentOptions),https:new https.Agent(agentOptions)};
+ const idleSockets=()=>Object.values(agents).flatMap(agent=>Object.values(agent.freeSockets).flat()).filter(socket=>!socket.destroyed);
+ const trimIdle=()=>{const idle=idleSockets();for(const socket of idle.slice(0,Math.max(0,idle.length-limit))){meters.retiredIdleConnections++;socket.destroy();}};
+ for(const agent of Object.values(agents))agent.on('free',trimIdle);
  async function open(url,part,{headers={},signal}={}){
   let parsed=mediaURL(url);
   const release=await slots.acquire(signal,0,Infinity,part.priority===0?0:2,true);let freed=false;
@@ -34,6 +48,7 @@ export function makeTransport({threads=16,dial}={}){
    const createRequest=dial?((u,o,cb)=>dial(u,o,cb)):((u,o,cb)=>api.request(u,o,cb));
    let request;try{request=createRequest(target,{method:'GET',agent:agents[secure?'https':'http'],signal,rejectUnauthorized:true,highWaterMark:65536,
     headers:{...headers,Range:`bytes=${part.start}-${part.end}`,'Accept-Encoding':'identity'}},response=>{
+     if(request.reusedSocket)meters.reusedRequests++;
      response.pause();response.on('error',()=>{});
      resolve({status:response.statusCode,headers:response.headers,stream:response,free});
     });}catch{free();reject(Error('upstream-network'));return;}
@@ -54,7 +69,9 @@ export function makeTransport({threads=16,dial}={}){
    }
   }catch(error){free();throw error;}
  }
- return {open,slots,stats:()=>({activeJobs:slots.active,queuedJobs:slots.queue.length}),close(){agents.http.destroy();agents.https.destroy();cache.clear();}};
+ return {open,slots,stats:()=>({activeJobs:slots.active,queuedJobs:slots.queue.length,idleConnections:idleSockets().length,
+  agentQueuedJobs:Object.values(agents).reduce((n,agent)=>n+Object.values(agent.requests).reduce((v,queue)=>v+queue.length,0),0),...meters}),
+  close(){closed=true;agents.http.destroy();agents.https.destroy();cache.clear();}};
 }
 function checked(response,part,canonical){
  const h=response.headers||{},cr=range.parseContentRange(h['content-range']);

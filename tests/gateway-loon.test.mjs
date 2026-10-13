@@ -32,6 +32,14 @@ test('credentials, conditionals, unbounded and foreign requests never query the 
 test('gateway plugin binds every consumed option and uses immutable matching bundle references',()=>{
  const plugin=readFileSync('dist/gateway/BiliBili.Range.Gateway.plugin','utf8');
  for(const name of ['Enabled','GatewayBase','GatewayToken','Connections','MinChunkKiB','AutoCDN','PreferredCDN'])assert.match(plugin,new RegExp('\\{'+name+'\\}'));
- assert.match(plugin,/Enabled = switch,false/);assert.match(plugin,/gateway-v0\.1\.0-experimental\/dist\/gateway\/rewrite.bundle.js/);
+ assert.match(plugin,/Enabled = switch,false/);assert.match(plugin,/gateway-v0\.1\.1-experimental\/dist\/gateway\/rewrite.bundle.js/);
  const emitted=readFileSync('dist/gateway/rewrite.bundle.js','utf8');assert.match(emitted,/MIT License/);assert.ok(!emitted.includes('session.json'));
+});
+test('network changes clear cached gateway health without sending credentials or probing media',async()=>{
+ const f=fixture();await gateway.rewrite({request,arg,...f});assert.equal(f.calls(),1);
+ let done,logged;
+ vm.runInNewContext(readFileSync('dist/gateway/network-reset.bundle.js','utf8'),{$persistentStore:f.store,
+  $httpClient:{get(){throw Error('No network request allowed');}},console:{log:value=>{logged=value;}},$done:value=>{done=value;}});
+ assert.ok(logged.includes('已清除'));assert.equal(done.content,logged);
+ await gateway.rewrite({request,arg,...f});assert.equal(f.calls(),2);
 });

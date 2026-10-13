@@ -3,10 +3,11 @@ import {createHash} from 'node:crypto';
 const root='vendor/btr-0302b345/',bytes=readFileSync(root+'range-core.js'),provenance=JSON.parse(readFileSync(root+'provenance.json','utf8'));
 if(createHash('sha256').update(bytes).digest('hex')!==provenance.sha256)throw Error('BTR integrity mismatch');
 const common='/* BTR range-core.js, unchanged '+provenance.commit+'\n'+readFileSync(root+'LICENSE','utf8')+'\n*/\n'+bytes.toString('utf8')+'\n'+readFileSync('src/accelerator/range-core.js','utf8')+'\n'+readFileSync('src/gateway/core.js','utf8');
-const out='dist/gateway',version='0.1.0-experimental',base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/gateway-v'+version+'/'+out+'/';
+const out='dist/gateway',version='0.1.1-experimental',base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/gateway-v'+version+'/'+out+'/';
 mkdirSync(out,{recursive:true});
 writeFileSync(out+'/rewrite.bundle.js',common+'\n'+readFileSync('src/gateway/loon.js','utf8'));
 writeFileSync(out+'/diagnose.bundle.js',common+'\n'+readFileSync('src/gateway/diagnose.js','utf8'));
+writeFileSync(out+'/network-reset.bundle.js',readFileSync('src/gateway/network-reset.js','utf8'));
 writeFileSync(out+'/BiliBili.Range.Gateway.plugin',`#!name = BiliBili 电脑中转原型 · aijc123
 #!desc = 需要同 Wi-Fi 的电脑运行服务；默认关闭。未进行 iPhone 安装和播放验证。停用其他 B 站 CDN/Range 插件。
 #!author = aijc123
@@ -30,6 +31,7 @@ force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:8
 [Script]
 http-request ^https?:\\/\\/(?:upos-(?:sz|hz|bstar1)-[a-z0-9-]+\\.bilivideo\\.com|cn-hk-eq-[a-z0-9-]+\\.bilivideo\\.com|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4483))?\\/upgcxcode\\/ script-path=${base}rewrite.bundle.js, timeout=3, tag=Bili 电脑中转, argument=[{Enabled},{GatewayBase},{GatewayToken},{Connections},{MinChunkKiB},{AutoCDN},{PreferredCDN}]
 generic script-path=${base}diagnose.bundle.js, timeout=3, tag=Bili 电脑中转诊断, argument=[{Enabled},{GatewayBase},{GatewayToken}]
+network-changed script-path=${base}network-reset.bundle.js, timeout=3, tag=Bili 电脑中转网络变化
 
 [MITM]
 hostname = *.bilivideo.com, upos-*-mirrorakam.akamaized.net

@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import {range,cdn} from './btr.mjs';
 import {mediaURL,makeTransport,streamRange} from './transport.mjs';
-const VERSION='0.1.0-experimental',SERVICE='aijc123-bili-range-gateway';
+const VERSION='0.1.1-experimental',SERVICE='aijc123-bili-range-gateway';
 const HOST=/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/;
 const DEFAULTS=['upos-sz-mirror08c.bilivideo.com','upos-sz-mirrorhwo1.bilivideo.com','upos-sz-mirrorhw.bilivideo.com','upos-sz-mirrorali.bilivideo.com'];
 const digest=value=>createHash('sha256').update(value).digest();
@@ -40,7 +40,10 @@ export function createGateway({token,threads=16,connections=8,minChunkKiB=128,tr
   for(const [key,item] of routes)if(Date.now()-item.at>15*60*1000)routes.delete(key);
   let item=routes.get(routeKey);
   if(!item){if(routes.size>=16)routes.delete(routes.keys().next().value);
-   const bans=cdn.createBanList();item={at:Date.now(),resolver:cdn.createResolver({baseUrl:source.href},()=> 'custom',bans,()=>hosts)};routes.set(routeKey,item);}
+   // BTR's browser URL inventory accepts HTTPS only. Upgrade a validated HTTP
+   // donor for ordinary CDN candidates, retaining the original URL as fallback.
+   const donor=new URL(source.href);donor.protocol='https:';donor.port='';
+   const bans=cdn.createBanList();item={at:Date.now(),resolver:cdn.createResolver({baseUrl:donor.href},()=> 'custom',bans,()=>hosts)};routes.set(routeKey,item);}
   item.at=Date.now();
   const parent=new AbortController();transfers.add(parent);declared+=requested.length;
   stats.activeRequests=transfers.size;stats.peakRequests=Math.max(stats.peakRequests,transfers.size);

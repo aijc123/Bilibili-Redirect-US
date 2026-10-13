@@ -16,14 +16,14 @@ const get=(port,path,headers={})=>new Promise((resolve,reject)=>{
   res.on('data',chunk=>{if(first===null)first=Date.now()-at;chunks.push(chunk);});res.on('end',()=>finish(false));res.on('aborted',()=>finish(true));res.on('error',()=>finish(true));
  });req.on('error',reject);
 });
-async function fixture({mismatch=false,hang=false,refuseHost=false,redirect=false}={}){
+async function fixture({mismatch=false,hang=false,refuseHost=false,redirect=false,firstDNSFailure=false}={}){
  const size=2*1024*1024,data=Buffer.alloc(size);for(let i=0;i<size;i++)data[i]=i%251;
  let sockets=0,calls=0,active=0,peak=0;
  const backend=http.createServer((req,res)=>{
   calls++;active++;peak=Math.max(peak,active);res.on('close',()=>active--);
   assert.equal(req.headers['x-bili-gateway-token'],undefined);assert.equal(req.headers.cookie,undefined);assert.equal(req.headers.authorization,undefined);
   if(refuseHost&&req.headers.host.startsWith('upos-sz-mirrorali.')){res.writeHead(206,{'Content-Range':'bytes 0-131071/'+size,'Content-Type':'video/mp4'});res.flushHeaders();setTimeout(()=>res.destroy(),10);return;}
-  if(redirect&&req.headers.host.startsWith('upos-sz-mirror08c.')){res.writeHead(302,{Location:'http://upos-sz-mirrorhwo1.bilivideo.com'+req.url});res.end();return;}
+  if(redirect&&req.headers.host.startsWith('upos-sz-mirror08c.')){res.writeHead(302,{Location:'https://upos-sz-mirrorhwo1.bilivideo.com'+req.url});res.end();return;}
   const part=range.parseRangeHeader(req.headers.range);
   res.writeHead(206,{'Content-Range':`bytes ${part.start}-${part.end}/${size}`,'Content-Type':'video/mp4',ETag:mismatch&&part.start>0?'"other"':'"same"'});
   if(hang)return;
@@ -34,8 +34,13 @@ async function fixture({mismatch=false,hang=false,refuseHost=false,redirect=fals
   },8);res.on('close',()=>clearInterval(timer));
  });backend.on('connection',()=>sockets++);
  const backendPort=await listen(backend);
- const transport=makeTransport({threads:8,dial:(url,options,cb)=>http.request(new URL(`http://127.0.0.1:${backendPort}${url.pathname}${url.search}`),
-  {...options,headers:{...options.headers,Host:url.host}},cb)});
+ let dnsCalls=0;
+ // Test-only adapters map each CDN origin to loopback HTTP. Production uses
+ // native HTTPS Agent and certificate validation; this fixture is not TLS proof.
+ const transport=makeTransport({threads:8,createAgents:options=>({http:new http.Agent(options),https:new http.Agent(options)}),
+  resolveDNS:(host,opts,callback)=>{const fail=firstDNSFailure&&++dnsCalls===1;setTimeout(()=>callback(fail?Error('fixture-private-dns-error'):null,[{address:'127.0.0.1',family:4}]),5);},
+  dial:(url,options,cb)=>http.request(new URL(`http://${url.hostname}:${backendPort}${url.pathname}${url.search}`),
+   {...options,headers:{...options.headers,Host:url.host}},cb)});
  const gateway=createGateway({token:TOKEN,threads:8,connections:8,transport,timeoutMs:1000});const port=await listen(gateway.server);
  const path='/range?source='+encodeURIComponent(SOURCE)+'&connections=8&autoCDN=false';
  return {port,path,data,transport,gateway,counts:()=>({sockets,calls,active,peak}),async close(){await gateway.shutdown();backend.closeAllConnections();await new Promise(resolve=>backend.close(resolve));}};
@@ -59,6 +64,7 @@ test('private gateway streams byte-exact data before completion and reuses actua
   assert.ok(f.counts().sockets<=firstCount+1);assert.ok(f.counts().peak<=8);
   const stats=await get(f.port,'/stats',{'x-bili-gateway-token':TOKEN});const data=JSON.parse(stats.body);
   assert.equal(data.completed,2);assert.equal(data.activeRequests,0);assert.ok(!stats.body.toString().includes('private-example'));assert.ok(!stats.body.toString().includes(TOKEN));
+  assert.equal(data.dnsQueries,1);assert.ok(data.dnsCoalesced>=7);assert.ok(data.reusedRequests>=8);assert.ok(data.idleConnections<=8);
  }finally{await f.close();}
 });
 test('unauthorized, bad URL, missing range and conditional requests never reach media transport',async()=>{
@@ -104,5 +110,39 @@ test('trusted redirects retain byte ranges and return exact streaming media',asy
   assert.ok(f.counts().calls>=16);assert.ok(f.counts().peak<=8);
   for(let i=0;i<20&&!f.gateway.snapshot().last;i++)await new Promise(resolve=>setTimeout(resolve,10));
   assert.deepEqual(f.gateway.snapshot().last.upstreamHosts,['upos-sz-mirrorhwo1.bilivideo.com']);assert.equal(f.gateway.snapshot().last.redirects,8);
+ }finally{await f.close();}
+});
+test('idle keepalive sockets on a previous CDN cannot strand new-origin requests at the global limit',async()=>{
+ const f=await fixture();try{
+  const headers={'x-bili-gateway-token':TOKEN,Range:'bytes=0-1048575'};
+  const warm=await get(f.port,f.path,headers);assert.equal(warm.status,206);assert.equal(warm.partial,false);
+  await new Promise(resolve=>setTimeout(resolve,20));
+  const switched=await get(f.port,f.path+'&cdn=upos-sz-mirrorhwo1.bilivideo.com',headers);
+  assert.equal(switched.status,206);assert.equal(switched.partial,false);assert.equal(checksum(switched.body),checksum(warm.body));
+  for(let i=0;i<20&&f.gateway.snapshot().last?.host!=='upos-sz-mirrorhwo1.bilivideo.com';i++)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(f.gateway.snapshot().last.host,'upos-sz-mirrorhwo1.bilivideo.com');
+  assert.ok(switched.elapsedMs<950);assert.equal(f.transport.stats().queuedJobs,0);
+  const third=await get(f.port,f.path+'&cdn=upos-sz-mirrorhw.bilivideo.com',headers);assert.equal(third.status,206);assert.equal(checksum(third.body),checksum(warm.body));
+  await new Promise(resolve=>setTimeout(resolve,20));assert.ok(f.transport.stats().idleConnections<=8);assert.ok(f.transport.stats().retiredIdleConnections>=8,JSON.stringify({transport:f.transport.stats(),server:f.gateway.snapshot(),fixture:f.counts()}));
+ }finally{await f.close();}
+});
+test('failed coalesced DNS lookup releases all waiters and does not poison a retry or expose raw DNS errors',async()=>{
+ const f=await fixture({firstDNSFailure:true});try{
+  const failures=await Promise.allSettled(Array.from({length:8},()=>f.transport.open(SOURCE,{start:0,end:8191})));
+  assert.ok(failures.every(r=>r.status==='rejected'&&r.reason.message==='upstream-network'));
+  assert.equal(f.transport.stats().dnsQueries,1);assert.equal(f.transport.stats().dnsFailures,1);assert.equal(f.transport.stats().activeJobs,0);
+  const response=await f.transport.open(SOURCE,{start:0,end:8191}),chunks=[];for await(const chunk of response.stream)chunks.push(chunk);
+  assert.equal(checksum(Buffer.concat(chunks)),checksum(f.data.subarray(0,8192)));assert.equal(f.transport.stats().dnsQueries,2);
+  assert.ok(!JSON.stringify(f.gateway.snapshot()).includes('fixture-private-dns-error'));
+ }finally{await f.close();}
+});
+test('every gateway CDN choice reaches its selected host even when the signed donor is HTTP',async()=>{
+ const f=await fixture();try{
+  for(const host of ['upos-sz-mirror08c.bilivideo.com','upos-sz-mirrorhwo1.bilivideo.com','upos-sz-mirrorhw.bilivideo.com','upos-sz-mirrorali.bilivideo.com']){
+   const result=await get(f.port,f.path+'&cdn='+host,{'x-bili-gateway-token':TOKEN,Range:'bytes=0-262143'});
+   assert.equal(result.status,206);assert.equal(result.partial,false);assert.equal(checksum(result.body),checksum(f.data.subarray(0,262144)));
+   for(let i=0;i<20&&f.gateway.snapshot().last?.host!==host;i++)await new Promise(resolve=>setTimeout(resolve,10));
+   assert.equal(f.gateway.snapshot().last.host,host);assert.deepEqual(f.gateway.snapshot().last.upstreamHosts,[host]);
+  }
  }finally{await f.close();}
 });
