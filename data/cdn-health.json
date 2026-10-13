@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-13T06:44:09.119Z",
-  "context": "manual-development",
+  "generatedAt": "2026-10-13T06:53:32.166Z",
+  "context": "github-actions",
   "scope": "DNS and validated TLS/HEAD from this runner only; not phone media throughput. HTTP403 still means media usability unknown.",
   "changesPlaybackDefault": false,
   "mediaBenchmarkAvailable": false,
@@ -10,14 +10,14 @@
       "host": "upos-sz-mirror08c.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 1730,
+        "elapsedMs": 851,
         "A": 6,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 1057,
-        "tlsMs": 774,
+        "elapsedMs": 1241,
+        "tlsMs": 1094,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
@@ -28,14 +28,14 @@
       "host": "upos-sz-mirror08h.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 2002,
+        "elapsedMs": 735,
         "A": 6,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 1503,
-        "tlsMs": 1247,
+        "elapsedMs": 896,
+        "tlsMs": 681,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
@@ -46,14 +46,14 @@
       "host": "upos-sz-mirrorali.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 2004,
+        "elapsedMs": 254,
         "A": 8,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 2901,
-        "tlsMs": 2607,
+        "elapsedMs": 862,
+        "tlsMs": 639,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
@@ -64,13 +64,13 @@
       "host": "upos-sz-mirroralib.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 271,
+        "elapsedMs": 259,
         "A": 8,
         "AAAA": 0
       },
       "tls": {
         "ok": false,
-        "elapsedMs": 3006,
+        "elapsedMs": 3003,
         "tlsMs": null,
         "status": null,
         "code": "ETIMEDOUT"
@@ -82,14 +82,14 @@
       "host": "upos-sz-mirrorbos.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 2010,
+        "elapsedMs": 604,
         "A": 10,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 1761,
-        "tlsMs": 1513,
+        "elapsedMs": 845,
+        "tlsMs": 638,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
@@ -100,14 +100,14 @@
       "host": "upos-sz-mirrorcos.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 2011,
+        "elapsedMs": 599,
         "A": 3,
-        "AAAA": 0
+        "AAAA": 5
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 1717,
-        "tlsMs": 1427,
+        "elapsedMs": 826,
+        "tlsMs": 620,
         "status": 403,
         "code": "HEAD_COMPLETED"
       },
@@ -118,14 +118,14 @@
       "host": "upos-sz-mirrorhw.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 507,
+        "elapsedMs": 406,
         "A": 6,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 950,
-        "tlsMs": 687,
+        "elapsedMs": 999,
+        "tlsMs": 782,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
@@ -136,14 +136,14 @@
       "host": "upos-sz-mirrorhwo1.bilivideo.com",
       "dns": {
         "ok": true,
-        "elapsedMs": 2006,
+        "elapsedMs": 840,
         "A": 6,
         "AAAA": 0
       },
       "tls": {
         "ok": true,
-        "elapsedMs": 773,
-        "tlsMs": 521,
+        "elapsedMs": 1572,
+        "tlsMs": 1364,
         "status": 959,
         "code": "HEAD_COMPLETED"
       },
