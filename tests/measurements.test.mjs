@@ -79,3 +79,27 @@ test('network-change write failure explicitly reports that reset did not complet
   $persistentStore:{read:()=>'{"epoch":2}',write:()=>false},$done:v=>{done=v;}});
  assert.ok(logged.includes('未完成'));assert.ok(!logged.includes('处理完成'));assert.equal(done.content,logged);
 });
+test('network-change warming is bounded to2 DNS queries and never downloads video or stores resolver details',async()=>{
+ let stored='{}',active=0,peak=0,doneCount=0;const domains=[];
+ const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+  $argument:{Enabled:true,WarmDNS:true,PreferredCDN:'upos-sz-mirror08h.bilivideo.com'},
+  $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:v=>{doneCount++;resolve(v);},
+  $httpClient:{get(){throw Error('Unexpected video GET');}},$dns:{query(o,cb){domains.push(o.domain);active++;peak=Math.max(peak,active);
+   assert.equal(o.timeout,1500);setImmediate(()=>{active--;cb(null,{fromCache:false,server:'192.168.0.1',answers:[{type:'A',value:'private-ip'}]});});}}}));
+ assert.equal(domains.length,4);assert.equal(domains[0],'upos-sz-mirror08h.bilivideo.com');assert.equal(peak,2);assert.equal(doneCount,1);
+ assert.equal(JSON.parse(stored).lastNetworkReset.warm.success,4);assert.ok(result.content.includes('DNS预热 4/4'));
+ assert.ok(!stored.includes('192.168.0.1'));assert.ok(!stored.includes('private-ip'));
+});
+test('old warm callbacks cannot replace a newer network epoch reset',async()=>{
+ let stored='{}';const callbacks=[];
+ const result=new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+  $argument:{WarmDNS:true},$persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
+  $dns:{query(o,cb){callbacks.push(cb);}}}));
+ stored=JSON.stringify({...JSON.parse(stored),epoch:2,lastNetworkReset:{epoch:2,at:3000}});
+ for(let i=0;i<4;i++){callbacks[i](null,{answers:[{type:'A'}]});await Promise.resolve();await Promise.resolve();}
+ await result;assert.equal(JSON.parse(stored).lastNetworkReset.warm,undefined);assert.equal(JSON.parse(stored).epoch,2);
+});
+test('network-change script handles a null JSON argument and keeps a successful synchronous reset',()=>{
+ let done=0;vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},$argument:'null',
+  $persistentStore:{read:()=>'{}',write:()=>true},$done(){done++;}});assert.equal(done,1);
+});

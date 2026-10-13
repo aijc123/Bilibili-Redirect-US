@@ -45,6 +45,7 @@ GlobalJobs = select,16,24,32,8,type=number,tag=全局子请求预算（尽力协
 TrialMode = select,"off","4vs8","4vs16","4vs32",tag=并发交替对照（固定首选 CDN）
 HTTPProtocol = select,"h1","h2",tag=HTTP 协议偏好（实际协商未知）
 PlaybackRate = select,1.5,1,1.25,2,type=number,tag=诊断假设倍速（不会改变播放）
+WarmDNS = switch,true,tag=切换网络后预热候选 DNS
 MaxMiB = select,4,2,8,type=number,tag=接管范围上限 MiB
 AutoCDN = switch,true,tag=根据本机传输选择 CDN
 PreferredCDN = select,${candidateOptions},tag=初始候选 CDN
@@ -57,7 +58,7 @@ force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:8
 http-request ^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/ script-path=${base}range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MinChunkKiB},{GlobalJobs},{TrialMode},{HTTPProtocol},{PlaybackRate},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
 generic script-path=${base}diagnose.bundle.js, tag=Bili Range 诊断
 generic script-path=${base}dns-diagnose.bundle.js, timeout=20, tag=Bili DNS 诊断
-network-changed script-path=${base}network-reset.bundle.js, tag=Bili Range 网络变化
+network-changed script-path=${base}network-reset.bundle.js, timeout=20, tag=Bili Range 网络变化, argument=[{Enabled},{WarmDNS},{PreferredCDN}]
 
 [MITM]
 hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net

@@ -1,18 +1,25 @@
 /* Loon HTTP adapter with a bounded, validated redirect chain. */
 (function (root) {
   'use strict';
-  function redirectURL(from, location) {
-    if (typeof location !== 'string' || !location || /[\s\\]/.test(location)) return null;
+  function inspectRedirect(from, location) {
+    if (typeof location !== 'string' || !location || /[\s\\]/.test(location)) return {reason:'malformed'};
     const base = /^(https?):\/\/([^/?#]+)(\/upgcxcode\/[^?#]+)(\?[^#]*)?$/i.exec(from);
-    if (!base) return null;
+    if (!base) return {reason:'source'};
     let next = location;
     if (next.startsWith('//')) next = base[1] + ':' + next;
     else if (next.startsWith('/')) next = base[1] + '://' + base[2] + next;
     else if (next.startsWith('?')) next = base[1] + '://' + base[2] + base[3] + next;
-    const parsed = /^(https?):\/\/([a-z0-9-]+\.bilivideo\.com)(?::(80|443))?(\/upgcxcode\/[^?#]+)(\?[^#]*)?$/i.exec(next);
-    if (!parsed || parsed[4] !== base[3] || (base[1].toLowerCase() === 'https' && parsed[1].toLowerCase() !== 'https')) return null;
-    return next;
+    const parsed = /^(https?):\/\/([^/?#]+)(\/[^?#]*)(\?[^#]*)?$/i.exec(next);
+    if(!parsed)return {reason:'malformed'};
+    if(parsed[2].includes('@'))return {reason:'credentials'};
+    const authority=/^([a-z0-9-]+\.bilivideo\.com)(?::(\d+))?$/i.exec(parsed[2]);
+    if(!authority)return {reason:'host'};
+    if(base[1].toLowerCase()==='https'&&parsed[1].toLowerCase()!=='https')return {reason:'downgrade'};
+    if(authority[2]&&!['80','443'].includes(authority[2]))return {reason:'port'};
+    if(parsed[3]!==base[3])return {reason:parsed[3].replace(/^\/v1\/resource/,'')===base[3]?'path-wrapper':'path'};
+    return {url:next};
   }
+  const redirectURL=(from,location)=>inspectRedirect(from,location).url||null;
   function makeFetch(client, now = Date.now) {
     return async options => {
       const started = now();
@@ -28,12 +35,12 @@
         });
         if (![301, 302, 303, 307, 308].includes(result.status)) return { ...result, redirects, elapsedMs:Math.max(1,now()-started) };
         const location = root.BiliRange.headers(result.headers).location;
-        const next = redirectURL(url, location);
-        if (!next) throw new Error('redirect-untrusted');
+        const inspected=inspectRedirect(url,location),next=inspected.url;
+        if (!next) throw Object.assign(new Error('redirect-untrusted'),{redirectField:inspected.reason});
         if (redirects >= 2 || next === url) throw new Error('redirect-limit');
         url = next; redirects++;
       }
     };
   }
-  root.BiliRangeHTTP = { redirectURL, makeFetch };
+  root.BiliRangeHTTP = { redirectURL, inspectRedirect, makeFetch };
 })(globalThis);

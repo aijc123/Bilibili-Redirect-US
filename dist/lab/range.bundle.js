@@ -363,7 +363,8 @@ SOFTWARE.
         .then(result => ({ ok: true, result }), error => ({ ok: false, error })));
       const settled = await Promise.all(pending);
       const failed = settled.find(r => !r.ok);
-      if (failed) throw new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport');
+      if (failed) throw Object.assign(new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport'),
+        ['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{});
       results = settled.map(r => r.result);
       let total, etag, modified, type;
       for (let i = 0; i < results.length; i++) {
@@ -406,7 +407,7 @@ SOFTWARE.
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}) } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };
@@ -415,18 +416,25 @@ SOFTWARE.
 /* Loon HTTP adapter with a bounded, validated redirect chain. */
 (function (root) {
   'use strict';
-  function redirectURL(from, location) {
-    if (typeof location !== 'string' || !location || /[\s\\]/.test(location)) return null;
+  function inspectRedirect(from, location) {
+    if (typeof location !== 'string' || !location || /[\s\\]/.test(location)) return {reason:'malformed'};
     const base = /^(https?):\/\/([^/?#]+)(\/upgcxcode\/[^?#]+)(\?[^#]*)?$/i.exec(from);
-    if (!base) return null;
+    if (!base) return {reason:'source'};
     let next = location;
     if (next.startsWith('//')) next = base[1] + ':' + next;
     else if (next.startsWith('/')) next = base[1] + '://' + base[2] + next;
     else if (next.startsWith('?')) next = base[1] + '://' + base[2] + base[3] + next;
-    const parsed = /^(https?):\/\/([a-z0-9-]+\.bilivideo\.com)(?::(80|443))?(\/upgcxcode\/[^?#]+)(\?[^#]*)?$/i.exec(next);
-    if (!parsed || parsed[4] !== base[3] || (base[1].toLowerCase() === 'https' && parsed[1].toLowerCase() !== 'https')) return null;
-    return next;
+    const parsed = /^(https?):\/\/([^/?#]+)(\/[^?#]*)(\?[^#]*)?$/i.exec(next);
+    if(!parsed)return {reason:'malformed'};
+    if(parsed[2].includes('@'))return {reason:'credentials'};
+    const authority=/^([a-z0-9-]+\.bilivideo\.com)(?::(\d+))?$/i.exec(parsed[2]);
+    if(!authority)return {reason:'host'};
+    if(base[1].toLowerCase()==='https'&&parsed[1].toLowerCase()!=='https')return {reason:'downgrade'};
+    if(authority[2]&&!['80','443'].includes(authority[2]))return {reason:'port'};
+    if(parsed[3]!==base[3])return {reason:parsed[3].replace(/^\/v1\/resource/,'')===base[3]?'path-wrapper':'path'};
+    return {url:next};
   }
+  const redirectURL=(from,location)=>inspectRedirect(from,location).url||null;
   function makeFetch(client, now = Date.now) {
     return async options => {
       const started = now();
@@ -442,14 +450,14 @@ SOFTWARE.
         });
         if (![301, 302, 303, 307, 308].includes(result.status)) return { ...result, redirects, elapsedMs:Math.max(1,now()-started) };
         const location = root.BiliRange.headers(result.headers).location;
-        const next = redirectURL(url, location);
-        if (!next) throw new Error('redirect-untrusted');
+        const inspected=inspectRedirect(url,location),next=inspected.url;
+        if (!next) throw Object.assign(new Error('redirect-untrusted'),{redirectField:inspected.reason});
         if (redirects >= 2 || next === url) throw new Error('redirect-limit');
         url = next; redirects++;
       }
     };
   }
-  root.BiliRangeHTTP = { redirectURL, makeFetch };
+  root.BiliRangeHTTP = { redirectURL, inspectRedirect, makeFetch };
 })(globalThis);
 
 /* Best-effort admission across Loon script contexts. The store has no atomic CAS.
@@ -530,6 +538,7 @@ SOFTWARE.
     // Restrict the only stored hostname field. Invalid metrics cannot introduce other text.
     if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
+    if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
     const trial=context.trial;
     if(trial&&/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(trial.block||'')&&
       [0,1,2,3].includes(trial.slot)&&['A','B'].includes(trial.arm)&&trial.baseline===4&&[8,16,32].includes(trial.candidate))
@@ -719,7 +728,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.9-experimental';
+  const VERSION = '0.1.10-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -756,6 +765,9 @@ SOFTWARE.
     if(['total','etag','last-modified','content-type'].includes(result.metrics?.integrityField)){
       const fields=d.integrityFields ||= {},field=result.metrics.integrityField;fields[field]=(fields[field]||0)+1;
     }
+    if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(result.metrics?.redirectField)){
+      const fields=d.redirectFields ||= {},field=result.metrics.redirectField;fields[field]=(fields[field]||0)+1;
+    }
     d.shapes[s.range] = (d.shapes[s.range] || 0) + 1;
     d.sources[s.source] = (d.sources[s.source] || 0) + 1;
     if (result.kind === 'response') {
@@ -773,6 +785,7 @@ SOFTWARE.
       '\n来源分类：' + JSON.stringify(d.sources || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) +
       '\n并发记录：' + JSON.stringify(d.modes || {}) + '\n提示：不同视频的记录不能直接作为提速倍数。' +
       '\n实体校验拒绝字段：'+JSON.stringify(d.integrityFields||{})+
+      '\n重定向拒绝类别：'+JSON.stringify(d.redirectFields||{})+
       (root.BiliRangeMeasurements?'\n\n'+root.BiliRangeMeasurements.report(state):'')+
       (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
       '\n最近网络重置：'+JSON.stringify(state.lastNetworkReset||{});
@@ -789,6 +802,7 @@ SOFTWARE.
   if (!state || typeof state !== 'object' || Array.isArray(state)) state = {};
   let arg = typeof $argument === 'object' && $argument ? $argument : {};
   if (typeof $argument === 'string') { try { arg = JSON.parse($argument); } catch { if ($argument === 'Action=reset') arg = { Action: 'reset' }; } }
+  if(!arg||typeof arg!=='object'||Array.isArray(arg))arg={};
   const epoch = state.epoch || 0;
   const save = () => $persistentStore.write(JSON.stringify(state), KEY);
   if (arg.Action === 'reset' || typeof $request === 'undefined' || !$request || typeof $request.url !== 'string' || !$request.url) {

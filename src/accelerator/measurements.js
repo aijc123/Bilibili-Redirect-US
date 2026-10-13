@@ -44,6 +44,7 @@
     // Restrict the only stored hostname field. Invalid metrics cannot introduce other text.
     if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
+    if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
     const trial=context.trial;
     if(trial&&/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(trial.block||'')&&
       [0,1,2,3].includes(trial.slot)&&['A','B'].includes(trial.arm)&&trial.baseline===4&&[8,16,32].includes(trial.candidate))

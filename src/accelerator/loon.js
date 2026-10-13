@@ -7,6 +7,7 @@
   if (!state || typeof state !== 'object' || Array.isArray(state)) state = {};
   let arg = typeof $argument === 'object' && $argument ? $argument : {};
   if (typeof $argument === 'string') { try { arg = JSON.parse($argument); } catch { if ($argument === 'Action=reset') arg = { Action: 'reset' }; } }
+  if(!arg||typeof arg!=='object'||Array.isArray(arg))arg={};
   const epoch = state.epoch || 0;
   const save = () => $persistentStore.write(JSON.stringify(state), KEY);
   if (arg.Action === 'reset' || typeof $request === 'undefined' || !$request || typeof $request.url !== 'string' || !$request.url) {

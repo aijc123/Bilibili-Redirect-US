@@ -107,3 +107,19 @@ test('entity failures expose only the offending field category and retain strict
   assert.ok(!JSON.stringify(r.metrics).includes('secret'));assert.equal(r.response,undefined);
  }
 });
+test('rejected redirect category distinguishes port, wrapper, host and downgrade without relaxing the gate',async()=>{
+ const cases=[
+  ['https://cn-gdfs-ct-01-01.bilivideo.com:4483/upgcxcode/a.m4s','port'],
+  ['https://cn-gdfs-ct-01-01.bilivideo.com/v1/resource/upgcxcode/a.m4s','path-wrapper'],
+  ['https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/other.m4s','path'],
+  ['https://evil.example/upgcxcode/a.m4s?secret=token','host'],
+  ['https://token@cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s','credentials'],
+  ['http://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s','downgrade'],
+  ['https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s#token','malformed']];
+ for(const [location,field] of cases){
+  const fetch=api.makeFetch({get(o,cb){cb(null,{status:302,headers:{Location:location}},null);}});
+  const result=await ctx.BiliRange.accelerate({request:{method:'GET',url,headers:{Range:'bytes=0-262143'}},fetchRange:fetch});
+  assert.equal(api.redirectURL(url,location),null);assert.equal(result.reason,'redirect-untrusted');assert.equal(result.metrics.redirectField,field);
+  assert.ok(!JSON.stringify(result).includes('token'));assert.ok(!JSON.stringify(result).includes('evil.example'));
+ }
+});

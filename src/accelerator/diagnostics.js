@@ -1,7 +1,7 @@
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.9-experimental';
+  const VERSION = '0.1.10-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -38,6 +38,9 @@
     if(['total','etag','last-modified','content-type'].includes(result.metrics?.integrityField)){
       const fields=d.integrityFields ||= {},field=result.metrics.integrityField;fields[field]=(fields[field]||0)+1;
     }
+    if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(result.metrics?.redirectField)){
+      const fields=d.redirectFields ||= {},field=result.metrics.redirectField;fields[field]=(fields[field]||0)+1;
+    }
     d.shapes[s.range] = (d.shapes[s.range] || 0) + 1;
     d.sources[s.source] = (d.sources[s.source] || 0) + 1;
     if (result.kind === 'response') {
@@ -55,6 +58,7 @@
       '\n来源分类：' + JSON.stringify(d.sources || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) +
       '\n并发记录：' + JSON.stringify(d.modes || {}) + '\n提示：不同视频的记录不能直接作为提速倍数。' +
       '\n实体校验拒绝字段：'+JSON.stringify(d.integrityFields||{})+
+      '\n重定向拒绝类别：'+JSON.stringify(d.redirectFields||{})+
       (root.BiliRangeMeasurements?'\n\n'+root.BiliRangeMeasurements.report(state):'')+
       (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
       '\n最近网络重置：'+JSON.stringify(state.lastNetworkReset||{});
