@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/MrTangLuyao/Bilibili-thread-ripper",
+  "commit": "0302b345cdfe367ac599b52dc6874e3f7967e220",
+  "license": "MIT",
+  "files": {
+    "cdn-resolver.js": "4f86ea84722f4e291246fb1c807f37ecb3060eb90bdccb42ec9665f3c6100f18",
+    "idm-downloader.js": "c772f5b57bb8fe860475548c8286ea29f7913fd8ce056756dfca84fe1f5405d3"
+  },
+  "modifications": "none; runtime loads the complete CDN resolver and the unchanged IDM prefix containing Semaphore, omitting player-only remainder"
+}

@@ -15,3 +15,9 @@ Lab work by aijc123 includes bounded admission, balanced existing-traffic trials
 local transfer statistics, DNS diagnostics and existing-response SIDX observation.
 The design also references nishuodedui1145-del/PiliPlus and MyTVB-Speed-Boost;
 their source is not copied. See RANGE-EXPERIMENT.md for details and limits.
+
+Optional gateway work by aijc123 adds private-LAN Loon request rewriting,
+persistent validated streaming, cancellation, process budgets and diagnostics.
+BTR cdn-resolver.js and idm-downloader.js are preserved unchanged under MIT
+at the same fixed commit; only the reviewed Semaphore portion is loaded from
+the downloader. Hashes and sources are in gateway-provenance.json.

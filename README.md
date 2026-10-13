@@ -71,6 +71,8 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 [0.1.10 研发版](LAB-EXPERIMENT.md) 提供可选的32 KiB小片，让1 MiB请求也能试32个HTTP任务；配合全局预算、精确长度对照、尾延迟与失败类别诊断、HTTP协议偏好、网络变化DNS预热、已有SIDX码率观察和8节点菜单。[GitHub定期候选探测](CANDIDATE-HEALTH.md)已实际运行并自动更新DNS/TLS快照，尚未进行媒体吞吐测速。默认仍为4路与128 KiB下限。32路更快和4K / 1.5倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
 
+[电脑中转原型](GATEWAY-EXPERIMENT.md) 是另一条可选路线：手机不安装新 App，由同 Wi-Fi 的电脑持久连接、边下载边转发，并复用 BTR 的 CDN 解析与取消队列。需要电脑在线，默认关闭，已做本机集成验证，尚未验证真实 iPhone 的兼容性或提速。不会替换手机独立版。
+
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 
 ```sh
