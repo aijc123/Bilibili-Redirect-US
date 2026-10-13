@@ -45,10 +45,7 @@
     if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
-    const trial=context.trial;
-    if(trial&&/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(trial.block||'')&&
-      [0,1,2,3].includes(trial.slot)&&['A','B'].includes(trial.arm)&&trial.baseline===4&&[8,16,32].includes(trial.candidate))
-      sample.trial={block:trial.block,slot:trial.slot,arm:trial.arm,baseline:4,candidate:trial.candidate};
+    const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
     m.samples.push(sample);m.samples=m.samples.slice(-MAX_SAMPLES);
   }
   function unionMs(intervals) {
@@ -124,10 +121,18 @@
     if(!a.contrasts.length)lines.push('暂无相同精确字节数且设置确实不同的对照；自然分成6/8片不能当作调高并发收益，旧样本缺精确长度时不比较。');
     if(a.trials){
       lines.push(`交替块对照：未完成块 ${a.trials.incomplete}，条件不一致块 ${a.trials.mismatched}`);
-      for(const g of a.trials.groups.slice(-6))lines.push(`设置 ${g.baseline}→${g.candidate} / 实际 ${g.actualA}→${g.actualB}路，块 ${g.cleanBlocks}/${g.blocks}，错误 ${(g.failureA*100).toFixed(1)}%/${(g.failureB*100).toFixed(1)}%，比值 ${fmt(g.ratio)}，经验区间 ${g.interval?g.interval.map(fmt).join('～'):'样本不足'}${g.equivalent?'；实际并发相同，不能验证高路数效果':''}`);
+      for(const g of a.trials.groups.slice(-6))lines.push(`设置 ${g.baseline}→${g.candidate} / 实际 ${g.actualA}→${g.actualB}路，块 ${g.cleanBlocks}/${g.blocks}，错误 ${(g.failureA*100).toFixed(1)}%/${(g.failureB*100).toFixed(1)}%，尝试耗时p90 ${fmt(g.p90MsA)}/${fmt(g.p90MsB)} ms（含失败），比值 ${fmt(g.ratio)}，经验区间 ${g.interval?g.interval.map(fmt).join('～'):'样本不足'}${g.equivalent?'；实际并发相同，不能验证高路数效果':''}`);
       if(a.trials.groups.length)lines.push('块重采样范围不是保证；仍有缓存、负载及样本依赖，不代表卡顿下降倍数。');
     }
     lines.push(w.scope);return lines.join('\n');
   }
-  root.BiliRangeMeasurements={record,identity,analyze,report,quantile,unionMs,rangeBucket};
+  const TRIAL_MODES=Object.freeze({'4vs8':Object.freeze([4,8]),'4vs16':Object.freeze([4,16]),'4vs32':Object.freeze([4,32]),
+    '8vs16':Object.freeze([8,16]),'8vs32':Object.freeze([8,32])});
+  function sanitizeTrial(trial){
+    if(!trial||typeof trial.block!=='string'||trial.block.length>80)return null;
+    const match=/^\d+\|[0-9a-f]{8}\|([48]vs(?:8|16|32))\|\d+$/.exec(trial.block),arms=match&&TRIAL_MODES[match[1]];
+    if(!arms||![0,1,2,3].includes(trial.slot)||!['A','B'].includes(trial.arm)||trial.baseline!==arms[0]||trial.candidate!==arms[1])return null;
+    return {block:trial.block,slot:trial.slot,arm:trial.arm,baseline:trial.baseline,candidate:trial.candidate};
+  }
+  root.BiliRangeMeasurements={record,identity,analyze,report,quantile,unionMs,rangeBucket,TRIAL_MODES,sanitizeTrial};
 })(globalThis);

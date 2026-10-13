@@ -42,7 +42,7 @@ Enabled = switch,true,tag=启用实验下载
 Connections = select,4,6,8,16,32,2,1,type=number,tag=并发上限（实际受块大小约束）
 MinChunkKiB = select,128,64,32,type=number,tag=最小分片 KiB（小片仅作对照试验）
 GlobalJobs = select,16,24,32,8,type=number,tag=全局子请求预算（尽力协调）
-TrialMode = select,"off","4vs8","4vs16","4vs32",tag=并发交替对照（固定首选 CDN）
+TrialMode = select,"off","4vs8","4vs16","4vs32","8vs16","8vs32",tag=并发交替对照（固定首选 CDN）
 HTTPProtocol = select,"h1","h2",tag=HTTP 协议偏好（实际协商未知）
 PlaybackRate = select,1.5,1,1.25,2,type=number,tag=诊断假设倍速（不会改变播放）
 WarmDNS = switch,true,tag=切换网络后预热候选 DNS

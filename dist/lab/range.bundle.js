@@ -539,10 +539,7 @@ SOFTWARE.
     if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
-    const trial=context.trial;
-    if(trial&&/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(trial.block||'')&&
-      [0,1,2,3].includes(trial.slot)&&['A','B'].includes(trial.arm)&&trial.baseline===4&&[8,16,32].includes(trial.candidate))
-      sample.trial={block:trial.block,slot:trial.slot,arm:trial.arm,baseline:4,candidate:trial.candidate};
+    const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
     m.samples.push(sample);m.samples=m.samples.slice(-MAX_SAMPLES);
   }
   function unionMs(intervals) {
@@ -618,21 +615,29 @@ SOFTWARE.
     if(!a.contrasts.length)lines.push('暂无相同精确字节数且设置确实不同的对照；自然分成6/8片不能当作调高并发收益，旧样本缺精确长度时不比较。');
     if(a.trials){
       lines.push(`交替块对照：未完成块 ${a.trials.incomplete}，条件不一致块 ${a.trials.mismatched}`);
-      for(const g of a.trials.groups.slice(-6))lines.push(`设置 ${g.baseline}→${g.candidate} / 实际 ${g.actualA}→${g.actualB}路，块 ${g.cleanBlocks}/${g.blocks}，错误 ${(g.failureA*100).toFixed(1)}%/${(g.failureB*100).toFixed(1)}%，比值 ${fmt(g.ratio)}，经验区间 ${g.interval?g.interval.map(fmt).join('～'):'样本不足'}${g.equivalent?'；实际并发相同，不能验证高路数效果':''}`);
+      for(const g of a.trials.groups.slice(-6))lines.push(`设置 ${g.baseline}→${g.candidate} / 实际 ${g.actualA}→${g.actualB}路，块 ${g.cleanBlocks}/${g.blocks}，错误 ${(g.failureA*100).toFixed(1)}%/${(g.failureB*100).toFixed(1)}%，尝试耗时p90 ${fmt(g.p90MsA)}/${fmt(g.p90MsB)} ms（含失败），比值 ${fmt(g.ratio)}，经验区间 ${g.interval?g.interval.map(fmt).join('～'):'样本不足'}${g.equivalent?'；实际并发相同，不能验证高路数效果':''}`);
       if(a.trials.groups.length)lines.push('块重采样范围不是保证；仍有缓存、负载及样本依赖，不代表卡顿下降倍数。');
     }
     lines.push(w.scope);return lines.join('\n');
   }
-  root.BiliRangeMeasurements={record,identity,analyze,report,quantile,unionMs,rangeBucket};
+  const TRIAL_MODES=Object.freeze({'4vs8':Object.freeze([4,8]),'4vs16':Object.freeze([4,16]),'4vs32':Object.freeze([4,32]),
+    '8vs16':Object.freeze([8,16]),'8vs32':Object.freeze([8,32])});
+  function sanitizeTrial(trial){
+    if(!trial||typeof trial.block!=='string'||trial.block.length>80)return null;
+    const match=/^\d+\|[0-9a-f]{8}\|([48]vs(?:8|16|32))\|\d+$/.exec(trial.block),arms=match&&TRIAL_MODES[match[1]];
+    if(!arms||![0,1,2,3].includes(trial.slot)||!['A','B'].includes(trial.arm)||trial.baseline!==arms[0]||trial.candidate!==arms[1])return null;
+    return {block:trial.block,slot:trial.slot,arm:trial.arm,baseline:trial.baseline,candidate:trial.candidate};
+  }
+  root.BiliRangeMeasurements={record,identity,analyze,report,quantile,unionMs,rangeBucket,TRIAL_MODES,sanitizeTrial};
 })(globalThis);
 
 /* Optional balanced existing-traffic comparison. No replay or background media GET.
  * Blocks alternate ABBA/BAAB at random; not a fully controlled player experiment. */
 (function(root){
   'use strict';
-  const MODES={'4vs8':[4,8],'4vs16':[4,16],'4vs32':[4,32]};
+  const MODES=root.BiliRangeMeasurements.TRIAL_MODES;
   function plan(state,request,mode,at=Date.now(),random=Math.random){
-    const arms=MODES[mode];if(!arms)return null;
+    const arms=MODES[mode];if(!Array.isArray(arms))return null;
     const identity=root.BiliRangeMeasurements.identity(state,request);if(!identity)return null;
     const key=[Number(state.epoch)||0,identity,mode].join('|');
     const groups=Object.fromEntries(Object.entries(state.trials?.groups||{}).filter(([,v])=>v&&at-v.at<15*60*1000).slice(-3));
@@ -656,8 +661,7 @@ SOFTWARE.
   function analyze(samples){
     const blocks={};
     for(const s of samples){
-      if(!s.trial||!/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(s.trial.block||'')||
-        !['A','B'].includes(s.trial.arm)||![0,1,2,3].includes(s.trial.slot)||s.trial.baseline!==4||![8,16,32].includes(s.trial.candidate))continue;
+      if(!root.BiliRangeMeasurements.sanitizeTrial(s.trial))continue;
       (blocks[s.trial.block] ||= []).push(s);
     }
     let incomplete=0,mismatched=0;const groups={};
@@ -666,11 +670,12 @@ SOFTWARE.
       const A=block.filter(s=>s.trial.arm==='A'),B=block.filter(s=>s.trial.arm==='B');
       const condition=s=>[s.epoch,s.content,s.host,s.rangeBytes,s.inflight,s.requestedALPN==='h2'?'h2':'h1',[32,64,128].includes(s.minChunkKiB)?s.minChunkKiB:128].join('|');
       if(A.length!==2||B.length!==2||new Set(block.map(condition)).size!==1||
-        new Set(block.map(s=>s.trial.candidate)).size!==1||
+        new Set(block.map(s=>s.trial.baseline+':'+s.trial.candidate)).size!==1||
         new Set(A.map(s=>s.mode)).size!==1||new Set(B.map(s=>s.mode)).size!==1){mismatched++;continue;}
-      const key=condition(A[0])+'|'+A[0].mode+'|'+B[0].mode+'|'+A[0].trial.candidate;
-      const g=groups[key] ||= {baseline:A[0].trial.baseline,candidate:B[0].trial.candidate,actualA:A[0].mode,actualB:B[0].mode,blocks:0,cleanBlocks:0,failedA:0,failedB:0,logRatios:[]};
+      const key=condition(A[0])+'|'+A[0].mode+'|'+B[0].mode+'|'+A[0].trial.baseline+'|'+A[0].trial.candidate;
+      const g=groups[key] ||= {baseline:A[0].trial.baseline,candidate:B[0].trial.candidate,actualA:A[0].mode,actualB:B[0].mode,blocks:0,cleanBlocks:0,failedA:0,failedB:0,logRatios:[],latencyA:[],latencyB:[]};
       g.blocks++;g.failedA+=A.filter(s=>!s.ok).length;g.failedB+=B.filter(s=>!s.ok).length;
+      g.latencyA.push(...A.map(s=>s.elapsedMs).filter(n=>Number.isFinite(n)&&n>0));g.latencyB.push(...B.map(s=>s.elapsedMs).filter(n=>Number.isFinite(n)&&n>0));
       if(block.every(s=>s.ok)){
         const median=values=>root.BiliRangeMeasurements.quantile(values,0.5);
         const ratio=median(B.map(s=>s.bytes/s.elapsedMs))/median(A.map(s=>s.bytes/s.elapsedMs));
@@ -680,6 +685,7 @@ SOFTWARE.
     return {incomplete,mismatched,groups:Object.entries(groups).map(([key,g])=>({key,baseline:g.baseline,candidate:g.candidate,
       actualA:g.actualA,actualB:g.actualB,blocks:g.blocks,cleanBlocks:g.cleanBlocks,
       failureA:g.failedA/(2*g.blocks),failureB:g.failedB/(2*g.blocks),
+      p90MsA:root.BiliRangeMeasurements.quantile(g.latencyA,0.9),p90MsB:root.BiliRangeMeasurements.quantile(g.latencyB,0.9),
       ratio:g.logRatios.length?Math.exp(g.logRatios.reduce((n,v)=>n+v,0)/g.logRatios.length):null,
       interval:empiricalInterval(g.logRatios),equivalent:g.actualA===g.actualB,
       caveat:'原有流量交替；不是完整播放实验；缓存、负载和依赖仍可混杂。区间是块重采样经验范围。'}))};
@@ -728,7 +734,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.10-experimental';
+  const VERSION = '0.1.11-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',

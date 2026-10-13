@@ -2,9 +2,9 @@
  * Blocks alternate ABBA/BAAB at random; not a fully controlled player experiment. */
 (function(root){
   'use strict';
-  const MODES={'4vs8':[4,8],'4vs16':[4,16],'4vs32':[4,32]};
+  const MODES=root.BiliRangeMeasurements.TRIAL_MODES;
   function plan(state,request,mode,at=Date.now(),random=Math.random){
-    const arms=MODES[mode];if(!arms)return null;
+    const arms=MODES[mode];if(!Array.isArray(arms))return null;
     const identity=root.BiliRangeMeasurements.identity(state,request);if(!identity)return null;
     const key=[Number(state.epoch)||0,identity,mode].join('|');
     const groups=Object.fromEntries(Object.entries(state.trials?.groups||{}).filter(([,v])=>v&&at-v.at<15*60*1000).slice(-3));
@@ -28,8 +28,7 @@
   function analyze(samples){
     const blocks={};
     for(const s of samples){
-      if(!s.trial||!/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(s.trial.block||'')||
-        !['A','B'].includes(s.trial.arm)||![0,1,2,3].includes(s.trial.slot)||s.trial.baseline!==4||![8,16,32].includes(s.trial.candidate))continue;
+      if(!root.BiliRangeMeasurements.sanitizeTrial(s.trial))continue;
       (blocks[s.trial.block] ||= []).push(s);
     }
     let incomplete=0,mismatched=0;const groups={};
@@ -38,11 +37,12 @@
       const A=block.filter(s=>s.trial.arm==='A'),B=block.filter(s=>s.trial.arm==='B');
       const condition=s=>[s.epoch,s.content,s.host,s.rangeBytes,s.inflight,s.requestedALPN==='h2'?'h2':'h1',[32,64,128].includes(s.minChunkKiB)?s.minChunkKiB:128].join('|');
       if(A.length!==2||B.length!==2||new Set(block.map(condition)).size!==1||
-        new Set(block.map(s=>s.trial.candidate)).size!==1||
+        new Set(block.map(s=>s.trial.baseline+':'+s.trial.candidate)).size!==1||
         new Set(A.map(s=>s.mode)).size!==1||new Set(B.map(s=>s.mode)).size!==1){mismatched++;continue;}
-      const key=condition(A[0])+'|'+A[0].mode+'|'+B[0].mode+'|'+A[0].trial.candidate;
-      const g=groups[key] ||= {baseline:A[0].trial.baseline,candidate:B[0].trial.candidate,actualA:A[0].mode,actualB:B[0].mode,blocks:0,cleanBlocks:0,failedA:0,failedB:0,logRatios:[]};
+      const key=condition(A[0])+'|'+A[0].mode+'|'+B[0].mode+'|'+A[0].trial.baseline+'|'+A[0].trial.candidate;
+      const g=groups[key] ||= {baseline:A[0].trial.baseline,candidate:B[0].trial.candidate,actualA:A[0].mode,actualB:B[0].mode,blocks:0,cleanBlocks:0,failedA:0,failedB:0,logRatios:[],latencyA:[],latencyB:[]};
       g.blocks++;g.failedA+=A.filter(s=>!s.ok).length;g.failedB+=B.filter(s=>!s.ok).length;
+      g.latencyA.push(...A.map(s=>s.elapsedMs).filter(n=>Number.isFinite(n)&&n>0));g.latencyB.push(...B.map(s=>s.elapsedMs).filter(n=>Number.isFinite(n)&&n>0));
       if(block.every(s=>s.ok)){
         const median=values=>root.BiliRangeMeasurements.quantile(values,0.5);
         const ratio=median(B.map(s=>s.bytes/s.elapsedMs))/median(A.map(s=>s.bytes/s.elapsedMs));
@@ -52,6 +52,7 @@
     return {incomplete,mismatched,groups:Object.entries(groups).map(([key,g])=>({key,baseline:g.baseline,candidate:g.candidate,
       actualA:g.actualA,actualB:g.actualB,blocks:g.blocks,cleanBlocks:g.cleanBlocks,
       failureA:g.failedA/(2*g.blocks),failureB:g.failedB/(2*g.blocks),
+      p90MsA:root.BiliRangeMeasurements.quantile(g.latencyA,0.9),p90MsB:root.BiliRangeMeasurements.quantile(g.latencyB,0.9),
       ratio:g.logRatios.length?Math.exp(g.logRatios.reduce((n,v)=>n+v,0)/g.logRatios.length):null,
       interval:empiricalInterval(g.logRatios),equivalent:g.actualA===g.actualB,
       caveat:'原有流量交替；不是完整播放实验；缓存、负载和依赖仍可混杂。区间是块重采样经验范围。'}))};

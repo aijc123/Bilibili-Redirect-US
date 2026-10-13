@@ -19,6 +19,14 @@ test('balanced blocks alternate ABBA and BAAB without downloading extra media',(
  }
  assert.equal(api.plan({},request,'off'),null);
 });
+test('8-based modes preserve exact pair labels and reject inconsistent or inherited mode keys',()=>{
+ for(const [mode,expected] of [['8vs16',[8,16,16,8]],['8vs32',[8,32,32,8]]]){
+  const state={},actual=[];for(let i=0;i<4;i++){const p=api.plan(state,request,mode,1000+i,()=>0.9);state.trials=p.next;actual.push(p.connections);assert.equal(measure.sanitizeTrial(p.trial).baseline,8);}
+  assert.deepEqual(actual,expected);
+ }
+ assert.equal(measure.sanitizeTrial({block:'0|12345678|4vs8|0',arm:'A',slot:0,baseline:8,candidate:32}),null);
+ assert.equal(api.plan({},request,'toString'),null);
+});
 test('constant linear time drift cancels in a balanced clean block',()=>{
  const state={};for(let i=0;i<4;i++)sample(state,i,500+i*100);
  const a=measure.analyze(state,10000).trials;
@@ -37,8 +45,9 @@ test('different load, byte count or missing slot invalidates a block',()=>{
  const missing={};for(let i=0;i<3;i++)sample(missing,i,1000);assert.equal(measure.analyze(missing,10000).trials.incomplete,1);
 });
 test('failure blocks keep both-arm error rates and do not count as clean speed comparisons',()=>{
- const state={};for(let i=0;i<4;i++)sample(state,i,1000,i!==1);
+ const state={};for(let i=0;i<4;i++)sample(state,i,[1000,4000,3000,2000][i],i!==1);
  const g=measure.analyze(state,10000).trials.groups[0];assert.equal(g.blocks,1);assert.equal(g.cleanBlocks,0);assert.equal(g.failureB,0.5);assert.equal(g.ratio,null);
+ assert.equal(g.p90MsA,1900);assert.ok(g.p90MsB>3000);assert.ok(measure.report(state,10000).includes('含失败'));
 });
 test('same effective parallelism is labelled equivalent and cannot prove configured32 faster',()=>{
  const state={};for(let i=0;i<4;i++)sample(state,i,1000);
@@ -65,4 +74,18 @@ test('published adapter compares existing requests on fixed preferred CDN withou
  assert.deepEqual(counts,[4,8,8,4]);assert.equal(JSON.parse(stored).measurements.samples.length,4);
  assert.equal(Object.values(JSON.parse(stored).trials.groups)[0].counter,4);
  assert.ok(!stored.includes('private-path'));assert.ok(!stored.includes('upsig'));
+});
+test('published 8vs32 adapter actually runs 8/32/32/8 jobs on matched 1MiB with a32KiB floor',async()=>{
+ let stored='{}';const counts=[];const mockMath=Object.create(Math);mockMath.random=()=>0.9;
+ for(let i=0;i<4;i++){
+  let count=0;
+  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,Math:mockMath,console,
+   $request:request,$argument:{TrialMode:'8vs32',Connections:4,MinChunkKiB:32,GlobalJobs:32,AutoCDN:true,PreferredCDN:'upos-sz-mirror08c.bilivideo.com'},
+   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
+   $httpClient:{get(o,cb){count++;const r=ctx.BiliRange.parseRange(o.headers.Range);cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}}}));
+  assert.equal(result.response.status,206);counts.push(count);
+ }
+ assert.deepEqual(counts,[8,32,32,8]);const state=JSON.parse(stored),groups=measure.analyze(state).trials.groups;
+ assert.equal(groups.length,1);assert.equal(groups[0].baseline,8);assert.equal(groups[0].candidate,32);assert.equal(groups[0].actualA,8);assert.equal(groups[0].actualB,32);
+ assert.equal(state.measurements.samples.length,4);assert.ok(!stored.includes('private-path'));assert.ok(!stored.includes('upsig'));
 });
