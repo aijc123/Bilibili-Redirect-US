@@ -10,12 +10,13 @@ const core = readFileSync('src/accelerator/range-core.js', 'utf8');
 const adapter = readFileSync('src/accelerator/loon.js', 'utf8');
 const diagnostics = readFileSync('src/accelerator/diagnostics.js', 'utf8');
 writeFileSync('dist/range.bundle.js', btr + '\n' + core + '\n' + diagnostics + '\n' + adapter);
-const base = 'https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/';
+const version = /const VERSION = '([^']+)'/.exec(diagnostics)[1];
+const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/`;
 writeFileSync('dist/BiliBili.Range.Experimental.plugin', `#!name = BiliBili Range 实验版 · aijc123
 #!desc = 有限 Range 并发下载与本机传输选 CDN；实验功能，需真机验证。请停用其他 B 站 CDN 复写插件。
 #!author = aijc123
 #!homepage = https://github.com/aijc123/Bilibili-Redirect-US
-#!version = 0.1.2-experimental
+#!version = ${version}
 #!loon_version = 3.5.1
 #!system = iOS,iPadOS
 
