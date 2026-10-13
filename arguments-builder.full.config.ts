@@ -31,11 +31,13 @@ export const args: ArgumentItem[] = [
 	{
 		key: "Host.OverseaVideo",
 		name: "[主机名] 重定向 OverseaVideo CDN (港澳台)",
-		defaultValue: "upos-sz-mirrorali.bilivideo.com",
+		defaultValue: "upos-sz-mirrorhwo1.bilivideo.com",
 		type: "string",
 		boxJsType: "selects",
 		description: "请选择 OverseaVideo 要重定向的主机名。",
 		options: [
+            { key: "upos-sz-mirrorhwo1.bilivideo.com", label: "hwo1（美国基准候选）" },
+            { key: "upos-sz-mirror08c.bilivideo.com", label: "08c（美国基准候选）" },
 			{
 				key: "upos-sz-mirrorali.bilivideo.com",
 				label: "阿里云 CDN",
@@ -93,11 +95,13 @@ export const args: ArgumentItem[] = [
 	{
 		key: "Host.BStar",
 		name: "[主机名] 重定向 BStar CDN (国际版)",
-		defaultValue: "upos-sz-mirrorali.bilivideo.com",
+		defaultValue: "upos-sz-mirrorhwo1.bilivideo.com",
 		type: "string",
 		boxJsType: "selects",
 		description: "请选择 BStar 要重定向的主机名。",
 		options: [
+            { key: "upos-sz-mirrorhwo1.bilivideo.com", label: "hwo1（美国基准候选）" },
+            { key: "upos-sz-mirror08c.bilivideo.com", label: "08c（美国基准候选）" },
 			{
 				key: "upos-sz-mirrorali.bilivideo.com",
 				label: "阿里云 CDN",
@@ -155,11 +159,13 @@ export const args: ArgumentItem[] = [
 	{
 		key: "Host.PCDN",
 		name: "[主机名] 重定向 PCDN 主机名 (中国大陆)",
-		defaultValue: "upos-sz-mirrorali.bilivideo.com",
+		defaultValue: "upos-sz-mirrorhwo1.bilivideo.com",
 		type: "string",
 		boxJsType: "selects",
 		description: "请选择 PCDN 要重定向的主机名。",
 		options: [
+            { key: "upos-sz-mirrorhwo1.bilivideo.com", label: "hwo1（美国基准候选）" },
+            { key: "upos-sz-mirror08c.bilivideo.com", label: "08c（美国基准候选）" },
 			{
 				key: "upos-sz-mirrorali.bilivideo.com",
 				label: "阿里云 CDN",

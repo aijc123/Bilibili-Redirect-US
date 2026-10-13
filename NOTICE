@@ -1,0 +1,6 @@
+This customization includes Biliverse/Redirect by VirgilClyne and contributors.
+Original project: https://github.com/Biliverse/Redirect
+License: Apache License, Version 2.0 (see LICENSE).
+Official v0.2.24 Release files are vendored without modifying request.bundle.js.
+Modifications by aijc123, 2026-10-13: CDN argument options, Loon template,
+custom subscription generation, configuration defaults, documentation and tests.
