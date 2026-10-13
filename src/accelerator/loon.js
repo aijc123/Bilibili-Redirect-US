@@ -1,19 +1,18 @@
 /* Loon adapter. Stores aggregates only; never stores or uploads media URLs. */
 (function () {
   'use strict';
-  const KEY = 'aijc123.BiliRange.v1', core = globalThis.BiliRange;
+  const KEY = 'aijc123.BiliRange.v1', core = globalThis.BiliRange, diagnostics = globalThis.BiliRangeDiagnostics;
   let state;
   try { state = JSON.parse($persistentStore.read(KEY) || '{}'); } catch { state = {}; }
+  if (!state || typeof state !== 'object' || Array.isArray(state)) state = {};
   let arg = typeof $argument === 'object' && $argument ? $argument : {};
   if (typeof $argument === 'string') { try { arg = JSON.parse($argument); } catch { if ($argument === 'Action=reset') arg = { Action: 'reset' }; } }
   const epoch = state.epoch || 0;
   const save = () => $persistentStore.write(JSON.stringify(state), KEY);
   if (typeof $request === 'undefined') {
     if (arg.Action === 'reset') { state.hosts = {}; state.epoch = epoch + 1; save(); $done({}); return; }
-    const d = state.diagnostics || {};
     const scores = Object.entries(state.hosts || {}).map(([h, v]) => `${h}: ${(Number(v.bps || 0) * 8 / 1e6).toFixed(1)} Mbps`);
-    $done({ title: 'Bili Range 实验版', content: `接管 ${d.accelerated || 0} 次 / 放行 ${d.passed || 0} 次\n` +
-      JSON.stringify(d.reasons || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) + '\n' + scores.join('\n') }); return;
+    $done({ title: 'Bili Range 实验版', content: diagnostics.report(state) + '\n' + scores.join('\n') }); return;
   }
   let finished = false;
   const done = result => { if (!finished) { finished = true; $done(result); } };
@@ -31,8 +30,7 @@
   if (options.enabled && core.parseURL($request.url) && parsed && parsed.length >= 256 * 1024 && parsed.length <= options.maxBytes && !core.headers($request.headers)[core.INTERNAL]) {
     // Best-effort cross-context budget. Storage exposes no atomic compare-and-swap.
     if (Object.keys(leases).length >= 2) {
-      const d = state.diagnostics ||= { accelerated: 0, passed: 0, reasons: {} };
-      d.passed++; d.reasons['busy'] = (d.reasons['busy'] || 0) + 1;
+      state.diagnostics = diagnostics.record(state.diagnostics, $request, {kind:'pass',reason:'busy'});
       save(); done({}); return;
     }
     lease = Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -43,10 +41,8 @@
     // Merge aggregate counters with the latest storage; separate script contexts may finish together.
     let latest;
     try { latest = JSON.parse($persistentStore.read(KEY) || '{}'); } catch { latest = {}; }
-    const d = latest.diagnostics || { accelerated: 0, passed: 0, reasons: {} };
-    if (result.kind === 'response') { d.accelerated++; d.last = result.metrics; }
-    else { d.passed++; d.reasons[result.reason] = (d.reasons[result.reason] || 0) + 1; }
-    state.diagnostics = d;
+    if (!latest || typeof latest !== 'object' || Array.isArray(latest)) latest = {};
+    state.diagnostics = diagnostics.record(latest.diagnostics, $request, result);
     state.epoch = latest.epoch || 0;
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];

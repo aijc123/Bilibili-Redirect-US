@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const context = { Uint8Array, Date, console };
+vm.runInNewContext(readFileSync('vendor/btr-0302b345/range-core.js','utf8'),context);
 vm.runInNewContext(readFileSync('src/accelerator/range-core.js','utf8'),context);
 const core = context.BiliRange;
 const request = { method: 'GET', url: 'https://upos-sz-mirroraliov.bilivideo.com/upgcxcode/test.m4s?upsig=abc&deadline=2999999999',
@@ -112,4 +113,39 @@ test('network changes during a download do not resurrect old host scores',async(
  for(const {o,cb} of callbacks){const r=await good({part:core.parseRange(o.headers.Range)});cb(null,r,r.body);}
  await done;const after=JSON.parse(value);
  assert.deepEqual(after.hosts,{});assert.deepEqual(after.leases,{});assert.equal(after.epoch,1);
+});
+test('Loon adapter actually delegates parsing, splitting and concatenation to BTR',async()=>{
+ const calls={};const ctx={Uint8Array,Date,console};
+ vm.runInNewContext(readFileSync('vendor/btr-0302b345/range-core.js','utf8'),ctx);
+ const original=ctx.__BILI_RANGE_CORE__;
+ ctx.__BILI_RANGE_CORE__=Object.fromEntries(Object.entries(original).map(([key,fn])=>[key,(...args)=>{calls[key]=(calls[key]||0)+1;return fn(...args);} ]));
+ vm.runInNewContext(readFileSync('src/accelerator/range-core.js','utf8'),ctx);
+ const r=await ctx.BiliRange.accelerate({request,fetchRange:good});
+ assert.equal(r.kind,'response');
+ for(const name of ['parseRangeHeader','parseContentRange','splitRange','concatChunks'])assert.ok(calls[name]>0,name);
+});
+test('diagnostic aggregates describe unsupported requests without retaining private data',async()=>{
+ let value='{}';let report;
+ const execute=(req,arg)=>new Promise(resolve=>{
+  const ctx={Uint8Array,Date,console,$argument:arg || {},
+   $persistentStore:{read:()=>value,write:v=>{value=v;return true;}},$done:resolve};
+  if(req)ctx.$request=req;
+  vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ });
+ await execute({method:'GET',url:'https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/private-video.m4s?upsig=secret',headers:{Range:'bytes=0-'}});
+ await execute({...request,headers:{Range:'bytes=0-'}});
+ report=await execute();
+ const saved=JSON.parse(value);
+ assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
+ assert.ok(report.content.includes('0.1.1-experimental'));
+ for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
+});
+test('generated plugin observes MCDN but does not take it over',()=>{
+ const plugin=readFileSync('dist/BiliBili.Range.Experimental.plugin','utf8');
+ const regexText=plugin.split('\n').find(l=>l.startsWith('http-request ')).split(' script-path=')[0].slice('http-request '.length);
+ const regex=new RegExp(regexText,'i');
+ assert.ok(regex.test('https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/video.m4s'));
+ assert.ok(regex.test('https://d1--example.bilivideo.com/upgcxcode/video.m4s'));
+ assert.ok(!regex.test('https://evil.example/upgcxcode/video.m4s'));
+ assert.equal(core.parseURL('https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/video.m4s'),null);
 });

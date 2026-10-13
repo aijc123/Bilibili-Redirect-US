@@ -48,7 +48,7 @@ HTTP 客户端显式请求 h1、二进制响应、identity 编码，不跟随重
 
 [本地 HTTP 实验结果](benchmarks/range-fixture.json)：真实 HTTP 连接到回环测试服务器，服务器按每连接 16 KiB/16 ms 节流，下载固定 2 MiB 数据，每种并发 3 轮。该模型刻意模拟单连接瓶颈，**不是 Bilibili CDN、iPhone 或用户宽带测速**。
 
-首轮测量中位耗时：单路 3298 ms，2 路 1720 ms，4 路 943 ms，对应约 1.92× 和 3.50×。所有输出均与原始字节严格相等。主机运行计时器有调度误差，因此名义节流值不是实测速率。
+0.1.1 复用 BTR 核心后的测量中位耗时：单路 3435 ms，2 路 1814 ms，4 路 908 ms，对应约 1.89× 和 3.78×。所有输出均与原始字节严格相等。主机运行计时器有调度误差，因此名义节流值不是实测速率。
 
 真实媒体 API 在当前测试环境返回 HTTP 412，未获得可用媒体地址，未把合成实验包装成真实 CDN 结果。尚待用户真机确认：脚本是否命中、范围分布、二进制直返兼容、真实并发、内存、拖动与后台行为、视频/音频连续播放表现及相对 CDN 重定向的净收益。
 
@@ -60,11 +60,17 @@ node --test tests/range.test.mjs tests/us-bundle.test.mjs
 node scripts/benchmark-range.mjs
 ```
 
-源代码是独立的 Apache-2.0 实现，不复制参考项目播放器或下载器源码。
+范围解析、分块和二进制拼接直接复用 BTR 的 `src/range-core.js`，保存在 `vendor/btr-0302b345/`，上游文件未修改。构建会检查固定提交的 SHA-256，并将完整 MIT 许可嵌入发布脚本。手机传输、限制、候选选择和诊断由本仓库的 Apache-2.0 适配层负责。
+
+BTR 的完整 IDM 下载器依赖 Fetch/ReadableStream、AbortController 和播放器上下文，Loon 没有公开相同的流式与取消接口，因此不直接嵌入该下载器。本实现复用能独立运行的核心，保留有证据支持的手机边界。
+
+### 0.1.1 的诊断改进
+
+摘要显示实际运行版本，记录范围大小分布及 UPOS/Akamai/HK/MCDN 来源分类。脚本观察更多 B 站媒体分发地址；尚不支持的类型仍放行，不因为扩大观察就声称已接管。各并发设置的累计字节和耗时用于记录对照，不将不同视频的记录自动换算成提速倍数。
 
 ## 参考与致谢
 
-- [Bilibili-thread-ripper](https://github.com/MrTangLuyao/Bilibili-thread-ripper)，参考提交 `0302b345cdfe367ac599b52dc6874e3f7967e220`：分块、校验、下载调度思想。感谢 MrTangLuyao 与贡献者。
+- [Bilibili-thread-ripper](https://github.com/MrTangLuyao/Bilibili-thread-ripper)，固定提交 `0302b345cdfe367ac599b52dc6874e3f7967e220`：直接复用 range-core.js，并参考校验与下载调度。感谢 MrTangLuyao 与贡献者；[完整 MIT 许可](vendor/btr-0302b345/LICENSE)。
 - [PiliPlus 加速分支](https://github.com/nishuodedui1145-del/PiliPlus)，参考提交 `3988e6d081a26120ca79f1e654fe1a3422b7282f`：本地代理、范围处理与原生播放器约束。
 - [MyTVB-Speed-Boost](https://github.com/nitansde/MyTVB-Speed-Boost) 及 [MyTVB](https://github.com/qianxuntudou-ops/MyTVB)：原生客户端加速与设置设计参考。
 - [Biliverse/Redirect](https://github.com/Biliverse/Redirect)：现有重定向版本的基础项目。

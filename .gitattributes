@@ -1,0 +1,3 @@
+# Preserve pinned upstream bytes for reproducible integrity checks on all hosts.
+vendor/btr-0302b345/range-core.js -text
+vendor/btr-0302b345/LICENSE -text

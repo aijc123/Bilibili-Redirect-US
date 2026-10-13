@@ -1,7 +1,9 @@
-/* Independent implementation, Apache-2.0. Design references: BTR and PiliPlus.
- * This core buffers only bounded ranges; it does not claim streaming support. */
+/* Loon transport/policy adapter, Apache-2.0. Byte-range primitives reuse the
+ * unmodified MIT-licensed BTR core in vendor/btr-0302b345. Not a streaming player. */
 (function (root) {
   'use strict';
+  const btr = root.__BILI_RANGE_CORE__;
+  if (!btr) throw new Error('BTR range core must load before the Loon adapter');
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
@@ -18,23 +20,17 @@
     return { protocol: m[1].toLowerCase(), authority: m[2], host: host.split(':')[0], path: m[3], query: m[4] || '' };
   }
   function parseRange(value) {
-    const m = /^bytes=(\d+)-(\d+)$/i.exec(value || '');
-    if (!m) return null;
-    const start = Number(m[1]), end = Number(m[2]);
-    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || end < start || !Number.isSafeInteger(end - start + 1)) return null;
-    return { start, end, length: end - start + 1 };
+    const range = btr.parseRangeHeader(value);
+    return range && Number.isSafeInteger(range.length) ? range : null;
   }
   function contentRange(value) {
-    const m = /^bytes (\d+)-(\d+)\/(\d+)$/i.exec(value || '');
-    if (!m) throw new Error('content-range');
-    const nums = m.slice(1).map(Number);
-    if (nums.some(n => !Number.isSafeInteger(n)) || nums[0] > nums[1] || nums[1] >= nums[2]) throw new Error('content-range');
-    return { start: nums[0], end: nums[1], total: nums[2] };
+    const range = btr.parseContentRange(value);
+    // BTR also permits unknown totals; buffered Loon responses require a known total.
+    if (!range || range.total === null) throw new Error('content-range');
+    return range;
   }
   function split(range, count) {
-    const out = [], width = Math.ceil(range.length / count);
-    for (let start = range.start; start <= range.end; start += width) out.push({ start, end: Math.min(range.end, start + width - 1) });
-    return out;
+    return btr.splitRange(range.start, range.end, count, 128 * 1024);
   }
   function chooseHost(state, candidates, now) {
     // Re-evaluate after network changes or a short lifetime. Real transfers are samples.
@@ -91,9 +87,7 @@
         if (i === 0) { total = cr.total; etag = rh.etag; modified = rh['last-modified']; type = rh['content-type']; }
         else if (total !== cr.total || etag !== rh.etag || modified !== rh['last-modified'] || type !== rh['content-type']) throw new Error('entity-mismatch');
       }
-      const body = new Uint8Array(range.length);
-      let offset = 0;
-      for (const result of results) { body.set(result.body, offset); offset += result.body.byteLength; }
+      const body = btr.concatChunks(results.map(result => result.body), range.length);
       const elapsed = Math.max(1, now() - at), bps = range.length * 1000 / elapsed;
       const stats = (state.hosts ||= {}), old = stats[target];
       stats[target] = { at: now(), bps: old?.bps ? old.bps * 0.3 + bps * 0.7 : bps, blockedUntil: 0 };

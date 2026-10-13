@@ -5,74 +5,74 @@
     {
       "round": 1,
       "connections": 1,
-      "elapsedMs": 3360,
+      "elapsedMs": 3416,
       "peakHTTPRequests": 1,
-      "Mbps": 4.993219047619048
+      "Mbps": 4.911362997658079
     },
     {
       "round": 1,
       "connections": 2,
-      "elapsedMs": 1733,
+      "elapsedMs": 1814,
       "peakHTTPRequests": 2,
-      "Mbps": 9.681024812463935
+      "Mbps": 9.248740904079384
     },
     {
       "round": 1,
       "connections": 4,
-      "elapsedMs": 943,
+      "elapsedMs": 939,
       "peakHTTPRequests": 4,
-      "Mbps": 17.79132131495228
+      "Mbps": 17.86710969116081
     },
     {
       "round": 2,
       "connections": 1,
-      "elapsedMs": 3298,
+      "elapsedMs": 3646,
       "peakHTTPRequests": 1,
-      "Mbps": 5.087087932080049
+      "Mbps": 4.601540318156885
     },
     {
       "round": 2,
       "connections": 2,
-      "elapsedMs": 1651,
+      "elapsedMs": 1845,
       "peakHTTPRequests": 2,
-      "Mbps": 10.161850999394305
+      "Mbps": 9.093342005420054
     },
     {
       "round": 2,
       "connections": 4,
-      "elapsedMs": 948,
+      "elapsedMs": 861,
       "peakHTTPRequests": 4,
-      "Mbps": 17.69748523206751
+      "Mbps": 19.48573286875726
     },
     {
       "round": 3,
       "connections": 1,
-      "elapsedMs": 3149,
+      "elapsedMs": 3435,
       "peakHTTPRequests": 1,
-      "Mbps": 5.327791679898381
+      "Mbps": 4.884196797671034
     },
     {
       "round": 3,
       "connections": 2,
-      "elapsedMs": 1720,
+      "elapsedMs": 1809,
       "peakHTTPRequests": 2,
-      "Mbps": 9.754195348837209
+      "Mbps": 9.274304035378663
     },
     {
       "round": 3,
       "connections": 4,
-      "elapsedMs": 885,
+      "elapsedMs": 908,
       "peakHTTPRequests": 4,
-      "Mbps": 18.957306214689265
+      "Mbps": 18.477110132158593
     }
   ],
   "medianMs": {
-    "single": 3298,
-    "two": 1720,
-    "four": 943
+    "single": 3435,
+    "two": 1814,
+    "four": 908
   },
   "speedup": {
-    "two": 1.9174418604651162,
-    "four": 3.4973488865323437
+    "two": 1.8936052921719957,
+    "four": 3.7830396475770924
   }
 }

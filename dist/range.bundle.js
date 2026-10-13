@@ -1,7 +1,174 @@
-/* Independent implementation, Apache-2.0. Design references: BTR and PiliPlus.
- * This core buffers only bounded ranges; it does not claim streaming support. */
+/* BTR range-core.js, upstream commit 0302b345cdfe367ac599b52dc6874e3f7967e220
+MIT License
+
+Copyright (c) 2026 Bilibili-thread-ripper contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+(function installRangeCore(root) {
+  "use strict";
+
+  const MEDIA_SUFFIX_RE = /\.(?:m4s|mp4|flv)$/i;
+  const MEDIA_HOST_RE = /(?:^|\.)(?:bilivideo\.(?:com|cn|net)|akamaized\.net|szbdyd\.com|hdslb\.com|xycdn\.com|mountaintoys\.cn|nexusedgeio\.com|ahdohpiechei\.com)$/i;
+
+  function parseByteRange(value) {
+    if (typeof value !== "string") return null;
+    const match = /^(\d+)-(\d+)$/.exec(value.trim());
+    if (!match) return null;
+    const start = Number(match[1]);
+    const end = Number(match[2]);
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || end < start) return null;
+    return { start, end, length: end - start + 1 };
+  }
+
+  function parseRangeHeader(value) {
+    if (typeof value !== "string") return null;
+    const match = /^bytes=(\d+)-(\d+)$/i.exec(value.trim());
+    return match ? parseByteRange(`${match[1]}-${match[2]}`) : null;
+  }
+
+  function parseContentRange(value) {
+    if (typeof value !== "string") return null;
+    const match = /^bytes\s+(\d+)-(\d+)\/(\d+|\*)$/i.exec(value.trim());
+    if (!match) return null;
+    const start = Number(match[1]);
+    const end = Number(match[2]);
+    const total = match[3] === "*" ? null : Number(match[3]);
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || end < start) return null;
+    if (total !== null && (!Number.isSafeInteger(total) || total <= end)) return null;
+    return { start, end, total, length: end - start + 1 };
+  }
+
+  function splitRange(start, end, concurrency, minChunkBytes = 128 * 1024) {
+    const length = end - start + 1;
+    const limit = Math.max(1, Math.min(512, Math.trunc(concurrency) || 1));
+    const minimum = Math.max(32 * 1024, Math.trunc(minChunkBytes) || 128 * 1024);
+    const count = Math.max(1, Math.min(limit, Math.ceil(length / minimum)));
+    const base = Math.floor(length / count);
+    const remainder = length % count;
+    const pieces = [];
+    let cursor = start;
+    for (let index = 0; index < count; index += 1) {
+      const size = base + (index < remainder ? 1 : 0);
+      pieces.push({ index, start: cursor, end: cursor + size - 1, length: size });
+      cursor += size;
+    }
+    return pieces;
+  }
+
+  function concatChunks(chunks, expectedLength) {
+    const output = new Uint8Array(expectedLength);
+    let offset = 0;
+    for (const chunk of chunks) {
+      const bytes = chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+      if (offset + bytes.byteLength > expectedLength) throw new RangeError("子区间超出目标长度");
+      output.set(bytes, offset);
+      offset += bytes.byteLength;
+    }
+    if (offset !== expectedLength) throw new RangeError(`子区间长度不符：${offset}/${expectedLength}`);
+    return output;
+  }
+
+  function isBilibiliMediaUrl(value) {
+    try {
+      const url = new URL(value, root.location?.href);
+      return url.protocol === "https:" && MEDIA_SUFFIX_RE.test(url.pathname) && MEDIA_HOST_RE.test(url.hostname);
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  // A server added by hand in the custom CDN mode. Only its host name is kept, and only for
+  // the Bilibili video servers isBilibiliMediaUrl accepts: the signed download addresses
+  // must never be sent to anyone else.
+  function normalizeCdnHost(value) {
+    const text = String(value || "").trim().toLowerCase();
+    if (!text || text.length > 253) return "";
+    let host = "";
+    try { host = new URL(/^[a-z][a-z\d+.-]*:\/\//.test(text) ? text : `https://${text}`).hostname; }
+    catch (_error) { return ""; }
+    return /^[a-z\d](?:[a-z\d-]*[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]*[a-z\d])?)+$/.test(host) && MEDIA_HOST_RE.test(host) ? host : "";
+  }
+
+  function normalizeSettings(input) {
+    const source = input && typeof input === "object" ? input : {};
+    const allowed = [4, 8, 16, 32, 64, 128];
+    const requested = Math.trunc(Number(source.concurrency));
+    return {
+      enabled: source.enabled !== false,
+      theme: ["light", "dark"].includes(source.theme) ? source.theme : "auto",
+      // The live module on live.bilibili.com; the master switch above still rules. Off unless
+      // switched on: a viewer who never chose keeps Bilibili's own live player.
+      liveEnabled: source.liveEnabled === true,
+      // 剧集加速: episode pages (/bangumi/play/ep… and ss…: anime, films, documentaries, …),
+      // sped up in the compatibility mode only.
+      episodeEnabled: source.episodeEnabled !== false,
+      // "full" replaces Bilibili's playback core; "compat" leaves it in charge and only
+      // downloads its media requests.
+      takeover: source.takeover === "compat" ? "compat" : "full",
+      mode: ["overseas", "custom"].includes(source.mode) ? source.mode : "mainland",
+      customHosts: (Array.isArray(source.customHosts) ? source.customHosts : [])
+        .map(normalizeCdnHost)
+        .filter((host, index, all) => host && all.indexOf(host) === index)
+        .slice(0, 32),
+      // The round button in the page corner that opens the settings panel, and where the
+      // viewer dragged it: which side, and how far down as a share of the window height.
+      floatingButton: source.floatingButton !== false,
+      // Where the viewer dragged it, as shares of the window (0 = flush left, 1 = flush
+      // right); null when it was never moved.
+      floatingButtonLeft: source.floatingButtonLeft != null && Number(source.floatingButtonLeft) >= 0 && Number(source.floatingButtonLeft) <= 1 ? Number(source.floatingButtonLeft) : null,
+      floatingButtonTop: source.floatingButtonTop != null && Number(source.floatingButtonTop) >= 0 && Number(source.floatingButtonTop) <= 1 ? Number(source.floatingButtonTop) : null,
+      debugNotices: source.debugNotices === true,
+      errorNotices: source.errorNotices === true,
+      debugCategories: Object.fromEntries(["takeover", "playback", "download", "buffer", "settings", "other"].map(key => [key, source.debugCategories?.[key] !== false])),
+      concurrency: allowed.includes(requested) ? requested : 8,
+      // 自动线程数: the downloader picks the thread count itself, between 8 and 64, and
+      // `concurrency` above is only what the viewer set by hand. Off unless asked for.
+      autoConcurrency: source.autoConcurrency === true,
+      minChunkBytes: 64 * 1024,
+      firstByteTimeoutMs: 5500,
+      stallTimeoutMs: 4000,
+      attemptTimeoutMs: 15000,
+      hedgeDelayMs: 900,
+      bufferAheadSeconds: 45
+    };
+  }
+
+  root.__BILI_RANGE_CORE__ = Object.freeze({
+    concatChunks,
+    isBilibiliMediaUrl,
+    normalizeCdnHost,
+    normalizeSettings,
+    parseByteRange,
+    parseContentRange,
+    parseRangeHeader,
+    splitRange
+  });
+})(globalThis);
+
+/* Loon transport/policy adapter, Apache-2.0. Byte-range primitives reuse the
+ * unmodified MIT-licensed BTR core in vendor/btr-0302b345. Not a streaming player. */
 (function (root) {
   'use strict';
+  const btr = root.__BILI_RANGE_CORE__;
+  if (!btr) throw new Error('BTR range core must load before the Loon adapter');
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
@@ -18,23 +185,17 @@
     return { protocol: m[1].toLowerCase(), authority: m[2], host: host.split(':')[0], path: m[3], query: m[4] || '' };
   }
   function parseRange(value) {
-    const m = /^bytes=(\d+)-(\d+)$/i.exec(value || '');
-    if (!m) return null;
-    const start = Number(m[1]), end = Number(m[2]);
-    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || end < start || !Number.isSafeInteger(end - start + 1)) return null;
-    return { start, end, length: end - start + 1 };
+    const range = btr.parseRangeHeader(value);
+    return range && Number.isSafeInteger(range.length) ? range : null;
   }
   function contentRange(value) {
-    const m = /^bytes (\d+)-(\d+)\/(\d+)$/i.exec(value || '');
-    if (!m) throw new Error('content-range');
-    const nums = m.slice(1).map(Number);
-    if (nums.some(n => !Number.isSafeInteger(n)) || nums[0] > nums[1] || nums[1] >= nums[2]) throw new Error('content-range');
-    return { start: nums[0], end: nums[1], total: nums[2] };
+    const range = btr.parseContentRange(value);
+    // BTR also permits unknown totals; buffered Loon responses require a known total.
+    if (!range || range.total === null) throw new Error('content-range');
+    return range;
   }
   function split(range, count) {
-    const out = [], width = Math.ceil(range.length / count);
-    for (let start = range.start; start <= range.end; start += width) out.push({ start, end: Math.min(range.end, start + width - 1) });
-    return out;
+    return btr.splitRange(range.start, range.end, count, 128 * 1024);
   }
   function chooseHost(state, candidates, now) {
     // Re-evaluate after network changes or a short lifetime. Real transfers are samples.
@@ -91,9 +252,7 @@
         if (i === 0) { total = cr.total; etag = rh.etag; modified = rh['last-modified']; type = rh['content-type']; }
         else if (total !== cr.total || etag !== rh.etag || modified !== rh['last-modified'] || type !== rh['content-type']) throw new Error('entity-mismatch');
       }
-      const body = new Uint8Array(range.length);
-      let offset = 0;
-      for (const result of results) { body.set(result.body, offset); offset += result.body.byteLength; }
+      const body = btr.concatChunks(results.map(result => result.body), range.length);
       const elapsed = Math.max(1, now() - at), bps = range.length * 1000 / elapsed;
       const stats = (state.hosts ||= {}), old = stats[target];
       stats[target] = { at: now(), bps: old?.bps ? old.bps * 0.3 + bps * 0.7 : bps, blockedUntil: 0 };
@@ -113,22 +272,75 @@
   root.BiliRange = { accelerate, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };
 })(globalThis);
 
+/* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
+(function (root) {
+  'use strict';
+  const VERSION = '0.1.1-experimental';
+  const names = {
+    internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
+    'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
+    'unbounded-or-multiple-range': '开放或多段范围', 'no-range': '没有 Range',
+    'small-range': '范围小于 256 KiB', 'large-range': '范围超过上限',
+    'expired-or-expiring': '签名过期或即将过期', cooldown: '候选暂时冷却',
+    busy: '已达到接管预算', transport: '子请求网络错误', 'entity-mismatch': '分块实体不一致',
+    'range-mismatch': '返回范围不符', 'length-mismatch': '返回长度不符',
+  };
+  function shape(request) {
+    const h = root.BiliRange.headers(request.headers);
+    const raw = h.range || '', parsed = root.BiliRange.parseRange(raw);
+    let range = raw ? 'invalid' : 'absent';
+    if (/^bytes=\d+-$/i.test(raw)) range = 'open-ended';
+    else if (/^bytes=-\d+$/i.test(raw)) range = 'suffix';
+    else if (raw.includes(',')) range = 'multiple';
+    else if (parsed) range = parsed.length < 256 * 1024 ? 'under-256KiB' :
+      parsed.length <= 2 * 1024 * 1024 ? '256KiB-2MiB' : parsed.length <= 4 * 1024 * 1024 ? '2-4MiB' :
+      parsed.length <= 8 * 1024 * 1024 ? '4-8MiB' : 'over-8MiB';
+    // Classify the authority only; never retain arbitrary host text.
+    const authority = /^https?:\/\/([^/?#]+)/i.exec(request.url || '')?.[1]?.toLowerCase() || '';
+    const source = authority.includes('.mcdn.bilivideo.cn') ? 'MCDN' :
+      authority.endsWith('.akamaized.net') || authority.includes('.akamaized.net:') ? 'Akamai' :
+      authority.startsWith('upos-') ? 'UPOS' : authority.startsWith('cn-hk-eq-') ? 'HK' : 'other';
+    return { range, source };
+  }
+  function record(d, request, result) {
+    d ||= {};
+    d.accelerated ||= 0; d.passed ||= 0; d.reasons ||= {}; d.shapes ||= {}; d.sources ||= {};
+    const s = shape(request);
+    d.shapes[s.range] = (d.shapes[s.range] || 0) + 1;
+    d.sources[s.source] = (d.sources[s.source] || 0) + 1;
+    if (result.kind === 'response') {
+      d.accelerated++; d.last = result.metrics;
+      const mode = String(result.metrics.connections), stats = (d.modes ||= {});
+      const m = stats[mode] ||= { requests: 0, bytes: 0, elapsedMs: 0 };
+      m.requests++; m.bytes += result.metrics.bytes; m.elapsedMs += result.metrics.elapsedMs;
+    } else { d.passed++; d.reasons[result.reason] = (d.reasons[result.reason] || 0) + 1; }
+    return d;
+  }
+  function report(state) {
+    const d = state.diagnostics || {}, reasons = Object.entries(d.reasons || {}).map(([k,v]) => `${names[k] || k}: ${v}`);
+    return `版本 ${VERSION}\n接管 ${d.accelerated || 0} 次 / 放行 ${d.passed || 0} 次\n` +
+      (reasons.join('\n') || '暂无请求') + '\n范围分布：' + JSON.stringify(d.shapes || {}) +
+      '\n来源分类：' + JSON.stringify(d.sources || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) +
+      '\n并发记录：' + JSON.stringify(d.modes || {}) + '\n提示：不同视频的记录不能直接作为提速倍数。';
+  }
+  root.BiliRangeDiagnostics = { VERSION, shape, record, report };
+})(globalThis);
+
 /* Loon adapter. Stores aggregates only; never stores or uploads media URLs. */
 (function () {
   'use strict';
-  const KEY = 'aijc123.BiliRange.v1', core = globalThis.BiliRange;
+  const KEY = 'aijc123.BiliRange.v1', core = globalThis.BiliRange, diagnostics = globalThis.BiliRangeDiagnostics;
   let state;
   try { state = JSON.parse($persistentStore.read(KEY) || '{}'); } catch { state = {}; }
+  if (!state || typeof state !== 'object' || Array.isArray(state)) state = {};
   let arg = typeof $argument === 'object' && $argument ? $argument : {};
   if (typeof $argument === 'string') { try { arg = JSON.parse($argument); } catch { if ($argument === 'Action=reset') arg = { Action: 'reset' }; } }
   const epoch = state.epoch || 0;
   const save = () => $persistentStore.write(JSON.stringify(state), KEY);
   if (typeof $request === 'undefined') {
     if (arg.Action === 'reset') { state.hosts = {}; state.epoch = epoch + 1; save(); $done({}); return; }
-    const d = state.diagnostics || {};
     const scores = Object.entries(state.hosts || {}).map(([h, v]) => `${h}: ${(Number(v.bps || 0) * 8 / 1e6).toFixed(1)} Mbps`);
-    $done({ title: 'Bili Range 实验版', content: `接管 ${d.accelerated || 0} 次 / 放行 ${d.passed || 0} 次\n` +
-      JSON.stringify(d.reasons || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) + '\n' + scores.join('\n') }); return;
+    $done({ title: 'Bili Range 实验版', content: diagnostics.report(state) + '\n' + scores.join('\n') }); return;
   }
   let finished = false;
   const done = result => { if (!finished) { finished = true; $done(result); } };
@@ -146,8 +358,7 @@
   if (options.enabled && core.parseURL($request.url) && parsed && parsed.length >= 256 * 1024 && parsed.length <= options.maxBytes && !core.headers($request.headers)[core.INTERNAL]) {
     // Best-effort cross-context budget. Storage exposes no atomic compare-and-swap.
     if (Object.keys(leases).length >= 2) {
-      const d = state.diagnostics ||= { accelerated: 0, passed: 0, reasons: {} };
-      d.passed++; d.reasons['busy'] = (d.reasons['busy'] || 0) + 1;
+      state.diagnostics = diagnostics.record(state.diagnostics, $request, {kind:'pass',reason:'busy'});
       save(); done({}); return;
     }
     lease = Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -158,10 +369,8 @@
     // Merge aggregate counters with the latest storage; separate script contexts may finish together.
     let latest;
     try { latest = JSON.parse($persistentStore.read(KEY) || '{}'); } catch { latest = {}; }
-    const d = latest.diagnostics || { accelerated: 0, passed: 0, reasons: {} };
-    if (result.kind === 'response') { d.accelerated++; d.last = result.metrics; }
-    else { d.passed++; d.reasons[result.reason] = (d.reasons[result.reason] || 0) + 1; }
-    state.diagnostics = d;
+    if (!latest || typeof latest !== 'object' || Array.isArray(latest)) latest = {};
+    state.diagnostics = diagnostics.record(latest.diagnostics, $request, result);
     state.epoch = latest.epoch || 0;
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];
