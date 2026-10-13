@@ -29,8 +29,9 @@
     if (!range || range.total === null) throw new Error('content-range');
     return range;
   }
-  function split(range, count) {
-    return btr.splitRange(range.start, range.end, count, 128 * 1024);
+  function split(range, count, minBytes = 128 * 1024) {
+    const floor=[32,64,128].map(n=>n*1024).includes(minBytes)?minBytes:128*1024;
+    return btr.splitRange(range.start, range.end, count, floor);
   }
   function chooseHost(state, candidates, now) {
     // Re-evaluate after network changes or a short lifetime. Real transfers are samples.
@@ -65,14 +66,15 @@
     const target = options.auto === false ? pool[0] : chooseHost(state, pool, at);
     if (!target) return {kind:'pass',reason:'cooldown'};
     const count = [1, 2, 4, 6, 8, 16, 32].includes(Number(options.connections)) ? Number(options.connections) : 4;
+    const minChunkKiB=[32,64,128].includes(Number(options.minChunkKiB))?Number(options.minChunkKiB):128;
     const allocated = Number.isSafeInteger(options.allocatedConnections) ? Math.max(1,options.allocatedConnections) : count;
-    const parts = split(range, Math.min(count, allocated, Math.floor(range.length / (128 * 1024))));
+    const parts = split(range, Math.min(count, allocated, Math.floor(range.length / (minChunkKiB * 1024))),minChunkKiB*1024);
     const url = u.protocol + '://' + target + u.path + u.query;
     const safeHeaders = { 'Accept-Encoding': 'identity', [INTERNAL]: '1' };
     for (const name of ['user-agent', 'referer', 'accept']) if (h[name]) safeHeaders[name] = h[name];
     const timeout = Math.max(500, Math.min(5000, Number(options.timeout) || 2500));
     const requestedALPN=options.alpn==='h2'?'h2':'h1';
-    let results;
+    let results,integrityField;
     try {
       // Wait for every callback even on failure: Loon has no documented cancellation API.
       const pending = parts.map(part => Promise.resolve().then(() => fetchRange({ url,
@@ -93,7 +95,10 @@
         if (rh['content-length'] && Number(rh['content-length']) !== response.body.byteLength) throw new Error('content-length');
         if (/^(?:text\/|application\/(?:json|xml))/i.test(rh['content-type'] || '')) throw new Error('non-media');
         if (i === 0) { total = cr.total; etag = rh.etag; modified = rh['last-modified']; type = rh['content-type']; }
-        else if (total !== cr.total || etag !== rh.etag || modified !== rh['last-modified'] || type !== rh['content-type']) throw new Error('entity-mismatch');
+        else {
+          integrityField=total!==cr.total?'total':etag!==rh.etag?'etag':modified!==rh['last-modified']?'last-modified':type!==rh['content-type']?'content-type':undefined;
+          if(integrityField)throw new Error('entity-mismatch');
+        }
       }
       const body = btr.concatChunks(results.map(result => result.body), range.length);
       const finishedAt=now(), elapsed = Math.max(1, finishedAt - at), bps = range.length * 1000 / elapsed;
@@ -107,7 +112,7 @@
       if (etag) responseHeaders.ETag = etag;
       if (modified) responseHeaders['Last-Modified'] = modified;
       return { kind: 'response', response: { status: 206, headers: responseHeaders, body },
-        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length,configuredConnections:count,bps,requestedALPN,
+        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length,configuredConnections:count,bps,requestedALPN,minChunkKiB,
           redirects: results.reduce((n, r) => n + (r.redirects || 0), 0),startedAt:at,finishedAt,
           minPieceMs:pieceTimes.length?Math.min(...pieceTimes):0,maxPieceMs:pieceTimes.length?Math.max(...pieceTimes):0 } };
     } catch (error) {
@@ -120,7 +125,7 @@
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}) } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };

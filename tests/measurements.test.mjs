@@ -22,6 +22,19 @@ test('mode comparisons are stratified and explicitly observational',()=>{
  api.record(state,{...req,url:req.url.replace('private-video','other-video')},result(52000,52600,8),{epoch:2,inflight:0});
  assert.equal(api.analyze(state,52600).contrasts.length,1);
 });
+test('same configured32 naturally becoming6 or8 pieces never becomes a concurrency-change comparison',()=>{
+ for(const differentSize of [true,false]){
+  const state={};for(let i=0;i<20;i++){
+   const bytes=differentSize&&i%2?786432:1048576,mode=i%2?6:8;
+   api.record(state,{...req,headers:{Range:`bytes=0-${bytes-1}`}}, {kind:'response',metrics:{...result(10000+i*2000,11000+i*2000,mode).metrics,bytes,configuredConnections:32}}, {inflight:0});
+  }
+  assert.equal(api.analyze(state,51000).contrasts.length,0);
+ }
+});
+test('different configured settings with same byte count report configured and actual counts separately',()=>{
+ const state={};for(let i=0;i<20;i++)api.record(state,req,{kind:'response',metrics:{...result(10000+i*2000,11000+i*2000,i%2?8:4).metrics,configuredConnections:i%2?32:4}}, {inflight:0});
+ const c=api.analyze(state,51000).contrasts[0];assert.equal(c.baselineSetting,4);assert.equal(c.candidateSetting,32);assert.equal(c.candidate,8);
+});
 test('a network epoch change does not mix old samples into the live window',()=>{
  const state={epoch:1};api.record(state,req,result(1000,2000),{epoch:1});state.epoch=2;
  api.record(state,req,result(2200,3000),{epoch:2});const a=api.analyze(state,3000);

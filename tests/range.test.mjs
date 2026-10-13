@@ -137,7 +137,7 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.7-experimental'));
+ assert.ok(report.content.includes('0.1.8-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{

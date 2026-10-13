@@ -71,3 +71,22 @@ test('a local post-download exception releases the admission lease and finishes 
  for(const {o,cb} of callbacks){const r=ctx.BiliRange.parseRange(o.headers.Range);cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}
  const result=await completed;assert.equal(result.response,undefined);assert.equal(doneCount,1);assert.equal(Object.keys(JSON.parse(stored).leases).length,0);
 });
+test('optional 32KiB floor enables 32 actual pieces for 1MiB, while default still uses8',async()=>{
+ for(const floor of [32,64,128]){
+  let calls=0;const entity=Uint8Array.from({length:MiB},(_,i)=>(i*47)%251);
+  const r=await ctx.BiliRange.accelerate({request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},options:{connections:32,minChunkKiB:floor},
+   fetchRange:async o=>{calls++;return {status:206,headers:{'Content-Range':`bytes ${o.part.start}-${o.part.end}/2097152`},body:entity.slice(o.part.start,o.part.end+1)};}});
+  assert.equal(r.kind,'response');assert.equal(calls,1024/floor);assert.equal(r.metrics.minChunkKiB,floor);assert.deepEqual(r.response.body,entity);
+ }
+});
+test('full Loon adapter reserves and runs all32 small-piece HTTP jobs, then releases lease',async()=>{
+ let stored='{}',calls=0;
+ const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console,
+  $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},
+  $argument:{Connections:32,GlobalJobs:32,MinChunkKiB:32,AutoCDN:false},
+  $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
+  $httpClient:{get(o,cb){calls++;const leases=Object.values(JSON.parse(stored).leases);assert.equal(leases[0].jobs,32);
+   const r=ctx.BiliRange.parseRange(o.headers.Range);assert.equal(r.length,32768);
+   cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}}}));
+ assert.equal(result.response.body.length,MiB);assert.equal(calls,32);assert.equal(Object.keys(JSON.parse(stored).leases).length,0);
+});

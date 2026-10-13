@@ -24,6 +24,7 @@
   const fetchRange = options => globalThis.BiliRangeHTTP.makeFetch($httpClient)(options);
   const options = { enabled: arg.Enabled !== false, auto: arg.AutoCDN !== false,
     alpn:arg.HTTPProtocol==='h2'?'h2':'h1',
+    minChunkKiB:[32,64,128].includes(Number(arg.MinChunkKiB))?Number(arg.MinChunkKiB):128,
     connections: [1,2,4,6,8,16,32].includes(Number(arg.Connections)) ? Number(arg.Connections) : 4, maxBytes: Math.min(8,Number(arg.MaxMiB) || 4) * 1024 * 1024,
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
   const plan=core.eligible($request,options);
@@ -37,7 +38,7 @@
     // Best-effort cross-context budget. Storage exposes no atomic compare-and-swap.
     const id=Date.now().toString(36) + Math.random().toString(36).slice(2);
     const admission=globalThis.BiliRangeBudget.admit({leases,now:Date.now(),bytes:parsed.length,
-      wanted:core.split(parsed,options.connections).length,globalJobs:Number(arg.GlobalJobs)||16,
+      wanted:core.split(parsed,options.connections,options.minChunkKiB*1024).length,globalJobs:Number(arg.GlobalJobs)||16,
       maxBufferedBytes:Math.max(4*1024*1024,options.maxBytes),id});
     if (!admission.ok) {
       state.leases=admission.leases;

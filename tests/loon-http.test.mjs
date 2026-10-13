@@ -95,3 +95,15 @@ test('unknown protocol preference falls back to documented HTTP1 and metrics do 
   fetchRange:async o=>{alpn=o.alpn;return {status:206,headers:{'Content-Range':`bytes ${o.part.start}-${o.part.end}/1000000`},body:new Uint8Array(o.part.end-o.part.start+1)};}});
  assert.equal(r.kind,'response');assert.equal(alpn,'h1');assert.equal(r.metrics.requestedALPN,'h1');assert.equal(r.metrics.negotiatedProtocol,undefined);
 });
+test('entity failures expose only the offending field category and retain strict fallback',async()=>{
+ for(const field of ['total','etag','last-modified','content-type']){
+  let calls=0;const r=await ctx.BiliRange.accelerate({request:{method:'GET',url,headers:{Range:'bytes=0-1048575'}},options:{connections:4},fetchRange:async o=>{
+   const first=++calls===1,total=field==='total'&&!first?4000000:5000000;
+   const headers={'Content-Range':`bytes ${o.part.start}-${o.part.end}/${total}`,ETag:field==='etag'&&!first?'secret-b':'secret-a',
+    'Last-Modified':field==='last-modified'&&!first?'date-b':'date-a','Content-Type':field==='content-type'&&!first?'audio/mp4':'video/mp4'};
+   return {status:206,headers,body:new Uint8Array(o.part.end-o.part.start+1)};
+  }});
+  assert.equal(r.kind,'pass');assert.equal(r.reason,'entity-mismatch');assert.equal(r.metrics.integrityField,field);assert.equal(r.metrics.cooldownMs,60000);
+  assert.ok(!JSON.stringify(r.metrics).includes('secret'));assert.equal(r.response,undefined);
+ }
+});

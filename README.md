@@ -69,7 +69,7 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 [0.1.4 候选版](NEXT-EXPERIMENT.md) 单独改进经过校验的 302 跳转与短退避，不自动替换正在使用的 0.1.3。
 
-[0.1.7 研发版](LAB-EXPERIMENT.md) 提供最高 32 路设置、全局子请求与缓冲预算、分层吞吐 / 尾延迟诊断、用原播放流量进行的交替并发对照、HTTP协议偏好、DNS诊断与已有SIDX码率观察，并修复网络变化脚本的日志输出。实际并发受 Range 大小限制；32 路更快和 4K / 1.5 倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
+[0.1.8 研发版](LAB-EXPERIMENT.md) 提供可选的32 KiB小片，让1 MiB请求也能试32个HTTP任务；配合全局子请求与缓冲预算、精确长度对照、尾延迟诊断、HTTP协议偏好、DNS诊断与已有SIDX码率观察。默认仍为4路与128 KiB下限。32 路更快和4K / 1.5倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
 
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 
