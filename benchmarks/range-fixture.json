@@ -1,0 +1,78 @@
+{
+  "scope": "Loopback HTTP synthetic 1 MiB/s per-connection fixture, no real Loon or CDN measurements",
+  "bytes": 2097152,
+  "results": [
+    {
+      "round": 1,
+      "connections": 1,
+      "elapsedMs": 3360,
+      "peakHTTPRequests": 1,
+      "Mbps": 4.993219047619048
+    },
+    {
+      "round": 1,
+      "connections": 2,
+      "elapsedMs": 1733,
+      "peakHTTPRequests": 2,
+      "Mbps": 9.681024812463935
+    },
+    {
+      "round": 1,
+      "connections": 4,
+      "elapsedMs": 943,
+      "peakHTTPRequests": 4,
+      "Mbps": 17.79132131495228
+    },
+    {
+      "round": 2,
+      "connections": 1,
+      "elapsedMs": 3298,
+      "peakHTTPRequests": 1,
+      "Mbps": 5.087087932080049
+    },
+    {
+      "round": 2,
+      "connections": 2,
+      "elapsedMs": 1651,
+      "peakHTTPRequests": 2,
+      "Mbps": 10.161850999394305
+    },
+    {
+      "round": 2,
+      "connections": 4,
+      "elapsedMs": 948,
+      "peakHTTPRequests": 4,
+      "Mbps": 17.69748523206751
+    },
+    {
+      "round": 3,
+      "connections": 1,
+      "elapsedMs": 3149,
+      "peakHTTPRequests": 1,
+      "Mbps": 5.327791679898381
+    },
+    {
+      "round": 3,
+      "connections": 2,
+      "elapsedMs": 1720,
+      "peakHTTPRequests": 2,
+      "Mbps": 9.754195348837209
+    },
+    {
+      "round": 3,
+      "connections": 4,
+      "elapsedMs": 885,
+      "peakHTTPRequests": 4,
+      "Mbps": 18.957306214689265
+    }
+  ],
+  "medianMs": {
+    "single": 3298,
+    "two": 1720,
+    "four": 943
+  },
+  "speedup": {
+    "two": 1.9174418604651162,
+    "four": 3.4973488865323437
+  }
+}

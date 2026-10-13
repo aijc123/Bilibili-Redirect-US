@@ -4,3 +4,8 @@ License: Apache License, Version 2.0 (see LICENSE).
 Official v0.2.24 Release files are vendored without modifying request.bundle.js.
 Modifications by aijc123, 2026-10-13: CDN argument options, Loon template,
 custom subscription generation, configuration defaults, documentation and tests.
+
+The independently implemented experimental range downloader references design
+ideas from MrTangLuyao/Bilibili-thread-ripper (MIT), nishuodedui1145-del/PiliPlus,
+and nitansde/MyTVB-Speed-Boost. Their source code is not copied into this engine.
+See RANGE-EXPERIMENT.md for attribution, reference commits and validation limits.

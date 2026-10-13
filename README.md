@@ -59,6 +59,14 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 ## 开发与维护
 
+### 正在验证：手机并发下载实验版
+
+除 CDN 重定向外，本仓库现已实现适用于 Loon 的有限 Range 并发下载实验版，参考 BTR 与 PiliPlus 的分块思路。它会将符合条件的请求拆成 2～4 路下载，并根据手机实际传输结果选择 CDN。**尚未证明在真实 iPhone 上提速**，请阅读 [实验版安装、对照方法与限制](RANGE-EXPERIMENT.md) 后试用；使用时停用原 Redirect，避免冲突。
+
+[获取实验插件](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Range.Experimental.plugin)
+
+原有订阅仍为固定 CDN 重定向版本，两者分开发行。
+
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 
 ```sh
