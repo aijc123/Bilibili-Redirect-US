@@ -61,11 +61,13 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 ### 正在验证：手机并发下载实验版
 
-除 CDN 重定向外，本仓库现已实现适用于 Loon 的有限 Range 并发下载实验版。范围解析、分块与拼接直接复用 BTR 核心，保留固定版本和完整 MIT 许可；本仓库负责 Loon 手机适配、传输、诊断与发布。它会将符合条件的请求拆成 2～4 路下载，并根据手机实际传输结果选择 CDN。**尚未证明在真实 iPhone 上提速**，请阅读 [实验版安装、对照方法与限制](RANGE-EXPERIMENT.md) 后试用；使用时停用原 Redirect，避免冲突。
+除 CDN 重定向外，本仓库现已实现适用于 Loon 的有限 Range 并发下载实验版。范围解析、分块与拼接直接复用 BTR 核心，保留固定版本和完整 MIT 许可；本仓库负责 Loon 手机适配、传输、诊断与发布。它会将符合条件的请求拆成 2～4 路下载，并根据手机实际传输结果选择 CDN。**0.1.3 已有真实 iPhone 的成功接管记录，并在用户同视频、同清晰度、同 Wi-Fi 对比中获得提速反馈，尚未量化倍数**。请阅读 [安装、对照方法与限制](RANGE-EXPERIMENT.md) 后试用；使用时停用原 Redirect，避免冲突。
 
 [获取实验插件](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Range.Experimental.plugin)
 
 原有订阅仍为固定 CDN 重定向版本，两者分开发行。
+
+[0.1.4 候选版](NEXT-EXPERIMENT.md) 单独改进经过校验的 302 跳转与短退避，不自动替换正在使用的 0.1.3。
 
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 

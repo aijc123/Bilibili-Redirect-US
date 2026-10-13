@@ -1,7 +1,7 @@
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.3-experimental';
+  const VERSION = '0.1.4-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -9,6 +9,7 @@
     'small-range': '范围小于 256 KiB', 'large-range': '范围超过上限',
     'expired-or-expiring': '签名过期或即将过期', cooldown: '候选暂时冷却',
     busy: '已达到接管预算', transport: '子请求网络错误', 'entity-mismatch': '分块实体不一致',
+    'redirect-untrusted': '重定向目标未通过校验', 'redirect-limit': '重定向循环或超过上限',
     'range-mismatch': '返回范围不符', 'length-mismatch': '返回长度不符',
   };
   function shape(request) {

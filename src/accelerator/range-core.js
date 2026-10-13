@@ -72,7 +72,8 @@
         headers: { ...safeHeaders, Range: `bytes=${part.start}-${part.end}` }, timeout, part }))
         .then(result => ({ ok: true, result }), error => ({ ok: false, error })));
       const settled = await Promise.all(pending);
-      if (settled.some(r => !r.ok)) throw new Error('transport');
+      const failed = settled.find(r => !r.ok);
+      if (failed) throw new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport');
       results = settled.map(r => r.result);
       let total, etag, modified, type;
       for (let i = 0; i < results.length; i++) {
@@ -90,7 +91,7 @@
       const body = btr.concatChunks(results.map(result => result.body), range.length);
       const elapsed = Math.max(1, now() - at), bps = range.length * 1000 / elapsed;
       const stats = (state.hosts ||= {}), old = stats[target];
-      stats[target] = { at: now(), bps: old?.bps ? old.bps * 0.3 + bps * 0.7 : bps, blockedUntil: 0 };
+      stats[target] = { at: now(), bps: old?.bps ? old.bps * 0.3 + bps * 0.7 : bps, blockedUntil: 0, failures: 0 };
       const first = headers(results[0].headers);
       const responseHeaders = { 'Content-Type': type || 'application/octet-stream',
         'Content-Range': `bytes ${range.start}-${range.end}/${total}`, 'Content-Length': String(body.byteLength),
@@ -98,10 +99,18 @@
       if (etag) responseHeaders.ETag = etag;
       if (modified) responseHeaders['Last-Modified'] = modified;
       return { kind: 'response', response: { status: 206, headers: responseHeaders, body },
-        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length, bps } };
+        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length, bps,
+          redirects: results.reduce((n, r) => n + (r.redirects || 0), 0) } };
     } catch (error) {
-      (state.hosts ||= {})[target] = { ...(state.hosts?.[target] || {}), at: now(), blockedUntil: now() + 60000 };
-      return { kind: 'pass', reason: error.message || 'failed', metrics: { host: target, elapsedMs: now() - at } };
+      const old = state.hosts?.[target] || {}, failures = Math.min(5, (old.failures || 0) + 1);
+      const reason = error.message || 'failed';
+      // One refused signed address is not proof the whole host is down. Keep a short
+      // retry delay for content/status failures; back off transient network failures.
+      const integrity = ['entity-mismatch','range-mismatch','length-mismatch','encoded-body','content-range','content-length','non-media'].includes(reason);
+      const statusFailure = /^status-/.test(reason) || reason.startsWith('redirect-');
+      const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
+      (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: now() - at, cooldownMs } };
     }
   }
   root.BiliRange = { accelerate, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };

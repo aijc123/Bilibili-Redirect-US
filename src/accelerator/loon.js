@@ -21,11 +21,7 @@
   }
   let finished = false;
   const done = result => { if (!finished) { finished = true; $done(result); } };
-  const fetchRange = options => new Promise((resolve, reject) => {
-    $httpClient.get({ url: options.url, headers: options.headers, timeout: options.timeout,
-      'binary-mode': true, 'auto-redirect': false, 'auto-cookie': false, insecure: false, alpn: 'h1' },
-    (error, response, data) => error || !response ? reject(new Error('transport')) : resolve({ status: response.status, headers: response.headers, body: data }));
-  });
+  const fetchRange = options => globalThis.BiliRangeHTTP.makeFetch($httpClient)(options);
   const options = { enabled: arg.Enabled !== false, auto: arg.AutoCDN !== false,
     connections: Number(arg.Connections) || 2, maxBytes: (Number(arg.MaxMiB) || 4) * 1024 * 1024,
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };

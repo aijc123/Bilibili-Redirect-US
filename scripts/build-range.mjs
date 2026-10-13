@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const vendorPath = 'vendor/btr-0302b345/';
 const btrBytes = readFileSync(vendorPath + 'range-core.js');
@@ -9,11 +9,15 @@ const btr = `/* BTR range-core.js, upstream commit ${provenance.commit}\n${licen
 const core = readFileSync('src/accelerator/range-core.js', 'utf8');
 const adapter = readFileSync('src/accelerator/loon.js', 'utf8');
 const diagnostics = readFileSync('src/accelerator/diagnostics.js', 'utf8');
-writeFileSync('dist/range.bundle.js', btr + '\n' + core + '\n' + diagnostics + '\n' + adapter);
-writeFileSync('dist/diagnose.bundle.js', diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8'));
+const http = readFileSync('src/accelerator/loon-http.js','utf8');
+const out = 'dist/next';
+mkdirSync(out,{recursive:true});
+const isolate = text => text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.next.v1');
+writeFileSync(out + '/range.bundle.js', isolate(btr + '\n' + core + '\n' + http + '\n' + diagnostics + '\n' + adapter));
+writeFileSync(out + '/diagnose.bundle.js', isolate(diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8')));
 const version = /const VERSION = '([^']+)'/.exec(diagnostics)[1];
-const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/`;
-writeFileSync('dist/BiliBili.Range.Experimental.plugin', `#!name = BiliBili Range 实验版 · aijc123
+const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/next/`;
+writeFileSync(out + '/BiliBili.Range.Next.plugin', `#!name = BiliBili Range 候选版 · aijc123
 #!desc = 有限 Range 并发下载与本机传输选 CDN；实验功能，需真机验证。请停用其他 B 站 CDN 复写插件。
 #!author = aijc123
 #!homepage = https://github.com/aijc123/Bilibili-Redirect-US
@@ -40,4 +44,4 @@ network-changed script-path=${base}range.bundle.js, argument="Action=reset", tag
 [MITM]
 hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net
 `);
-console.log('Built bounded-range experimental plugin.');
+console.log('Built next candidate; the phone-tested 0.1.3 subscription is unchanged.');

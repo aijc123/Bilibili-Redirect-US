@@ -78,7 +78,7 @@ test('adapter accepts plugin object, binary response and reports no signed URLs'
     $persistentStore:{read:k=>storage[k],write:(v,k)=>{storage[k]=v;return true;}},
     $httpClient:{get:(o,cb)=>{const range=core.parseRange(o.headers.Range);good({part:range}).then(r=>cb(null,r,r.body));}},
     $done:r=>{completed++;resolve(r);}};
-  vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+  vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  });
  assert.equal(completed,1);assert.ok(result.response.body instanceof Uint8Array);
  assert.ok(!JSON.stringify(storage).includes('upsig'));assert.ok(!JSON.stringify(storage).includes('test.m4s'));
@@ -86,7 +86,7 @@ test('adapter accepts plugin object, binary response and reports no signed URLs'
 test('network-change string argument resets scores',()=>{
  let value=JSON.stringify({hosts:{abc:{bps:123}},diagnostics:{accelerated:1}});
  const ctx={Uint8Array,Date,console,$argument:'{"Action":"reset"}',$persistentStore:{read:()=>value,write:v=>{value=v;}},$done(){}};
- vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  assert.deepEqual(JSON.parse(value).hosts,{});assert.equal(JSON.parse(value).epoch,1);
 });
 test('single-connection control uses the same byte and validation path',async()=>{
@@ -98,7 +98,7 @@ test('busy adapter passes request without multiplying concurrent transfers',()=>
  let value=JSON.stringify({leases:{a:Date.now()+10000,b:Date.now()+10000}}), completed=0, calls=0;
  const ctx={Uint8Array,Date,console,$request:request,$argument:{},
   $persistentStore:{read:()=>value,write:v=>{value=v;}},$httpClient:{get(){calls++;}},$done(){completed++;}};
- vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  assert.equal(completed,1);assert.equal(calls,0);assert.equal(JSON.parse(value).diagnostics.reasons.busy,1);
 });
 test('network changes during a download do not resurrect old host scores',async()=>{
@@ -107,7 +107,7 @@ test('network changes during a download do not resurrect old host scores',async(
  const ctx={Uint8Array,Date,console,$request:request,$argument:{Connections:2},
   $persistentStore:{read:()=>value,write:v=>{value=v;}},
   $httpClient:{get:(o,cb)=>callbacks.push({o,cb})},$done:resolve};
- vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  await new Promise(r=>setImmediate(r));
  const saved=JSON.parse(value);saved.epoch=1;saved.hosts={};value=JSON.stringify(saved);
  for(const {o,cb} of callbacks){const r=await good({part:core.parseRange(o.headers.Range)});cb(null,r,r.body);}
@@ -130,18 +130,18 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
   const ctx={Uint8Array,Date,console,$argument:arg || {},
    $persistentStore:{read:()=>value,write:v=>{value=v;return true;}},$done:resolve};
   if(req)ctx.$request=req;
-  vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+  vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  });
  await execute({method:'GET',url:'https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/private-video.m4s?upsig=secret',headers:{Range:'bytes=0-'}});
  await execute({...request,headers:{Range:'bytes=0-'}});
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.3-experimental'));
+ assert.ok(report.content.includes('0.1.4-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{
- const plugin=readFileSync('dist/BiliBili.Range.Experimental.plugin','utf8');
+ const plugin=readFileSync('dist/next/BiliBili.Range.Next.plugin','utf8');
  const regexText=plugin.split('\n').find(l=>l.startsWith('http-request ')).split(' script-path=')[0].slice('http-request '.length);
  const regex=new RegExp(regexText,'i');
  assert.ok(regex.test('https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/video.m4s'));
@@ -154,7 +154,7 @@ test('manual diagnosis logs and offers the exact summary for notification copy',
  const ctx={Uint8Array,Date,$argument:null,
   console:{log:v=>{logged=v;}},$persistentStore:{read:()=>'{"diagnostics":{"accelerated":2,"passed":1}}'},
   $notification:{post:(...args)=>{notified=args;}},$done:v=>{completed=v;}};
- vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  assert.equal(notified[3].clipboard,completed.content);
  assert.equal(logged,completed.content);
  assert.ok(completed.content.includes('接管 2 次 / 放行 1 次'));
@@ -164,7 +164,7 @@ for(const placeholder of [undefined,null,{}, {url:''}, {url:'https://example.com
  const ctx={Uint8Array,Date,$request:placeholder,
   console:{log:v=>{logged=v;}},$persistentStore:{read:()=>'{"diagnostics":{"accelerated":3,"passed":1}}'},
   $notification:{post:(...args)=>{notified=args;}},$done:()=>{finished++;}};
- vm.runInNewContext(readFileSync('dist/diagnose.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/diagnose.bundle.js','utf8'),ctx);
  assert.equal(finished,1);assert.ok(logged.includes('接管 3 次 / 放行 1 次'));
  assert.equal(notified[3].clipboard,logged);
 });
@@ -172,13 +172,13 @@ test('standalone diagnosis logs a result even when notification permission fails
  let logged,finished=0;
  const ctx={console:{log:v=>{logged=v;}},$persistentStore:{read:()=>null},
   $notification:{post:()=>{throw Error('disabled');}},$done:()=>{finished++;}};
- vm.runInNewContext(readFileSync('dist/diagnose.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/diagnose.bundle.js','utf8'),ctx);
  assert.ok(logged.includes('暂无请求'));assert.equal(finished,1);
 });
 test('manual placeholder in the full adapter does not silently run the download path',()=>{
  let logged,finished;
  const ctx={Uint8Array,Date,$request:{},$argument:null,
   console:{log:v=>{logged=v;}},$persistentStore:{read:()=>null},$done:v=>{finished=v;}};
- vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),ctx);
  assert.ok(logged.includes('暂无请求'));assert.ok(finished.content);
 });
