@@ -2,7 +2,7 @@
 
 订阅：https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Redirect.plugin
 
-基于 Biliverse/Redirect 的 Apache-2.0 项目，保留完整 fork 历史和 LICENSE。上游 README 仍保留。此版本为非官方定制。
+基于 Biliverse/Redirect 的 Apache-2.0 项目，保留完整 fork 历史和 LICENSE。仓库首页 README 为本定制版的中文说明，上游 README 可在 fork 历史中查看。此版本为非官方定制。
 
 新增 hwo1 与 08c 到 Host.OverseaVideo、Host.BStar、Host.PCDN 的 Loon/BoxJS 选项。Loon 默认第一个选项为 hwo1，可手动换成 08c；没有自动测速或故障切换。MCDN 使用特殊代理流程，因此保持原选项。国内普通 UPOS 请求保持上游行为，不强行改写所有国内节点。
 
