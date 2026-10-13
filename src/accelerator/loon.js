@@ -23,19 +23,26 @@
   const done = result => { if (!finished) { finished = true; $done(result); } };
   const fetchRange = options => globalThis.BiliRangeHTTP.makeFetch($httpClient)(options);
   const options = { enabled: arg.Enabled !== false, auto: arg.AutoCDN !== false,
-    connections: Number(arg.Connections) || 2, maxBytes: (Number(arg.MaxMiB) || 4) * 1024 * 1024,
+    connections: [1,2,4,6,8,16,32].includes(Number(arg.Connections)) ? Number(arg.Connections) : 4, maxBytes: Math.min(8,Number(arg.MaxMiB) || 4) * 1024 * 1024,
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
-  const parsed = core.parseRange(core.headers($request.headers).range);
-  const leases = Object.fromEntries(Object.entries(state.leases || {}).filter(([,expiry]) => expiry > Date.now()));
+  const plan=core.eligible($request,options);
+  const parsed=plan.range;
+  const leases = globalThis.BiliRangeBudget.active(state.leases,Date.now());
+  let inflight=Object.keys(leases).length;
   let lease;
-  if (options.enabled && core.parseURL($request.url) && parsed && parsed.length >= 256 * 1024 && parsed.length <= options.maxBytes && !core.headers($request.headers)[core.INTERNAL]) {
+  if (plan.kind==='eligible') {
     // Best-effort cross-context budget. Storage exposes no atomic compare-and-swap.
-    if (Object.keys(leases).length >= 2) {
-      state.diagnostics = diagnostics.record(state.diagnostics, $request, {kind:'pass',reason:'busy'});
+    const id=Date.now().toString(36) + Math.random().toString(36).slice(2);
+    const admission=globalThis.BiliRangeBudget.admit({leases,now:Date.now(),bytes:parsed.length,
+      wanted:core.split(parsed,options.connections).length,globalJobs:Number(arg.GlobalJobs)||16,
+      maxBufferedBytes:Math.max(4*1024*1024,options.maxBytes),id});
+    if (!admission.ok) {
+      state.leases=admission.leases;
+      state.diagnostics = diagnostics.record(state.diagnostics, $request, {kind:'pass',reason:admission.reason});
       save(); done({}); return;
     }
-    lease = Date.now().toString(36) + Math.random().toString(36).slice(2);
-    leases[lease] = Date.now() + 8000; state.leases = leases; save();
+    lease=id;inflight=admission.inflight;options.allocatedConnections=admission.count;
+    state.leases=admission.leases;save();
   }
   core.accelerate({ request: $request, options, fetchRange, state }).then(result => {
     if (result.reason === 'internal') { done({}); return; }
@@ -44,6 +51,11 @@
     try { latest = JSON.parse($persistentStore.read(KEY) || '{}'); } catch { latest = {}; }
     if (!latest || typeof latest !== 'object' || Array.isArray(latest)) latest = {};
     state.diagnostics = diagnostics.record(latest.diagnostics, $request, result);
+    if(globalThis.BiliRangeMeasurements){
+      state.measurements=latest.measurements;
+      globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight});
+    }
+    state.lastNetworkReset=latest.lastNetworkReset;
     state.epoch = latest.epoch || 0;
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];
@@ -52,5 +64,9 @@
     save();
     if (arg.Debug === true) console.log(JSON.stringify({ kind: result.kind, reason: result.reason, metrics: result.metrics }));
     done(result.kind === 'response' ? { response: result.response } : {});
-  }).catch(() => done({}));
+  }).catch(() => {
+    // A local processing exception must not hold the admission budget until expiry.
+    try {const latest=JSON.parse($persistentStore.read(KEY)||'{}');if(lease&&latest?.leases){delete latest.leases[lease];$persistentStore.write(JSON.stringify(latest),KEY);}}catch{}
+    done({});
+  });
 })();

@@ -78,7 +78,7 @@ test('candidate bundle uses trusted redirect transport end to end',async()=>{
    $httpClient:{get(o,cb){seen.push(o);if(o.url.includes('mirrorhwo1')){cb(null,{status:302,headers:{Location:'https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s?upsig=private'}},null);return;}
     const range=ctx.BiliRange.parseRange(o.headers.Range);
     cb(null,{status:206,headers:{'Content-Range':`bytes ${range.start}-${range.end}/2000000`,'Content-Type':'video/mp4'}},new Uint8Array(range.length));}}};
-  vm.runInNewContext(readFileSync('dist/next/range.bundle.js','utf8'),context);
+  vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),context);
  });
  assert.equal(result.response.status,206);assert.equal(result.response.body.length,1048576);assert.equal(seen.length,8);
  const d=JSON.parse(stored).diagnostics;assert.equal(d.last.redirects,4);assert.equal(d.accelerated,1);

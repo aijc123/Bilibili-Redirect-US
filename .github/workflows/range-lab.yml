@@ -1,0 +1,24 @@
+name: Range lab validation
+on:
+  push:
+    branches: [main]
+    paths: ['src/accelerator/**', 'scripts/build-range.mjs', 'tests/**', 'dist/lab/**', 'vendor/btr-0302b345/**', '.github/workflows/range-lab.yml']
+  pull_request:
+    paths: ['src/accelerator/**', 'scripts/build-range.mjs', 'tests/**', 'dist/lab/**', 'vendor/btr-0302b345/**', '.github/workflows/range-lab.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build dependency-free Loon lab bundle
+        run: node scripts/build-range.mjs
+      - name: Validate Range transport, budgets, statistics and original CDN options
+        run: node --test tests/range.test.mjs tests/loon-http.test.mjs tests/budget.test.mjs tests/measurements.test.mjs tests/us-bundle.test.mjs
+      - name: Verify committed lab files are reproducible
+        run: git diff --exit-code -- dist/lab

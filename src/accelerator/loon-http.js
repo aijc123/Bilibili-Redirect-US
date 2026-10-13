@@ -26,7 +26,7 @@
           (error, response, data) => error || !response ? reject(new Error('transport')) :
             resolve({ status: Number(response.status), headers: response.headers, body: data }));
         });
-        if (![301, 302, 303, 307, 308].includes(result.status)) return { ...result, redirects };
+        if (![301, 302, 303, 307, 308].includes(result.status)) return { ...result, redirects, elapsedMs:Math.max(1,now()-started) };
         const location = root.BiliRange.headers(result.headers).location;
         const next = redirectURL(url, location);
         if (!next) throw new Error('redirect-untrusted');

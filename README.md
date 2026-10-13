@@ -1,6 +1,6 @@
 # Bilibili Redirect US 🇺🇸
 
-**由 [aijc123](https://github.com/aijc123) 定制发布，为在美国使用 iPhone / Loon 看 B 站的用户，提供更方便的 CDN 选择。**
+**由 [aijc123](https://github.com/aijc123) 开发和发布，面向海外 iPhone 官方 App：从更方便的 CDN 选择，推进到 Loon 有限 Range 并发下载与本机诊断。**
 
 把公开测速中的优选节点，变成可以直接订阅、手动切换、持续维护的 Loon 插件。新增 `hwo1` 和 `08c` 两个 CDN 候选，插件、脚本与配置均托管在本仓库。
 
@@ -68,6 +68,8 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 原有订阅仍为固定 CDN 重定向版本，两者分开发行。
 
 [0.1.4 候选版](NEXT-EXPERIMENT.md) 单独改进经过校验的 302 跳转与短退避，不自动替换正在使用的 0.1.3。
+
+[0.1.5 研发版](LAB-EXPERIMENT.md) 提供最高 32 路设置、全局子请求与缓冲预算、分层吞吐 / 尾延迟诊断，并修复网络变化脚本的日志输出。实际并发受 Range 大小限制；32 路更快和 4K / 1.5 倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
 
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 

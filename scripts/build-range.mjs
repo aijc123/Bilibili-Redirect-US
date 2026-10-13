@@ -10,14 +10,17 @@ const core = readFileSync('src/accelerator/range-core.js', 'utf8');
 const adapter = readFileSync('src/accelerator/loon.js', 'utf8');
 const diagnostics = readFileSync('src/accelerator/diagnostics.js', 'utf8');
 const http = readFileSync('src/accelerator/loon-http.js','utf8');
-const out = 'dist/next';
+const measurements = readFileSync('src/accelerator/measurements.js','utf8');
+const budget=readFileSync('src/accelerator/budget.js','utf8');
+const out = 'dist/lab';
 mkdirSync(out,{recursive:true});
-const isolate = text => text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.next.v1');
-writeFileSync(out + '/range.bundle.js', isolate(btr + '\n' + core + '\n' + http + '\n' + diagnostics + '\n' + adapter));
-writeFileSync(out + '/diagnose.bundle.js', isolate(diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8')));
+const isolate = text => text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.lab.v1');
+writeFileSync(out + '/range.bundle.js', isolate(btr + '\n' + core + '\n' + http + '\n' + budget + '\n' + measurements + '\n' + diagnostics + '\n' + adapter));
+writeFileSync(out + '/diagnose.bundle.js', isolate(measurements+'\n'+diagnostics + '\n' + readFileSync('src/accelerator/manual-diagnose.js','utf8')));
+writeFileSync(out + '/network-reset.bundle.js',isolate(readFileSync('src/accelerator/network-reset.js','utf8')));
 const version = /const VERSION = '([^']+)'/.exec(diagnostics)[1];
-const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/next/`;
-writeFileSync(out + '/BiliBili.Range.Next.plugin', `#!name = BiliBili Range 候选版 · aijc123
+const base = `https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v${version}/dist/lab/`;
+writeFileSync(out + '/BiliBili.Range.Lab.plugin', `#!name = BiliBili Range 研发版 · aijc123
 #!desc = 有限 Range 并发下载与本机传输选 CDN；实验功能，需真机验证。请停用其他 B 站 CDN 复写插件。
 #!author = aijc123
 #!homepage = https://github.com/aijc123/Bilibili-Redirect-US
@@ -27,7 +30,8 @@ writeFileSync(out + '/BiliBili.Range.Next.plugin', `#!name = BiliBili Range 候�
 
 [Argument]
 Enabled = switch,true,tag=启用实验下载
-Connections = select,2,4,1,type=number,tag=每请求并发上限（1 为对照）
+Connections = select,4,6,8,16,32,2,1,type=number,tag=并发上限（实际受块大小约束）
+GlobalJobs = select,16,24,32,8,type=number,tag=全局子请求预算（尽力协调）
 MaxMiB = select,4,2,8,type=number,tag=接管范围上限 MiB
 AutoCDN = switch,true,tag=根据本机传输选择 CDN
 PreferredCDN = select,"upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com",tag=初始候选 CDN
@@ -37,11 +41,11 @@ Debug = switch,false,tag=诊断日志
 force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:80, upos-*-mirrorakam.akamaized.net:80
 
 [Script]
-http-request ^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/ script-path=${base}range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
+http-request ^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/ script-path=${base}range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{GlobalJobs},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
 generic script-path=${base}diagnose.bundle.js, tag=Bili Range 诊断
-network-changed script-path=${base}range.bundle.js, argument="Action=reset", tag=Bili Range 网络变化
+network-changed script-path=${base}network-reset.bundle.js, tag=Bili Range 网络变化
 
 [MITM]
 hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net
 `);
-console.log('Built next candidate; the phone-tested 0.1.3 subscription is unchanged.');
+console.log('Built lab version; phone-tested 0.1.3 and 0.1.4 subscriptions are unchanged.');
