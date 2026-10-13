@@ -35,6 +35,7 @@
       ok:result.kind==='response',reason:result.kind==='response'?'ok':
         (root.BiliRangeDiagnostics?.allowedReasons?.includes(result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'other-failure'),
       bytes:result.kind==='response'?Number(r.bytes)||0:0,elapsedMs:Math.max(1,Number(r.elapsedMs)||1),
+      requestedALPN:r.requestedALPN==='h2'?'h2':'h1',
       mode:Number(r.connections)||Number(context.connections)||0,requestedMode:Number(r.configuredConnections)||Number(context.connections)||0,host:String(r.host||''),
       epoch:Number(context.epoch)||0,content:identity(state,request),bucket:rangeBucket(range.length),rangeBytes:range.length,
       inflight:Number(context.inflight)||0,redirects:Number(r.redirects)||0,
@@ -82,9 +83,9 @@
     const elapsed=recent.length?Math.max(1000,Math.max(...recent.map(s=>s.at))-Math.min(...recent.map(s=>s.from))):0;
     const occupied=unionMs(intervals);
     const groups={};
-    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.mode].join('|');(groups[key] ||= []).push(s);}
+    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.requestedALPN==='h2'?'h2':'h1',s.mode].join('|');(groups[key] ||= []).push(s);}
     const comparisons={};
-    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight].join('|');((comparisons[key] ||= {})[s.mode] ||= []).push(s);}
+    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.requestedALPN==='h2'?'h2':'h1'].join('|');((comparisons[key] ||= {})[s.mode] ||= []).push(s);}
     const contrasts=[];
     for(const [key,modes] of Object.entries(comparisons)) {
       const keys=Object.keys(modes).map(Number).sort((a,b)=>a-b);
@@ -105,7 +106,8 @@
     const a=analyze(state,at),w=a.window,fmt=n=>n===null?'未知':Number(n).toFixed(2);
     const lines=[`客观采样：保留 ${a.samples} 条 / 最近30秒 ${w.n} 条`,
       `窗口交付率 ${fmt(w.deliveryMbps)} Mbps；尝试活跃区间交付率 ${fmt(w.activeMbps)} Mbps；完成尝试重叠峰值 ${w.peakCompletedOverlap}`,
-      '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 实际并发',
+      '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 请求ALPN / 实际并发',
+      'ALPN表示请求偏好；API未报告实际协商协议，也不提供实际TCP连接数。',
       '下列为每请求分布，含连接/重定向/返回等待，API不提供真实TTFB或播放器卡顿计数：'];
     for(const [key,v] of Object.entries(a.groups).slice(-12))lines.push(`${key}: n=${v.n}, 错误=${(v.failureRate*100).toFixed(1)}%, p50=${fmt(v.p50Mbps)} Mbps, p10=${fmt(v.p10Mbps)} Mbps, p90=${fmt(v.p90Ms)} ms, ${v.noise}`);
     for(const c of a.contrasts)lines.push(`观察对照 ${c.baseline}→${c.candidate}路: 中位比=${c.medianRatio.toFixed(2)}, n=${c.baselineN}/${c.candidateN}, ${c.adequate?'样本达到最低门槛':'样本不足'}；不是因果倍数`);
@@ -158,7 +160,7 @@
     for(const block of Object.values(blocks)){
       if(block.length!==4||new Set(block.map(s=>s.trial.slot)).size!==4){incomplete++;continue;}
       const A=block.filter(s=>s.trial.arm==='A'),B=block.filter(s=>s.trial.arm==='B');
-      const condition=s=>[s.epoch,s.content,s.host,s.rangeBytes,s.inflight].join('|');
+      const condition=s=>[s.epoch,s.content,s.host,s.rangeBytes,s.inflight,s.requestedALPN==='h2'?'h2':'h1'].join('|');
       if(A.length!==2||B.length!==2||new Set(block.map(condition)).size!==1||
         new Set(block.map(s=>s.trial.candidate)).size!==1||
         new Set(A.map(s=>s.mode)).size!==1||new Set(B.map(s=>s.mode)).size!==1){mismatched++;continue;}
@@ -181,10 +183,48 @@
   root.BiliRangeTrials={plan,analyze,empiricalInterval};
 })(globalThis);
 
+/* Observe complete SIDX boxes already present in successful buffered responses.
+ * Uses pinned BTR parser. No extra GET, response hook, or media URL persistence. */
+(function(root){
+  'use strict';
+  function observe(state,request,result,context={}){
+    try{
+      if(result.kind!=='response'||!root.__BILI_SIDX__)return;
+      const range=root.BiliRange.parseRange(root.BiliRange.headers(request.headers).range),body=result.response?.body;
+      if(!range||range.start>65536||!(body instanceof Uint8Array))return;
+      const sidx=root.__BILI_SIDX__.parseSidx(body.subarray(0,65536),range.start);
+      if(!sidx||sidx.segments.length>2048)return;
+      const segments=sidx.segments;
+      if(segments.some(s=>!Number.isSafeInteger(s.length)||s.length<=0||!Number.isFinite(s.durationSeconds)||s.durationSeconds<=0))return;
+      const bytes=segments.reduce((n,s)=>n+s.length,0),duration=segments.reduce((n,s)=>n+s.durationSeconds,0);
+      const rates=segments.map(s=>s.length*8/s.durationSeconds/1e6),average=bytes*8/duration/1e6;
+      if(!Number.isFinite(average)||average<=0||average>1000)return;
+      const at=Number(result.metrics?.finishedAt)||Date.now(),content=root.BiliRangeMeasurements.identity(state,request);
+      const type=root.BiliRange.headers(result.response.headers)['content-type']||'';
+      const item={at,epoch:Number(context.epoch)||0,content,averageMbps:average,
+        p90SegmentMbps:root.BiliRangeMeasurements.quantile(rates,0.9),maxSegmentMbps:Math.max(...rates),
+        segments:segments.length,durationSeconds:duration,type:/^video\//i.test(type)?'video':/^audio\//i.test(type)?'audio':'unknown'};
+      state.mediaInfos=(Array.isArray(state.mediaInfos)?state.mediaInfos:[]).filter(v=>v.content!==content&&at-v.at<15*60*1000).slice(-3);
+      state.mediaInfos.push(item);
+    }catch{} // Metadata observation must never cause a valid media response to fall back.
+  }
+  function report(state,at=Date.now()){
+    const infos=(Array.isArray(state.mediaInfos)?state.mediaInfos:[]).filter(v=>v&&v.epoch===(Number(state.epoch)||0)&&at-v.at<15*60*1000&&
+      /^[0-9a-f]{8}$/.test(v.content||'')&&['video','audio','unknown'].includes(v.type)&&
+      [v.averageMbps,v.p90SegmentMbps,v.maxSegmentMbps,v.durationSeconds].every(n=>Number.isFinite(n)&&n>0)).slice(-4);
+    if(!infos.length)return '码率需求：未知；合格既有响应尚未包含完整SIDX。小范围初始化通常放行，不额外取索引。';
+    const speed=[1,1.25,1.5,2].includes(Number(state.playbackRate))?Number(state.playbackRate):1.5;
+    return [`SIDX已见表示；诊断假设倍速 ${speed}（没有读取或改变 App 实际倍速）：`,
+      ...infos.map(v=>`${v.content} / ${v.type}: 均值 ${v.averageMbps.toFixed(2)} Mbps，段p90 ${v.p90SegmentMbps.toFixed(2)} Mbps，均值×倍速 ${(v.averageMbps*speed).toFixed(2)} Mbps，索引段 ${v.segments}`),
+      '仅已见表示的索引估计；当前表示未知，不含其他音视频表示、传输开销或缓冲余量，不能保证不卡顿。'].join('\n');
+  }
+  root.BiliRangeMedia={observe,report};
+})(globalThis);
+
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.6-experimental';
+  const VERSION = '0.1.7-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -235,6 +275,7 @@
       '\n来源分类：' + JSON.stringify(d.sources || {}) + '\n最近传输：' + JSON.stringify(d.last || {}) +
       '\n并发记录：' + JSON.stringify(d.modes || {}) + '\n提示：不同视频的记录不能直接作为提速倍数。' +
       (root.BiliRangeMeasurements?'\n\n'+root.BiliRangeMeasurements.report(state):'')+
+      (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
       '\n最近网络重置：'+JSON.stringify(state.lastNetworkReset||{});
   }
   root.BiliRangeDiagnostics = { VERSION, shape, record, report, allowedReasons:Object.keys(names) };

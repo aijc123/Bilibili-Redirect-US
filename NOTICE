@@ -5,10 +5,13 @@ Official v0.2.24 Release files are vendored without modifying request.bundle.js.
 Modifications by aijc123, 2026-10-13: CDN argument options, Loon template,
 custom subscription generation, configuration defaults, documentation and tests.
 
-The experimental range downloader includes the unmodified range-core.js from
+The experimental range downloader includes the unmodified range-core.js and
+sidx.js from
 MrTangLuyao/Bilibili-thread-ripper, commit 0302b345cdfe367ac599b52dc6874e3f7967e220.
 Copyright (c) 2026 Bilibili-thread-ripper contributors. Licensed under MIT;
 the full license is in vendor/btr-0302b345/LICENSE and embedded in range.bundle.js.
 Loon-specific transport, policy and diagnostics are separate Apache-2.0 code.
+Lab work by aijc123 includes bounded admission, balanced existing-traffic trials,
+local transfer statistics, DNS diagnostics and existing-response SIDX observation.
 The design also references nishuodedui1145-del/PiliPlus and MyTVB-Speed-Boost;
 their source is not copied. See RANGE-EXPERIMENT.md for details and limits.

@@ -71,11 +71,12 @@
     const safeHeaders = { 'Accept-Encoding': 'identity', [INTERNAL]: '1' };
     for (const name of ['user-agent', 'referer', 'accept']) if (h[name]) safeHeaders[name] = h[name];
     const timeout = Math.max(500, Math.min(5000, Number(options.timeout) || 2500));
+    const requestedALPN=options.alpn==='h2'?'h2':'h1';
     let results;
     try {
       // Wait for every callback even on failure: Loon has no documented cancellation API.
       const pending = parts.map(part => Promise.resolve().then(() => fetchRange({ url,
-        headers: { ...safeHeaders, Range: `bytes=${part.start}-${part.end}` }, timeout, part }))
+        headers: { ...safeHeaders, Range: `bytes=${part.start}-${part.end}` }, timeout, part,alpn:requestedALPN }))
         .then(result => ({ ok: true, result }), error => ({ ok: false, error })));
       const settled = await Promise.all(pending);
       const failed = settled.find(r => !r.ok);
@@ -106,7 +107,7 @@
       if (etag) responseHeaders.ETag = etag;
       if (modified) responseHeaders['Last-Modified'] = modified;
       return { kind: 'response', response: { status: 206, headers: responseHeaders, body },
-        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length,configuredConnections:count,bps,
+        metrics: { host: target, bytes: range.length, elapsedMs: elapsed, connections: parts.length,configuredConnections:count,bps,requestedALPN,
           redirects: results.reduce((n, r) => n + (r.redirects || 0), 0),startedAt:at,finishedAt,
           minPieceMs:pieceTimes.length?Math.min(...pieceTimes):0,maxPieceMs:pieceTimes.length?Math.max(...pieceTimes):0 } };
     } catch (error) {
@@ -119,7 +120,7 @@
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, DEFAULT_HOSTS, INTERNAL };

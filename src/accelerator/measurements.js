@@ -35,6 +35,7 @@
       ok:result.kind==='response',reason:result.kind==='response'?'ok':
         (root.BiliRangeDiagnostics?.allowedReasons?.includes(result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'other-failure'),
       bytes:result.kind==='response'?Number(r.bytes)||0:0,elapsedMs:Math.max(1,Number(r.elapsedMs)||1),
+      requestedALPN:r.requestedALPN==='h2'?'h2':'h1',
       mode:Number(r.connections)||Number(context.connections)||0,requestedMode:Number(r.configuredConnections)||Number(context.connections)||0,host:String(r.host||''),
       epoch:Number(context.epoch)||0,content:identity(state,request),bucket:rangeBucket(range.length),rangeBytes:range.length,
       inflight:Number(context.inflight)||0,redirects:Number(r.redirects)||0,
@@ -82,9 +83,9 @@
     const elapsed=recent.length?Math.max(1000,Math.max(...recent.map(s=>s.at))-Math.min(...recent.map(s=>s.from))):0;
     const occupied=unionMs(intervals);
     const groups={};
-    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.mode].join('|');(groups[key] ||= []).push(s);}
+    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.requestedALPN==='h2'?'h2':'h1',s.mode].join('|');(groups[key] ||= []).push(s);}
     const comparisons={};
-    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight].join('|');((comparisons[key] ||= {})[s.mode] ||= []).push(s);}
+    for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.requestedALPN==='h2'?'h2':'h1'].join('|');((comparisons[key] ||= {})[s.mode] ||= []).push(s);}
     const contrasts=[];
     for(const [key,modes] of Object.entries(comparisons)) {
       const keys=Object.keys(modes).map(Number).sort((a,b)=>a-b);
@@ -105,7 +106,8 @@
     const a=analyze(state,at),w=a.window,fmt=n=>n===null?'未知':Number(n).toFixed(2);
     const lines=[`客观采样：保留 ${a.samples} 条 / 最近30秒 ${w.n} 条`,
       `窗口交付率 ${fmt(w.deliveryMbps)} Mbps；尝试活跃区间交付率 ${fmt(w.activeMbps)} Mbps；完成尝试重叠峰值 ${w.peakCompletedOverlap}`,
-      '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 实际并发',
+      '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 请求ALPN / 实际并发',
+      'ALPN表示请求偏好；API未报告实际协商协议，也不提供实际TCP连接数。',
       '下列为每请求分布，含连接/重定向/返回等待，API不提供真实TTFB或播放器卡顿计数：'];
     for(const [key,v] of Object.entries(a.groups).slice(-12))lines.push(`${key}: n=${v.n}, 错误=${(v.failureRate*100).toFixed(1)}%, p50=${fmt(v.p50Mbps)} Mbps, p10=${fmt(v.p10Mbps)} Mbps, p90=${fmt(v.p90Ms)} ms, ${v.noise}`);
     for(const c of a.contrasts)lines.push(`观察对照 ${c.baseline}→${c.candidate}路: 中位比=${c.medianRatio.toFixed(2)}, n=${c.baselineN}/${c.candidateN}, ${c.adequate?'样本达到最低门槛':'样本不足'}；不是因果倍数`);

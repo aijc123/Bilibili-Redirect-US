@@ -23,6 +23,7 @@
   const done = result => { if (!finished) { finished = true; $done(result); } };
   const fetchRange = options => globalThis.BiliRangeHTTP.makeFetch($httpClient)(options);
   const options = { enabled: arg.Enabled !== false, auto: arg.AutoCDN !== false,
+    alpn:arg.HTTPProtocol==='h2'?'h2':'h1',
     connections: [1,2,4,6,8,16,32].includes(Number(arg.Connections)) ? Number(arg.Connections) : 4, maxBytes: Math.min(8,Number(arg.MaxMiB) || 4) * 1024 * 1024,
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
   const plan=core.eligible($request,options);
@@ -59,6 +60,9 @@
       state.measurements=latest.measurements;
       globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight,trial:trialPlan?.trial});
     }
+    state.mediaInfos=latest.mediaInfos;
+    state.playbackRate=[1,1.25,1.5,2].includes(Number(arg.PlaybackRate))?Number(arg.PlaybackRate):1.5;
+    if(globalThis.BiliRangeMedia)globalThis.BiliRangeMedia.observe(state,$request,result,{epoch});
     state.lastNetworkReset=latest.lastNetworkReset;
     state.trials=latest.trials;
     state.epoch = latest.epoch || 0;

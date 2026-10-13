@@ -84,3 +84,14 @@ test('candidate bundle uses trusted redirect transport end to end',async()=>{
  const d=JSON.parse(stored).diagnostics;assert.equal(d.last.redirects,4);assert.equal(d.accelerated,1);
  assert.ok(!stored.includes('upsig'));assert.ok(!stored.includes('private'));
 });
+test('requested HTTP2 preference survives redirects without weakening TLS, cookies or redirect rules',async()=>{
+ const seen=[];const fetch=api.makeFetch({get(o,cb){seen.push(o);cb(null,seen.length===1?{status:302,headers:{Location:'https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s'}}:{status:206,headers:{}},new Uint8Array(1));}});
+ await fetch({...options,alpn:'h2'});assert.equal(seen.length,2);
+ assert.ok(seen.every(o=>o.alpn==='h2'&&o.insecure===false&&o['auto-cookie']===false&&o['auto-redirect']===false));
+});
+test('unknown protocol preference falls back to documented HTTP1 and metrics do not claim negotiation',async()=>{
+ let alpn;
+ const r=await ctx.BiliRange.accelerate({request:{method:'GET',url,headers:{Range:'bytes=0-262143'}},options:{alpn:'h3'},
+  fetchRange:async o=>{alpn=o.alpn;return {status:206,headers:{'Content-Range':`bytes ${o.part.start}-${o.part.end}/1000000`},body:new Uint8Array(o.part.end-o.part.start+1)};}});
+ assert.equal(r.kind,'response');assert.equal(alpn,'h1');assert.equal(r.metrics.requestedALPN,'h1');assert.equal(r.metrics.negotiatedProtocol,undefined);
+});

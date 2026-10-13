@@ -22,7 +22,7 @@
         if (remaining < 100) throw new Error('transport');
         const result = await new Promise((resolve, reject) => {
           client.get({ url, headers: options.headers, timeout: remaining,
-            'binary-mode': true, 'auto-redirect': false, 'auto-cookie': false, insecure: false, alpn: 'h1' },
+            'binary-mode': true, 'auto-redirect': false, 'auto-cookie': false, insecure: false, alpn: options.alpn==='h2'?'h2':'h1' },
           (error, response, data) => error || !response ? reject(new Error('transport')) :
             resolve({ status: Number(response.status), headers: response.headers, body: data }));
         });
