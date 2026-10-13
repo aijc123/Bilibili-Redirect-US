@@ -1,0 +1,14 @@
+{
+  "version": "0.1.15-experimental",
+  "warmSamples": 8,
+  "cleanBlocks": 5,
+  "maxProbeRequests": 20,
+  "sampleTTL": 600000,
+  "warmTTL": 120000,
+  "blockMaxMs": 60000,
+  "probeGapMs": 1500,
+  "pauseMs": 180000,
+  "gainMargin": 1.15,
+  "plateauMargin": 1.10,
+  "maxTailRegression": 1.05
+}

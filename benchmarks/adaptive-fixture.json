@@ -1,0 +1,513 @@
+{
+  "scope": "Real loopback HTTP candidate evaluation only. NOT Bilibili, iPhone or playback evidence.",
+  "generatedAt": "2026-10-13T18:29:30.359Z",
+  "version": "0.1.15-experimental",
+  "bytes": 1048576,
+  "artifactSHA256": "ca532a6e1e9aea3c68378f0217c26d4c45a933679730244f80569eeb6a886b67",
+  "environment": {
+    "node": "v24.12.0",
+    "platform": "win32"
+  },
+  "parameters": {
+    "tickMs": 16,
+    "perJobBytesPerTick": 16384,
+    "initialDelayMs": 120,
+    "sharedLinkBytesPerTick": 65536
+  },
+  "modes": [
+    {
+      "profile": "single-job-limit",
+      "chosen": 8,
+      "reason": "learned",
+      "rows": [
+        {
+          "request": 1,
+          "bytes": 1048576,
+          "elapsedMs": 270,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 2,
+          "bytes": 1048576,
+          "elapsedMs": 325,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 3,
+          "bytes": 1048576,
+          "elapsedMs": 328,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 4,
+          "bytes": 1048576,
+          "elapsedMs": 327,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 5,
+          "bytes": 1048576,
+          "elapsedMs": 358,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 6,
+          "bytes": 1048576,
+          "elapsedMs": 340,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 7,
+          "bytes": 1048576,
+          "elapsedMs": 290,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 8,
+          "bytes": 1048576,
+          "elapsedMs": 328,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 9,
+          "bytes": 1048576,
+          "elapsedMs": 329,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 10,
+          "bytes": 1048576,
+          "elapsedMs": 605,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 11,
+          "bytes": 1048576,
+          "elapsedMs": 567,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 12,
+          "bytes": 1048576,
+          "elapsedMs": 339,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 13,
+          "bytes": 1048576,
+          "elapsedMs": 340,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 14,
+          "bytes": 1048576,
+          "elapsedMs": 576,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 15,
+          "bytes": 1048576,
+          "elapsedMs": 575,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 16,
+          "bytes": 1048576,
+          "elapsedMs": 358,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 17,
+          "bytes": 1048576,
+          "elapsedMs": 552,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 18,
+          "bytes": 1048576,
+          "elapsedMs": 396,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 19,
+          "bytes": 1048576,
+          "elapsedMs": 340,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 20,
+          "bytes": 1048576,
+          "elapsedMs": 547,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 21,
+          "bytes": 1048576,
+          "elapsedMs": 385,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 22,
+          "bytes": 1048576,
+          "elapsedMs": 571,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 23,
+          "bytes": 1048576,
+          "elapsedMs": 586,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 24,
+          "bytes": 1048576,
+          "elapsedMs": 349,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 25,
+          "bytes": 1048576,
+          "elapsedMs": 584,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 26,
+          "bytes": 1048576,
+          "elapsedMs": 379,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 27,
+          "bytes": 1048576,
+          "elapsedMs": 364,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 28,
+          "bytes": 1048576,
+          "elapsedMs": 507,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 29,
+          "bytes": 1048576,
+          "elapsedMs": 338,
+          "actualJobs": 8,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "request": 30,
+          "bytes": 1048576,
+          "elapsedMs": 363,
+          "actualJobs": 8,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "profile": "shared-link-limit",
+      "chosen": 4,
+      "reason": "learned",
+      "rows": [
+        {
+          "request": 1,
+          "bytes": 1048576,
+          "elapsedMs": 585,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 2,
+          "bytes": 1048576,
+          "elapsedMs": 594,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 3,
+          "bytes": 1048576,
+          "elapsedMs": 536,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 4,
+          "bytes": 1048576,
+          "elapsedMs": 620,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 5,
+          "bytes": 1048576,
+          "elapsedMs": 586,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 6,
+          "bytes": 1048576,
+          "elapsedMs": 611,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 7,
+          "bytes": 1048576,
+          "elapsedMs": 545,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 8,
+          "bytes": 1048576,
+          "elapsedMs": 528,
+          "actualJobs": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "request": 9,
+          "bytes": 1048576,
+          "elapsedMs": 560,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 10,
+          "bytes": 1048576,
+          "elapsedMs": 557,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 11,
+          "bytes": 1048576,
+          "elapsedMs": 576,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 12,
+          "bytes": 1048576,
+          "elapsedMs": 496,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 13,
+          "bytes": 1048576,
+          "elapsedMs": 584,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 14,
+          "bytes": 1048576,
+          "elapsedMs": 549,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 15,
+          "bytes": 1048576,
+          "elapsedMs": 595,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 16,
+          "bytes": 1048576,
+          "elapsedMs": 547,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 17,
+          "bytes": 1048576,
+          "elapsedMs": 568,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 18,
+          "bytes": 1048576,
+          "elapsedMs": 604,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 19,
+          "bytes": 1048576,
+          "elapsedMs": 484,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 20,
+          "bytes": 1048576,
+          "elapsedMs": 568,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 21,
+          "bytes": 1048576,
+          "elapsedMs": 566,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 22,
+          "bytes": 1048576,
+          "elapsedMs": 583,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 23,
+          "bytes": 1048576,
+          "elapsedMs": 535,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 24,
+          "bytes": 1048576,
+          "elapsedMs": 535,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 25,
+          "bytes": 1048576,
+          "elapsedMs": 591,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 26,
+          "bytes": 1048576,
+          "elapsedMs": 557,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 27,
+          "bytes": 1048576,
+          "elapsedMs": 507,
+          "actualJobs": 4,
+          "reason": "compare",
+          "trial": "A"
+        },
+        {
+          "request": 28,
+          "bytes": 1048576,
+          "elapsedMs": 583,
+          "actualJobs": 8,
+          "reason": "compare",
+          "trial": "B"
+        },
+        {
+          "request": 29,
+          "bytes": 1048576,
+          "elapsedMs": 508,
+          "actualJobs": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "request": 30,
+          "bytes": 1048576,
+          "elapsedMs": 577,
+          "actualJobs": 4,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    }
+  ]
+}

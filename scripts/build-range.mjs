@@ -1,5 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {resolve} from 'node:path';
 const vendorPath = 'vendor/btr-0302b345/';
 const btrBytes = readFileSync(vendorPath + 'range-core.js');
 const provenance = JSON.parse(readFileSync(vendorPath + 'provenance.json','utf8'));
@@ -25,13 +27,8 @@ if(!Array.isArray(inventory.hosts)||inventory.hosts.length>16||inventory.hosts.s
 const preferred='upos-sz-mirror08c.bilivideo.com';
 if(!inventory.groups||['baseline','mainland','overseas'].some(key=>!Array.isArray(inventory.groups[key])||!inventory.groups[key].length||inventory.groups[key].some(h=>!inventory.hosts.includes(h))))throw new Error('Invalid CDN groups');
 const candidateOptions=[preferred,...inventory.hosts.filter(h=>h!==preferred)].map(h=>JSON.stringify(h)).join(',');
-const out='dist/lab',version=/const VERSION = '([^']+)'/.exec(diagnostics)[1];
-const base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v'+version+'/'+out+'/';
-mkdirSync(out,{recursive:true});
-const isolate=text=>text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.lab.v1');
+const version=/const VERSION = '([^']+)'/.exec(diagnostics)[1];
 const profileFlag=profile=>'globalThis.BiliRangeProfile='+JSON.stringify(profile)+';';
-const modules=manifest.download.map(readModule),diagnosticModules=manifest.diagnostics.map(readModule),networkModules=manifest.network.map(readModule);
-const profiles=manifest.profiles;
 const advancedArguments=[
  'Connections = select,4,6,8,16,32,2,1,type=number,tag=并发上限（实际受块大小约束）',
  'MinChunkKiB = select,128,64,32,type=number,tag=最小分片 KiB',
@@ -47,11 +44,17 @@ const advancedArguments=[
  'Debug = switch,false,tag=诊断日志'];
 const requestPattern='^https?:\\/\\/(?:[a-z0-9-]+\\.bilivideo\\.com|[a-z0-9-]+\\.mcdn\\.bilivideo\\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\\.akamaized\\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\\/(?:upgcxcode|v1\\/resource\\/upgcxcode)\\/';
 const argumentsFor=keys=>'argument=['+keys.map(k=>'{'+k+'}').join(',')+']';
-for(const p of profiles){
+export function buildProfiles({profiles=manifest.profiles,out='dist/lab',releaseVersion=version,
+ namespace='aijc123.BiliRange.lab.v1',read=readModule,extra=[]}={}){
+ const version=releaseVersion,base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v'+version+'/'+out+'/';
+ mkdirSync(out,{recursive:true});
+ const isolate=text=>text.replaceAll('aijc123.BiliRange.v1',namespace);
+ const modules=[...manifest.download.map(read),...extra],diagnosticModules=[...manifest.diagnostics.map(read),...extra],networkModules=manifest.network.map(read);
+ for(const p of profiles){
  const automatic=p.mode==='automatic',flag=profileFlag(p.mode),range='range'+p.suffix+'.bundle.js',diagnose='diagnose'+p.suffix+'.bundle.js',network='network-reset'+p.suffix+'.bundle.js';
- writeFileSync(out+'/'+range,isolate([...modules,flag,readModule(manifest.entries.download)].join('\n')));
- writeFileSync(out+'/'+diagnose,isolate([...diagnosticModules,flag,readModule(manifest.entries.diagnostics)].join('\n')));
- writeFileSync(out+'/'+network,isolate([...networkModules,flag,readModule(manifest.entries.network)].join('\n')));
+ writeFileSync(out+'/'+range,isolate([...modules,flag,read(manifest.entries.download)].join('\n')));
+ writeFileSync(out+'/'+diagnose,isolate([...diagnosticModules,flag,read(manifest.entries.diagnostics)].join('\n')));
+ writeFileSync(out+'/'+network,isolate([...networkModules,flag,read(manifest.entries.network)].join('\n')));
  const requestKeys=automatic?['Enabled']:['Enabled',...advancedArguments.map(line=>line.split(' = ')[0])];
  const networkKeys=automatic?['Enabled']:['Enabled','WarmDNS','PreferredCDN','CDNGroup'];
  const lines=['#!name = '+p.title,
@@ -67,6 +70,13 @@ for(const p of profiles){
   'network-changed script-path='+base+network+', timeout=20, tag=Bili Range 网络变化, '+argumentsFor(networkKeys),
   '','[MITM]','hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net',''];
  writeFileSync(out+'/'+p.plugin,lines.join('\n'));
+ }
+ // The automatic profile exposes full diagnosis without exposing developer options.
+ if(!profiles.some(p=>p.suffix==='-advanced'))writeFileSync(out+'/diagnose-advanced.bundle.js',isolate([...diagnosticModules,profileFlag('advanced'),read(manifest.entries.diagnostics)].join('\n')));
+ writeFileSync(out+'/dns-diagnose.bundle.js',read(manifest.entries.dns));
 }
-writeFileSync(out+'/dns-diagnose.bundle.js',readModule(manifest.entries.dns));
-console.log('Built one-switch automatic subscription and separate comparison tool; frozen releases unchanged.');
+export {readModule};
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
+ buildProfiles();
+ console.log('Built one-switch automatic subscription and separate comparison tool; frozen releases unchanged.');
+}

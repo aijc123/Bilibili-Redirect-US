@@ -17,6 +17,10 @@ The 0.1.14 automatic profile adds one-switch operation, conservative size/load/e
 scheduling, bounded recent events and marked request-version summaries. BTR's regional
 host facts and successful-node preference inform the separately implemented Loon policy;
 its browser streaming/progress/buffer controller is not claimed as a Loon capability.
+The isolated 0.1.15 candidate adds completion-only gain/tail evaluation,
+bounded adjacent-rung trials and regression recovery, reusing the existing local
+balanced comparator. BTR's trial/backoff/rest principles inform this separate
+Apache-2.0 Loon implementation; its player-only signals are not fabricated.
 The design also references nishuodedui1145-del/PiliPlus and MyTVB-Speed-Boost;
 their source is not copied. See RANGE-EXPERIMENT.md for details and limits.
 

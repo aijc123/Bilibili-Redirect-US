@@ -1,0 +1,23 @@
+#!name = BiliBili Range 自动调优候选 · aijc123
+#!desc = 自动选择节点与有限 Range 并发；实验功能，效果待真机验证。只启用一份 B 站 CDN/Range 插件。
+#!author = aijc123
+#!homepage = https://github.com/aijc123/Bilibili-Redirect-US
+#!version = 0.1.15-experimental
+#!loon_version = 3.5.1
+#!system = iOS,iPadOS
+
+[Argument]
+Enabled = switch,true,tag=启用加速
+
+[General]
+force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:80, upos-*-mirrorakam.akamaized.net:80
+
+[Script]
+http-request ^https?:\/\/(?:[a-z0-9-]+\.bilivideo\.com|[a-z0-9-]+\.mcdn\.bilivideo\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\/(?:upgcxcode|v1\/resource\/upgcxcode)\/ script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.15-experimental/dist/candidate/range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled}]
+generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.15-experimental/dist/candidate/diagnose.bundle.js, tag=Bili Range 诊断
+generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.15-experimental/dist/candidate/diagnose-advanced.bundle.js, tag=Bili Range 详细诊断
+generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.15-experimental/dist/candidate/dns-diagnose.bundle.js, timeout=20, tag=Bili DNS 诊断
+network-changed script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.15-experimental/dist/candidate/network-reset.bundle.js, timeout=20, tag=Bili Range 网络变化, argument=[{Enabled}]
+
+[MITM]
+hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net

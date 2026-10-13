@@ -27,3 +27,5 @@ GitHub Actions的[data/cdn-health.json](../data/cdn-health.json)只做Runner DNS
 ## 可复现的图
 
 README新增[并发流程图及本机受控HTTP对比图](../README.md#并发能带来多少速度收益)。图的JSON、条件、原始轮次与绘图脚本公开；这是合成回环模型，不填入上表作为手机速度证据。[真机测试方法、空白CSV与复现步骤](BENCHMARK.md)另行说明。
+
+自动调优候选另外在同一份生成脚本上执行60次真实回环HTTP下载，每次1 MiB、逐字节一致：两个配额模型分别观察到选8和4。保留[原始轮次及产物摘要](../benchmarks/adaptive-fixture.json)，只验证模型中的决策和传输；不改变上面的手机证据范围，不宣称4K或倍速无卡顿。[候选算法及限制](ADAPTIVE.md)
