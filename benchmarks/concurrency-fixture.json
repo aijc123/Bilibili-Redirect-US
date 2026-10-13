@@ -1,11 +1,17 @@
 {
   "scope": "Synthetic loopback fixture only. Not Loon, ISP, overseas CDN, or a predicted phone speedup.",
+  "generatedAt": "2026-10-13T17:08:16.064Z",
+  "environment": {
+    "node": "v24.12.0",
+    "platform": "win32"
+  },
   "bytes": 4194304,
   "parameters": {
     "tickMs": 16,
     "perJobBytesPerTick": 16384,
     "initialDelayMs": 120,
-    "sharedLinkBytesPerTick": 65536
+    "sharedLinkBytesPerTick": 65536,
+    "minChunkKiB": 128
   },
   "purpose": "Verify real 8/16/32 HTTP jobs, byte equality, and a concurrency plateau when a shared bottleneck is present.",
   "measurements": [
@@ -15,8 +21,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6746,
-      "Mbps": 4.976187453655642
+      "elapsedMs": 7206,
+      "Mbps": 4.656457396613933
     },
     {
       "profile": "single-job-limit",
@@ -24,8 +30,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3310,
-      "Mbps": 10.143419588875455
+      "elapsedMs": 3608,
+      "Mbps": 9.300008869179601
     },
     {
       "profile": "single-job-limit",
@@ -33,8 +39,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1886,
-      "Mbps": 17.81020806794055
+      "elapsedMs": 1960,
+      "Mbps": 17.11960816326531
     },
     {
       "profile": "single-job-limit",
@@ -42,8 +48,8 @@
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
-      "elapsedMs": 832,
-      "Mbps": 40.37837785800241
+      "elapsedMs": 1008,
+      "Mbps": 33.28812698412698
     },
     {
       "profile": "single-job-limit",
@@ -51,44 +57,44 @@
       "configured": 16,
       "effective": 16,
       "peakHTTPJobs": 16,
-      "elapsedMs": 580,
+      "elapsedMs": 620,
+      "Mbps": 54.120051612903225
+    },
+    {
+      "profile": "single-job-limit",
+      "round": 1,
+      "configured": 32,
+      "effective": 32,
+      "peakHTTPJobs": 32,
+      "elapsedMs": 373,
+      "Mbps": 89.95826273458445
+    },
+    {
+      "profile": "single-job-limit",
+      "round": 2,
+      "configured": 32,
+      "effective": 32,
+      "peakHTTPJobs": 32,
+      "elapsedMs": 356,
+      "Mbps": 94.2540224719101
+    },
+    {
+      "profile": "single-job-limit",
+      "round": 2,
+      "configured": 16,
+      "effective": 16,
+      "peakHTTPJobs": 16,
+      "elapsedMs": 578,
       "Mbps": 58.05265051903115
     },
     {
       "profile": "single-job-limit",
-      "round": 1,
-      "configured": 32,
-      "effective": 32,
-      "peakHTTPJobs": 32,
-      "elapsedMs": 359,
-      "Mbps": 93.72746368715083
-    },
-    {
-      "profile": "single-job-limit",
-      "round": 2,
-      "configured": 32,
-      "effective": 32,
-      "peakHTTPJobs": 32,
-      "elapsedMs": 313,
-      "Mbps": 108.24010322580645
-    },
-    {
-      "profile": "single-job-limit",
-      "round": 2,
-      "configured": 16,
-      "effective": 16,
-      "peakHTTPJobs": 16,
-      "elapsedMs": 584,
-      "Mbps": 57.554771869639794
-    },
-    {
-      "profile": "single-job-limit",
       "round": 2,
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
-      "elapsedMs": 940,
-      "Mbps": 35.77231556503198
+      "elapsedMs": 1014,
+      "Mbps": 33.091155818540436
     },
     {
       "profile": "single-job-limit",
@@ -96,8 +102,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1758,
-      "Mbps": 19.108446469248292
+      "elapsedMs": 1914,
+      "Mbps": 17.531051201671893
     },
     {
       "profile": "single-job-limit",
@@ -105,8 +111,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3406,
-      "Mbps": 9.857353701527614
+      "elapsedMs": 3571,
+      "Mbps": 9.396368524222908
     },
     {
       "profile": "single-job-limit",
@@ -114,8 +120,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6916,
-      "Mbps": 4.8524124367317425
+      "elapsedMs": 6932,
+      "Mbps": 4.8405124062319675
     },
     {
       "profile": "single-job-limit",
@@ -123,8 +129,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6632,
-      "Mbps": 5.060237068315488
+      "elapsedMs": 6745,
+      "Mbps": 4.974711934766494
     },
     {
       "profile": "single-job-limit",
@@ -132,8 +138,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3485,
-      "Mbps": 9.631008036739379
+      "elapsedMs": 3417,
+      "Mbps": 9.819851331577407
     },
     {
       "profile": "single-job-limit",
@@ -141,8 +147,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1853,
-      "Mbps": 18.127732036736898
+      "elapsedMs": 1669,
+      "Mbps": 20.10451288196525
     },
     {
       "profile": "single-job-limit",
@@ -150,8 +156,8 @@
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
-      "elapsedMs": 955,
-      "Mbps": 35.209267576075554
+      "elapsedMs": 981,
+      "Mbps": 34.20431396534149
     },
     {
       "profile": "single-job-limit",
@@ -159,8 +165,8 @@
       "configured": 16,
       "effective": 16,
       "peakHTTPJobs": 16,
-      "elapsedMs": 530,
-      "Mbps": 63.55006060606061
+      "elapsedMs": 613,
+      "Mbps": 54.738061990212074
     },
     {
       "profile": "single-job-limit",
@@ -168,8 +174,8 @@
       "configured": 32,
       "effective": 32,
       "peakHTTPJobs": 32,
-      "elapsedMs": 361,
-      "Mbps": 93.20675555555555
+      "elapsedMs": 423,
+      "Mbps": 79.32489834515366
     },
     {
       "profile": "shared-link-limit",
@@ -177,8 +183,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6596,
-      "Mbps": 5.0886308765544435
+      "elapsedMs": 6609,
+      "Mbps": 5.077081555454684
     },
     {
       "profile": "shared-link-limit",
@@ -186,8 +192,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3449,
-      "Mbps": 9.73438700319118
+      "elapsedMs": 3590,
+      "Mbps": 9.346638440111422
     },
     {
       "profile": "shared-link-limit",
@@ -195,8 +201,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1644,
-      "Mbps": 20.435098660170524
+      "elapsedMs": 1823,
+      "Mbps": 18.40616127262754
     },
     {
       "profile": "shared-link-limit",
@@ -204,17 +210,17 @@
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
+      "elapsedMs": 1674,
+      "Mbps": 20.044463560334528
+    },
+    {
+      "profile": "shared-link-limit",
+      "round": 1,
+      "configured": 16,
+      "effective": 16,
+      "peakHTTPJobs": 16,
       "elapsedMs": 1815,
-      "Mbps": 18.507684500827356
-    },
-    {
-      "profile": "shared-link-limit",
-      "round": 1,
-      "configured": 16,
-      "effective": 16,
-      "peakHTTPJobs": 16,
-      "elapsedMs": 1741,
-      "Mbps": 19.30634752589183
+      "Mbps": 18.48729035812672
     },
     {
       "profile": "shared-link-limit",
@@ -222,8 +228,8 @@
       "configured": 32,
       "effective": 32,
       "peakHTTPJobs": 32,
-      "elapsedMs": 1626,
-      "Mbps": 20.6615960591133
+      "elapsedMs": 1931,
+      "Mbps": 17.37671258415329
     },
     {
       "profile": "shared-link-limit",
@@ -231,8 +237,8 @@
       "configured": 32,
       "effective": 32,
       "peakHTTPJobs": 32,
-      "elapsedMs": 1667,
-      "Mbps": 20.152812012012014
+      "elapsedMs": 1702,
+      "Mbps": 19.71470740305523
     },
     {
       "profile": "shared-link-limit",
@@ -240,8 +246,8 @@
       "configured": 16,
       "effective": 16,
       "peakHTTPJobs": 16,
-      "elapsedMs": 1820,
-      "Mbps": 18.446636613523914
+      "elapsedMs": 1578,
+      "Mbps": 21.263898605830164
     },
     {
       "profile": "shared-link-limit",
@@ -249,8 +255,8 @@
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
-      "elapsedMs": 1613,
-      "Mbps": 20.84126211180124
+      "elapsedMs": 1844,
+      "Mbps": 18.196546637744035
     },
     {
       "profile": "shared-link-limit",
@@ -258,8 +264,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1840,
-      "Mbps": 18.25594776931447
+      "elapsedMs": 1602,
+      "Mbps": 20.945338327091136
     },
     {
       "profile": "shared-link-limit",
@@ -267,8 +273,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3324,
-      "Mbps": 10.100671884406983
+      "elapsedMs": 3199,
+      "Mbps": 10.4890378243201
     },
     {
       "profile": "shared-link-limit",
@@ -276,8 +282,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6667,
-      "Mbps": 5.034423405851463
+      "elapsedMs": 6542,
+      "Mbps": 5.129078569244879
     },
     {
       "profile": "shared-link-limit",
@@ -285,8 +291,8 @@
       "configured": 1,
       "effective": 1,
       "peakHTTPJobs": 1,
-      "elapsedMs": 6622,
-      "Mbps": 5.0678797764688115
+      "elapsedMs": 6460,
+      "Mbps": 5.194184520123839
     },
     {
       "profile": "shared-link-limit",
@@ -294,8 +300,8 @@
       "configured": 2,
       "effective": 2,
       "peakHTTPJobs": 2,
-      "elapsedMs": 3184,
-      "Mbps": 10.558348646947765
+      "elapsedMs": 3499,
+      "Mbps": 9.58972049156902
     },
     {
       "profile": "shared-link-limit",
@@ -303,8 +309,8 @@
       "configured": 4,
       "effective": 4,
       "peakHTTPJobs": 4,
-      "elapsedMs": 1818,
-      "Mbps": 18.47711013215859
+      "elapsedMs": 1794,
+      "Mbps": 18.703696767001116
     },
     {
       "profile": "shared-link-limit",
@@ -312,8 +318,8 @@
       "configured": 8,
       "effective": 8,
       "peakHTTPJobs": 8,
-      "elapsedMs": 1510,
-      "Mbps": 22.250949602122017
+      "elapsedMs": 1759,
+      "Mbps": 19.07585673678226
     },
     {
       "profile": "shared-link-limit",
@@ -321,8 +327,8 @@
       "configured": 16,
       "effective": 16,
       "peakHTTPJobs": 16,
-      "elapsedMs": 1861,
-      "Mbps": 18.04972135556751
+      "elapsedMs": 1782,
+      "Mbps": 18.829647586980922
     },
     {
       "profile": "shared-link-limit",
@@ -330,8 +336,8 @@
       "configured": 32,
       "effective": 32,
       "peakHTTPJobs": 32,
-      "elapsedMs": 1835,
-      "Mbps": 18.305745771958538
+      "elapsedMs": 1950,
+      "Mbps": 17.207401025641026
     }
   ]
 }

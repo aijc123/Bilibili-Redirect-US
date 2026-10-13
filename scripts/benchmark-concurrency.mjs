@@ -42,10 +42,12 @@ try{
    peak=0;const started=Date.now();
    const result=await core.accelerate({request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/fixture.m4s',headers:{Range:`bytes=0-${size-1}`}},options:{connections,maxBytes:size,timeout:5000,minChunkKiB},fetchRange});
    assert.equal(result.kind,'response');assert.deepEqual(Buffer.from(result.response.body),entity);
-   measurements.push({profile,round:round+1,configured:connections,effective:result.metrics.connections,peakHTTPJobs:peak,elapsedMs:Date.now()-started,Mbps:result.metrics.bps*8/1e6});
+   const elapsedMs=Date.now()-started;
+   measurements.push({profile,round:round+1,configured:connections,effective:result.metrics.connections,peakHTTPJobs:peak,elapsedMs,Mbps:size*8/elapsedMs/1000});
   }
  }
  const output={scope:'Synthetic loopback fixture only. Not Loon, ISP, overseas CDN, or a predicted phone speedup.',
+  generatedAt:new Date().toISOString(),environment:{node:process.version,platform:process.platform},
   bytes:size,parameters:{tickMs:16,perJobBytesPerTick:16384,initialDelayMs:120,sharedLinkBytesPerTick:65536,minChunkKiB},
   purpose:'Verify real 8/16/32 HTTP jobs, byte equality, and a concurrency plateau when a shared bottleneck is present.',measurements};
  mkdirSync('benchmarks',{recursive:true});writeFileSync(small?'benchmarks/small-chunk-fixture.json':'benchmarks/concurrency-fixture.json',JSON.stringify(output,null,2)+'\n');

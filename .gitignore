@@ -145,3 +145,6 @@ dist
 .wrangler
 /boxjs.settings.json
 gateway/.runtime/
+benchmarks/phone-private/
+.venv-plot/
+__pycache__/
