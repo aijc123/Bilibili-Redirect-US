@@ -137,7 +137,7 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.1-experimental'));
+ assert.ok(report.content.includes('0.1.2-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{
@@ -148,4 +148,14 @@ test('generated plugin observes MCDN but does not take it over',()=>{
  assert.ok(regex.test('https://d1--example.bilivideo.com/upgcxcode/video.m4s'));
  assert.ok(!regex.test('https://evil.example/upgcxcode/video.m4s'));
  assert.equal(core.parseURL('https://xy123.mcdn.bilivideo.cn:4483/upgcxcode/video.m4s'),null);
+});
+test('manual diagnosis logs and offers the exact summary for notification copy',()=>{
+ let notified,logged,completed;
+ const ctx={Uint8Array,Date,$argument:null,
+  console:{log:v=>{logged=v;}},$persistentStore:{read:()=>'{"diagnostics":{"accelerated":2,"passed":1}}'},
+  $notification:{post:(...args)=>{notified=args;}},$done:v=>{completed=v;}};
+ vm.runInNewContext(readFileSync('dist/range.bundle.js','utf8'),ctx);
+ assert.equal(notified[3].clipboard,completed.content);
+ assert.equal(logged,completed.content);
+ assert.ok(completed.content.includes('接管 2 次 / 放行 1 次'));
 });

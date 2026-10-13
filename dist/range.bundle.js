@@ -275,7 +275,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.1-experimental';
+  const VERSION = '0.1.2-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -340,7 +340,12 @@ SOFTWARE.
   if (typeof $request === 'undefined') {
     if (arg.Action === 'reset') { state.hosts = {}; state.epoch = epoch + 1; save(); $done({}); return; }
     const scores = Object.entries(state.hosts || {}).map(([h, v]) => `${h}: ${(Number(v.bps || 0) * 8 / 1e6).toFixed(1)} Mbps`);
-    $done({ title: 'Bili Range 实验版', content: diagnostics.report(state) + '\n' + scores.join('\n') }); return;
+    const summary = diagnostics.report(state) + '\n' + scores.join('\n');
+    console.log(summary);
+    if (typeof $notification !== 'undefined' && typeof $notification.post === 'function') {
+      try { $notification.post('Bili Range 诊断', '点此通知复制摘要，然后粘贴到聊天', summary, { clipboard: summary }); } catch {}
+    }
+    $done({ title: 'Bili Range 实验版', content: summary }); return;
   }
   let finished = false;
   const done = result => { if (!finished) { finished = true; $done(result); } };

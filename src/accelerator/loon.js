@@ -12,7 +12,12 @@
   if (typeof $request === 'undefined') {
     if (arg.Action === 'reset') { state.hosts = {}; state.epoch = epoch + 1; save(); $done({}); return; }
     const scores = Object.entries(state.hosts || {}).map(([h, v]) => `${h}: ${(Number(v.bps || 0) * 8 / 1e6).toFixed(1)} Mbps`);
-    $done({ title: 'Bili Range 实验版', content: diagnostics.report(state) + '\n' + scores.join('\n') }); return;
+    const summary = diagnostics.report(state) + '\n' + scores.join('\n');
+    console.log(summary);
+    if (typeof $notification !== 'undefined' && typeof $notification.post === 'function') {
+      try { $notification.post('Bili Range 诊断', '点此通知复制摘要，然后粘贴到聊天', summary, { clipboard: summary }); } catch {}
+    }
+    $done({ title: 'Bili Range 实验版', content: summary }); return;
   }
   let finished = false;
   const done = result => { if (!finished) { finished = true; $done(result); } };
