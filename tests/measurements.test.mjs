@@ -90,18 +90,18 @@ test('epoch, version, clock or counter resets cannot create an invalid manual in
 test('network-change entry always logs the applied epoch and preserves in-flight leases',()=>{
  let stored=JSON.stringify({epoch:2,hosts:{a:{bps:1}},leases:{pending:12345}}),logged,done;
  const ctx={Date,console:{log:s=>{logged=s;}},$persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:v=>{done=v;},$request:{}};
- vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),ctx);
+ vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),ctx);
  const state=JSON.parse(stored);assert.equal(state.epoch,3);assert.deepEqual(state.hosts,{});assert.equal(state.leases.pending,12345);
  assert.ok(logged.includes('网络epoch 2 → 3'));assert.equal(done.content,logged);
 });
 test('network-change write failure explicitly reports that reset did not complete',()=>{
- let logged,done;vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log:s=>{logged=s;}},
+ let logged,done;vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),{Date,console:{log:s=>{logged=s;}},
   $persistentStore:{read:()=>'{"epoch":2}',write:()=>false},$done:v=>{done=v;}});
  assert.ok(logged.includes('未完成'));assert.ok(!logged.includes('处理完成'));assert.equal(done.content,logged);
 });
 test('network-change warming is bounded to2 DNS queries and never downloads video or stores resolver details',async()=>{
  let stored='{}',active=0,peak=0,doneCount=0;const domains=[];
- const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+ const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),{Date,console:{log(){}},
   $argument:{Enabled:true,WarmDNS:true,PreferredCDN:'upos-sz-mirror08h.bilivideo.com'},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:v=>{doneCount++;resolve(v);},
   $httpClient:{get(){throw Error('Unexpected video GET');}},$dns:{query(o,cb){domains.push(o.domain);active++;peak=Math.max(peak,active);
@@ -112,7 +112,7 @@ test('network-change warming is bounded to2 DNS queries and never downloads vide
 });
 test('old warm callbacks cannot replace a newer network epoch reset',async()=>{
  let stored='{}';const callbacks=[];
- const result=new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+ const result=new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),{Date,console:{log(){}},
   $argument:{WarmDNS:true},$persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
   $dns:{query(o,cb){callbacks.push(cb);}}}));
  stored=JSON.stringify({...JSON.parse(stored),epoch:2,lastNetworkReset:{epoch:2,at:3000}});
@@ -122,7 +122,7 @@ test('old warm callbacks cannot replace a newer network epoch reset',async()=>{
 
 test('network warming follows the selected overseas group including a Hong Kong preferred host',async()=>{
  let stored='{}';const domains=[];
- await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},
+ await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),{Date,console:{log(){}},
   $argument:{WarmDNS:true,CDNGroup:'overseas',PreferredCDN:'cn-hk-eq-01-03.bilivideo.com'},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
   $httpClient:{get(){throw Error('No media probing');}},$dns:{query(o,cb){domains.push(o.domain);cb(null,{answers:[{type:'A',value:'private-ip'}]});}}}));
@@ -130,6 +130,6 @@ test('network warming follows the selected overseas group including a Hong Kong 
  assert.equal(JSON.parse(stored).lastNetworkReset.warm.success,4);assert.ok(!stored.includes('private-ip'));
 });
 test('network-change script handles a null JSON argument and keeps a successful synchronous reset',()=>{
- let done=0;vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log(){}},$argument:'null',
+ let done=0;vm.runInNewContext(readFileSync('dist/lab/network-reset-advanced.bundle.js','utf8'),{Date,console:{log(){}},$argument:'null',
   $persistentStore:{read:()=>'{}',write:()=>true},$done(){done++;}});assert.equal(done,1);
 });

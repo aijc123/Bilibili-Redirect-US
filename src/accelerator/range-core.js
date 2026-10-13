@@ -88,7 +88,8 @@
       const settled = await Promise.all(pending);
       const failed = settled.find(r => !r.ok);
       if (failed) throw Object.assign(new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport'),
-        ['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{});
+        {...(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{}),
+          ...(['bili-akamai','bili-mcdn','bili-other','external'].includes(failed.error?.redirectFamily)?{redirectFamily:failed.error.redirectFamily}:{})});
       results = settled.map(r => r.result);
       let total, etag, modified, type;
       for (let i = 0; i < results.length; i++) {
@@ -131,7 +132,7 @@
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}),...(error.redirectFamily?{redirectFamily:error.redirectFamily}:{}) } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, isTargetHost,DEFAULT_HOSTS, INTERNAL };

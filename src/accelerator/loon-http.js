@@ -13,7 +13,13 @@
     if(!parsed)return {reason:'malformed'};
     if(parsed[2].includes('@'))return {reason:'credentials'};
     const authority=/^([a-z0-9-]+\.bilivideo\.com)(?::(\d+))?$/i.exec(parsed[2]);
-    if(!authority)return {reason:'host'};
+    if(!authority){
+      const name=parsed[2].toLowerCase().replace(/:\d+$/,'');
+      const family=/^upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net$/.test(name)?'bili-akamai':
+        /^[a-z0-9-]+\.mcdn\.bilivideo\.cn$/.test(name)?'bili-mcdn':
+        /^(?:[a-z0-9-]+\.)+bilivideo\.com$/.test(name)?'bili-other':'external';
+      return {reason:'host',family};
+    }
     if(base[1].toLowerCase()==='https'&&parsed[1].toLowerCase()!=='https')return {reason:'downgrade'};
     if(authority[2]&&!['80','443'].includes(authority[2]))return {reason:'port'};
     if(parsed[3]!==base[3])return {reason:parsed[3].replace(/^\/v1\/resource/,'')===base[3]?'path-wrapper':'path'};
@@ -36,7 +42,7 @@
         if (![301, 302, 303, 307, 308].includes(result.status)) return { ...result, redirects, elapsedMs:Math.max(1,now()-started) };
         const location = root.BiliRange.headers(result.headers).location;
         const inspected=inspectRedirect(url,location),next=inspected.url;
-        if (!next) throw Object.assign(new Error('redirect-untrusted'),{redirectField:inspected.reason});
+        if (!next) throw Object.assign(new Error('redirect-untrusted'),{redirectField:inspected.reason,...(inspected.family?{redirectFamily:inspected.family}:{})});
         if (redirects >= 2 || next === url) throw new Error('redirect-limit');
         url = next; redirects++;
       }

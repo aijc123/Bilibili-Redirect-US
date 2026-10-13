@@ -1,5 +1,7 @@
 # aijc123 的 Loon CDN 定制订阅
 
+这是原固定CDN订阅的维护说明。日常使用请看[当前自动版](README.md)；[Range代码结构与构建](docs/ARCHITECTURE.md)另有独立入口。
+
 订阅：https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Redirect.plugin
 
 基于 Biliverse/Redirect 的 Apache-2.0 项目，保留完整 fork 历史和 LICENSE。仓库首页 README 为本定制版的中文说明，上游 README 可在 fork 历史中查看。此版本为非官方定制。

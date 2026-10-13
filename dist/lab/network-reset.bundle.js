@@ -253,7 +253,8 @@ SOFTWARE.
       const settled = await Promise.all(pending);
       const failed = settled.find(r => !r.ok);
       if (failed) throw Object.assign(new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport'),
-        ['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{});
+        {...(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{}),
+          ...(['bili-akamai','bili-mcdn','bili-other','external'].includes(failed.error?.redirectFamily)?{redirectFamily:failed.error.redirectFamily}:{})});
       results = settled.map(r => r.result);
       let total, etag, modified, type;
       for (let i = 0; i < results.length; i++) {
@@ -296,7 +297,7 @@ SOFTWARE.
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}),...(error.redirectFamily?{redirectFamily:error.redirectFamily}:{}) } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, isTargetHost,DEFAULT_HOSTS, INTERNAL };
@@ -317,6 +318,7 @@ SOFTWARE.
   root.BiliRangeCandidates={pool,groups};
 })(globalThis);
 
+globalThis.BiliRangeProfile="automatic";
 /* Observable, isolated network epoch reset. No media downloads or notifications. */
 (function () {
   'use strict';
@@ -335,6 +337,7 @@ SOFTWARE.
   let arg=typeof $argument==='object'&&$argument?$argument:{};
   if(typeof $argument==='string')try{arg=JSON.parse($argument);}catch{}
   if(!arg||typeof arg!=='object'||Array.isArray(arg))arg={};
+  if(globalThis.BiliRangeProfile==='automatic')arg={Enabled:arg.Enabled!==false,WarmDNS:true,PreferredCDN:'upos-sz-mirror08c.bilivideo.com',CDNGroup:'all'};
   if(saved===false||arg.Enabled===false||arg.WarmDNS!==true){finish(message);return;}
   if(typeof $dns==='undefined'||typeof $dns.query!=='function'){const skipped='DNS预热未执行：当前运行环境没有DNS API。';console.log(skipped);finish(message+'\n'+skipped);return;}
   const hosts=globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup).slice(0,4);

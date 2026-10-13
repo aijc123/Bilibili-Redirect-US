@@ -1,6 +1,6 @@
 # 候选更新与 GitHub Actions
 
-aijc123 的候选清单保存在 [data/cdn-candidates.json](data/cdn-candidates.json)，研发版菜单与定期探测读取同一清单。0.1.13提供15个选项：hwo1、08c、hw、ali、08h、bos、alib、cos、bd、14b、estgoss、cosov、aliov、香港01-01和01-03。`CDNGroup` 可选基础4个、BTR大陆8个、海外4个或全部15个，始终保留指定首选。手机依据真实传输优先复用最近成功节点，再在失败、过期或换网络后探索备用；不在初次播放逐个测速，也不因云端DNS/TLS排名改变首选。详见[节点使用规则](LAB-EXPERIMENT.md)。
+aijc123 的候选清单保存在 [data/cdn-candidates.json](data/cdn-candidates.json)，自动版、独立对照工具与定期探测读取同一清单。目前有15个候选：hwo1、08c、hw、ali、08h、bos、alib、cos、bd、14b、estgoss、cosov、aliov、香港01-01和01-03。0.1.14自动版使用全部候选，无需选择地区，初始08c、优先复用成功节点，再失败回退；仅对照工具保留地区与手动首选参数。不在初次播放逐个测速，也不因云端DNS/TLS排名改变手机选择。详见[自动策略](LAB-EXPERIMENT.md)。
 
 [CDN candidate health](https://github.com/aijc123/Bilibili-Redirect-US/actions/workflows/cdn-health.yml) 每天09:17 UTC定期运行，也可手动运行。它对公开主机做DNS查询与严格证书验证的HTTPS HEAD，最多两个主机并行，自动更新 [最新快照](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/data/cdn-health.json)。不需要B站登录，不下载视频，不上传Cookie、签名播放地址、DNS返回IP或原始错误文本，不改变播放默认节点。
 

@@ -2,9 +2,9 @@ name: Range lab validation
 on:
   push:
     branches: [main]
-    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', '.github/workflows/range-lab.yml']
+    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
   pull_request:
-    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', '.github/workflows/range-lab.yml']
+    paths: ['src/accelerator/**', 'src/gateway/**', 'gateway/**', 'scripts/build-gateway.mjs', 'scripts/build-range.mjs', 'scripts/check-range.mjs', 'scripts/cdn-health.mjs', 'data/cdn-candidates.json', 'tests/**', 'dist/lab/**', 'dist/gateway/**', 'vendor/btr-0302b345/**', 'vendor/loon-range-0.1.12/**', '.github/workflows/range-lab.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,11 +16,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Build dependency-free Loon lab bundle
-        run: node scripts/build-range.mjs
-      - name: Build optional private gateway rewrite bundle
-        run: node scripts/build-gateway.mjs
-      - name: Validate Range transport, budgets, statistics and original CDN options
-        run: node --test tests/range.test.mjs tests/loon-http.test.mjs tests/budget.test.mjs tests/measurements.test.mjs tests/trials.test.mjs tests/dns-diagnose.test.mjs tests/media-info.test.mjs tests/cdn-health.test.mjs tests/us-bundle.test.mjs tests/gateway.test.mjs tests/gateway-loon.test.mjs
-      - name: Verify committed lab files are reproducible
-        run: git diff --exit-code -- dist/lab dist/gateway
+      - name: Build, validate automatic policy and verify reproducible artifacts
+        run: node scripts/check-range.mjs --check-generated

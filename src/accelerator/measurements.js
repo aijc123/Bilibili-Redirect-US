@@ -45,6 +45,7 @@
     if(!root.BiliRange.isTargetHost(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
+    if(['bili-akamai','bili-mcdn','bili-other','external'].includes(r.redirectFamily))sample.redirectFamily=r.redirectFamily;
     const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
     m.samples.push(sample);m.samples=m.samples.slice(-MAX_SAMPLES);
   }

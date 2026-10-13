@@ -39,7 +39,7 @@ for(const [length,configured,effective] of [[MiB,32,8],[2*MiB,32,16],[4*MiB,32,3
   assert.ok(seen.every(p=>p.end-p.start+1>=128*1024));assert.deepEqual(result.response.body,source);
  });
 test('end-to-end shared storage admission permits four requests then releases all leases',async()=>{
- let stored='{}';const callbacks=[],completed=[],bundle=readFileSync('dist/lab/range.bundle.js','utf8');
+ let stored='{}';const callbacks=[],completed=[],bundle=readFileSync('dist/lab/range-advanced.bundle.js','utf8');
  const launch=()=>new Promise(resolve=>vm.runInNewContext(bundle,{Uint8Array,Date,console,$argument:{Connections:32,GlobalJobs:32,AutoCDN:false},
   $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
@@ -54,7 +54,7 @@ test('end-to-end shared storage admission permits four requests then releases al
 });
 test('failed persistent admission never starts uncoordinated media downloads',()=>{
  let called=0,done=0,log;
- vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console:{log:s=>{log=s;}},
+ vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,console:{log:s=>{log=s;}},
   $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},$argument:{},
   $persistentStore:{read:()=>'{}',write:()=>false},$httpClient:{get(){called++;}},$done(){done++;}});
  assert.equal(called,0);assert.equal(done,1);assert.ok(log.includes('写入失败'));
@@ -65,7 +65,7 @@ test('a local post-download exception releases the admission lease and finishes 
   $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$httpClient:{get(o,cb){callbacks.push({o,cb});}}};
  const completed=new Promise(resolve=>{context.$done=r=>{doneCount++;resolve(r);};});
- vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),context);
+ vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),context);
  context.BiliRangeMeasurements.record=()=>{throw Error('local processing');};
  await Promise.resolve();await Promise.resolve();
  for(const {o,cb} of callbacks){const r=ctx.BiliRange.parseRange(o.headers.Range);cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}
@@ -81,7 +81,7 @@ test('optional 32KiB floor enables 32 actual pieces for 1MiB, while default stil
 });
 test('full Loon adapter reserves and runs all32 small-piece HTTP jobs, then releases lease',async()=>{
  let stored='{}',calls=0;
- const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console,
+ const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,console,
   $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},
   $argument:{Connections:32,GlobalJobs:32,MinChunkKiB:32,AutoCDN:false},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,

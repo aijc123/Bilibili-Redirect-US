@@ -253,7 +253,8 @@ SOFTWARE.
       const settled = await Promise.all(pending);
       const failed = settled.find(r => !r.ok);
       if (failed) throw Object.assign(new Error(['redirect-untrusted', 'redirect-limit'].includes(failed.error?.message) ? failed.error.message : 'transport'),
-        ['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{});
+        {...(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(failed.error?.redirectField)?{redirectField:failed.error.redirectField}:{}),
+          ...(['bili-akamai','bili-mcdn','bili-other','external'].includes(failed.error?.redirectFamily)?{redirectFamily:failed.error.redirectFamily}:{})});
       results = settled.map(r => r.result);
       let total, etag, modified, type;
       for (let i = 0; i < results.length; i++) {
@@ -296,7 +297,7 @@ SOFTWARE.
       const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
-      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}) } };
+      return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}),...(error.redirectFamily?{redirectFamily:error.redirectFamily}:{}) } };
     }
   }
   root.BiliRange = { accelerate, eligible, headers, parseRange, parseURL, contentRange, split, chooseHost, isTargetHost,DEFAULT_HOSTS, INTERNAL };
@@ -349,6 +350,7 @@ SOFTWARE.
     if(!root.BiliRange.isTargetHost(sample.host))return;
     if(['total','etag','last-modified','content-type'].includes(r.integrityField))sample.integrityField=r.integrityField;
     if(['malformed','source','host','credentials','downgrade','port','path-wrapper','path'].includes(r.redirectField))sample.redirectField=r.redirectField;
+    if(['bili-akamai','bili-mcdn','bili-other','external'].includes(r.redirectFamily))sample.redirectFamily=r.redirectFamily;
     const trial=sanitizeTrial(context.trial);if(trial)sample.trial=trial;
     m.samples.push(sample);m.samples=m.samples.slice(-MAX_SAMPLES);
   }
@@ -583,7 +585,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.13-experimental';
+  const VERSION = '0.1.14-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -613,10 +615,13 @@ SOFTWARE.
       authority.startsWith('upos-') ? 'UPOS' : authority.startsWith('cn-hk-eq-') ? 'HK' : 'other';
     return { range, source };
   }
-  function record(d, request, result) {
+  function record(d, request, result,context={}) {
     d ||= {};
     d.accelerated ||= 0; d.passed ||= 0; d.reasons ||= {}; d.shapes ||= {}; d.sources ||= {};
     const s = shape(request);
+    if(['bili-akamai','bili-mcdn','bili-other','external'].includes(result.metrics?.redirectFamily)){
+      const families=d.redirectFamilies ||= {},family=result.metrics.redirectFamily;families[family]=(families[family]||0)+1;
+    }
     if(['total','etag','last-modified','content-type'].includes(result.metrics?.integrityField)){
       const fields=d.integrityFields ||= {},field=result.metrics.integrityField;fields[field]=(fields[field]||0)+1;
     }
@@ -631,7 +636,42 @@ SOFTWARE.
       const m = stats[mode] ||= { requests: 0, bytes: 0, elapsedMs: 0 };
       m.requests++; m.bytes += result.metrics.bytes; m.elapsedMs += result.metrics.elapsedMs;
     } else { d.passed++; d.reasons[result.reason] = (d.reasons[result.reason] || 0) + 1; }
+    const at=Date.now(),epoch=Number.isSafeInteger(context.epoch)?context.epoch:0,p=context.policy;
+    const reason=Object.prototype.hasOwnProperty.call(names,result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'other';
+    d.events=(Array.isArray(d.events)?d.events:[]).filter(e=>e&&Number.isFinite(e.at)&&e.at<=at&&at-e.at<15*60*1000&&
+      ['response','pass'].includes(e.kind)&&(Object.prototype.hasOwnProperty.call(names,e.reason)||/^status-\d{3}$/.test(e.reason||'')||['other','ok'].includes(e.reason)))
+      .map(e=>({at:e.at,epoch:Number.isSafeInteger(e.epoch)?e.epoch:0,kind:e.kind,reason:e.reason})).slice(-119);
+    d.events.push({at,epoch,kind:result.kind==='response'?'response':'pass',reason:result.kind==='response'?'ok':reason});
+    if(p&&['automatic','advanced'].includes(p.profile))d.writer={version:VERSION,at,epoch,profile:p.profile,
+      connections:[1,2,4,6,8,16,32].includes(p.options?.connections)?p.options.connections:0,
+      minChunkKiB:[32,64,128].includes(p.options?.minChunkKiB)?p.options.minChunkKiB:128,
+      reason:['baseline','load','network-errors','manual'].includes(p.reason)?p.reason:'baseline',
+      count:d.accelerated+d.passed};
     return d;
+  }
+  function summary(state,at=Date.now()){
+    const d=state.diagnostics||{},writer=d.writer,w=root.BiliRangeMeasurements?.analyze(state,at).window;
+    const age=time=>Number.isFinite(time)&&time<=at?Math.round((at-time)/1000)+'秒前':'未知';
+    const lines=[`Bili Range 自动诊断 ${VERSION}`,`累计接管 ${count(d.accelerated)} 次 / 放行 ${count(d.passed)} 次（包含升级前记录）`];
+    if(writer&&/^0\.1\.\d+-experimental$/.test(writer.version||'')&&['automatic','advanced'].includes(writer.profile)){
+      lines.push(`最近已标记请求脚本：${writer.version} / ${writer.profile==='automatic'?'自动':'对照工具'} / ${age(writer.at)}`);
+      lines.push(`调度：上限${[1,2,4,6,8,16,32].includes(writer.connections)?writer.connections:'未知'}路，${[32,64,128].includes(writer.minChunkKiB)?writer.minChunkKiB:128} KiB下限；${({baseline:'常规',load:'在途负载收缩','network-errors':'近期网络错误收缩',manual:'手动对照'})[writer.reason]||'未知'}`);
+      if(writer.count!==count(d.accelerated)+count(d.passed))lines.push('此后存在未标记版本的计数写入；可能有旧脚本或并行写入，版本标记不证明没有插件冲突。');
+    }else lines.push('尚未收到带版本标记的新请求；诊断脚本更新不等于下载脚本已经生效。');
+    const events=(Array.isArray(d.events)?d.events:[]).filter(e=>e&&e.epoch===(Number(state.epoch)||0)&&Number.isFinite(e.at)&&e.at<=at&&at-e.at<=30000),reasons={};
+    for(const e of events)if(e.kind==='pass'&&(Object.prototype.hasOwnProperty.call(names,e.reason)||/^status-\d{3}$/.test(e.reason||'')))reasons[e.reason]=(reasons[e.reason]||0)+1;
+    lines.push(`最近30秒事件记录：${events.length}条（最多保留120条）；放行原因：${Object.entries(reasons).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>(names[k]||k)+' '+v).join('，')||'暂无'}`);
+    if(w?.n){
+      lines.push(`完成接管尝试：成功${w.success} / 失败${w.failed}；交付率 ${w.deliveryMbps===null?'未知':w.deliveryMbps.toFixed(2)} Mbps（仅接管流量）`);
+      if(w.failed)lines.push('失败类别：'+Object.entries(w.failureReasons).map(([k,v])=>(names[k]||k)+' '+v).join('，'));
+      if(w.n<8)lines.push('近期样本不足，不能判断提速或卡顿改善。');
+    }else lines.push('最近30秒没有完成的接管尝试，当前速度未知；可能已缓冲、停止播放或主要是直接放行的小请求。');
+    const last=d.last||{};
+    if(root.BiliRange.isTargetHost(last.host)&&Number.isFinite(last.bytes)&&Number.isFinite(last.elapsedMs))
+      lines.push(`最近成功：${last.host}；${Math.round(last.bytes/1024)} KiB / ${last.elapsedMs} ms；实际分片${[1,2,3,4,5,6,7,8,16,32].includes(last.connections)?last.connections:'未知'}；${age(last.finishedAt)}`);
+    lines.push('小请求直接放行是正常策略，不等于下载失败。无法读取App实际清晰度、倍速、缓冲和卡顿次数；旧SIDX不能代表当前播放。',
+      '反馈方法：保持同视频和清晰度，播放30–60秒后立即运行诊断；注明清晰度、倍速及是首开慢还是播放中卡顿。');
+    return lines.join('\n');
   }
   function report(state) {
     const d = state.diagnostics || {}, reasons = Object.entries(d.reasons || {}).map(([k,v]) => `${names[k] || k}: ${v}`);
@@ -641,6 +681,7 @@ SOFTWARE.
       '\n并发记录：' + JSON.stringify(d.modes || {}) + '\n提示：不同视频的记录不能直接作为提速倍数。' +
       '\n实体校验拒绝字段：'+JSON.stringify(d.integrityFields||{})+
       '\n重定向拒绝类别：'+JSON.stringify(d.redirectFields||{})+
+      '\n重定向拒绝域族：'+JSON.stringify(d.redirectFamilies||{})+'（固定分类，不保存Location；旧记录未知）'+
       (root.BiliRangeMeasurements?'\n\n'+root.BiliRangeMeasurements.report(state):'')+
       (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
       (root.BiliRangeTrials?.safetyReport(state)?'\n\n'+root.BiliRangeTrials.safetyReport(state):'')+
@@ -663,9 +704,10 @@ SOFTWARE.
     }
     return `自上次手动诊断 ${Math.round((current.at-previous.at)/1000)} 秒：新增接管 ${current.accelerated-previous.accelerated} / 放行 ${current.passed-previous.passed}\n新增原因：${reasons.join('，')||'无'}\n计数差不是测速，也不含播放器卡顿计数。`;
   }
-  root.BiliRangeDiagnostics = { VERSION, shape, record, report, snapshot,deltaReport,allowedReasons:Object.keys(names) };
+  root.BiliRangeDiagnostics = { VERSION, shape, record, report,summary,snapshot,deltaReport,allowedReasons:Object.keys(names) };
 })(globalThis);
 
+globalThis.BiliRangeProfile="automatic";
 /* Standalone manual entry: never inspects $request or starts media downloads. */
 (function () {
   'use strict';
@@ -676,7 +718,7 @@ SOFTWARE.
     if (!state || typeof state !== 'object' || Array.isArray(state)) state = {};
   } catch { readError = true; }
   let summary;
-  try { summary = globalThis.BiliRangeDiagnostics.report(state); }
+  try { summary = globalThis.BiliRangeProfile==='automatic'?globalThis.BiliRangeDiagnostics.summary(state):globalThis.BiliRangeDiagnostics.report(state); }
   catch { summary = '诊断统计格式异常，请将此提示发回聊天。'; }
   if (readError) summary += '\n本次无法读取本地统计，请将此提示发回聊天。';
   if(!readError){

@@ -13,6 +13,10 @@ the full license is in vendor/btr-0302b345/LICENSE and embedded in range.bundle.
 Loon-specific transport, policy and diagnostics are separate Apache-2.0 code.
 Lab work by aijc123 includes bounded admission, balanced existing-traffic trials,
 local transfer statistics, DNS diagnostics and existing-response SIDX observation.
+The 0.1.14 automatic profile adds one-switch operation, conservative size/load/error
+scheduling, bounded recent events and marked request-version summaries. BTR's regional
+host facts and successful-node preference inform the separately implemented Loon policy;
+its browser streaming/progress/buffer controller is not claimed as a Loon capability.
 The design also references nishuodedui1145-del/PiliPlus and MyTVB-Speed-Boost;
 their source is not copied. See RANGE-EXPERIMENT.md for details and limits.
 

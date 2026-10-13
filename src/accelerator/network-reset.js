@@ -16,6 +16,7 @@
   let arg=typeof $argument==='object'&&$argument?$argument:{};
   if(typeof $argument==='string')try{arg=JSON.parse($argument);}catch{}
   if(!arg||typeof arg!=='object'||Array.isArray(arg))arg={};
+  if(globalThis.BiliRangeProfile==='automatic')arg={Enabled:arg.Enabled!==false,WarmDNS:true,PreferredCDN:'upos-sz-mirror08c.bilivideo.com',CDNGroup:'all'};
   if(saved===false||arg.Enabled===false||arg.WarmDNS!==true){finish(message);return;}
   if(typeof $dns==='undefined'||typeof $dns.query!=='function'){const skipped='DNS预热未执行：当前运行环境没有DNS API。';console.log(skipped);finish(message+'\n'+skipped);return;}
   const hosts=globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup).slice(0,4);

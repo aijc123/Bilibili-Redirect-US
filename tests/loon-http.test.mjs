@@ -78,7 +78,7 @@ test('candidate bundle uses trusted redirect transport end to end',async()=>{
    $httpClient:{get(o,cb){seen.push(o);if(o.url.includes('mirrorhwo1')){cb(null,{status:302,headers:{Location:'https://cn-gdfs-ct-01-01.bilivideo.com/upgcxcode/a.m4s?upsig=private'}},null);return;}
     const range=ctx.BiliRange.parseRange(o.headers.Range);
     cb(null,{status:206,headers:{'Content-Range':`bytes ${range.start}-${range.end}/2000000`,'Content-Type':'video/mp4'}},new Uint8Array(range.length));}}};
-  vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),context);
+  vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),context);
  });
  assert.equal(result.response.status,206);assert.equal(result.response.body.length,1048576);assert.equal(seen.length,8);
  const d=JSON.parse(stored).diagnostics;assert.equal(d.last.redirects,4);assert.equal(d.accelerated,1);
@@ -121,5 +121,16 @@ test('rejected redirect category distinguishes port, wrapper, host and downgrade
   const result=await ctx.BiliRange.accelerate({request:{method:'GET',url,headers:{Range:'bytes=0-262143'}},fetchRange:fetch});
   assert.equal(api.redirectURL(url,location),null);assert.equal(result.reason,'redirect-untrusted');assert.equal(result.metrics.redirectField,field);
   assert.ok(!JSON.stringify(result).includes('token'));assert.ok(!JSON.stringify(result).includes('evil.example'));
+ }
+});
+
+test('refused target families are diagnosable without retaining URLs or expanding redirect trust',async()=>{
+ const cases=[['upos-hz-mirrorakam.akamaized.net','bili-akamai'],['xy123.mcdn.bilivideo.cn','bili-mcdn'],
+  ['nested.cdn.bilivideo.com','bili-other'],['bilivideo.com.evil.example','external']];
+ for(const [name,family] of cases){
+  const location=`https://${name}/upgcxcode/a.m4s?signature=private`,fetch=api.makeFetch({get(o,cb){cb(null,{status:302,headers:{Location:location}},null);}});
+  const result=await ctx.BiliRange.accelerate({request:{method:'GET',url,headers:{Range:'bytes=0-262143'}},fetchRange:fetch});
+  assert.equal(api.redirectURL(url,location),null);assert.equal(result.reason,'redirect-untrusted');assert.equal(result.metrics.redirectFamily,family);
+  const metrics=JSON.stringify(result.metrics);for(const secret of [name,'signature','private'])assert.ok(!metrics.includes(secret));
  }
 });

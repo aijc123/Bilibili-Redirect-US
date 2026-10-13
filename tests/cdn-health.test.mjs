@@ -24,11 +24,11 @@ test('DNS failure prevents a pointless HTTPS request; at most2 hosts probe concu
  assert.ok(!JSON.stringify(data).includes('secret'));
 });
 test('expanded CDN menu is consumed by the published Loon business logic, including signed path preservation',async()=>{
- const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8')),plugin=readFileSync('dist/lab/BiliBili.Range.Lab.plugin','utf8');
+ const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8')),plugin=readFileSync('dist/lab/BiliBili.Range.Advanced.plugin','utf8');
  const baseURL='https://upos-hz-mirrorakam.akamaized.net/upgcxcode/test-media.m4s?upsig=example';
  for(const host of inventory.hosts){
   assert.ok(plugin.includes(JSON.stringify(host)));let stored='{}',calls=0;
-  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console,
+  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,console,
    $argument:{AutoCDN:false,Connections:4,PreferredCDN:host},$request:{method:'GET',url:baseURL,headers:{Range:'bytes=0-1048575'}},
    $persistentStore:{read:()=>stored,write:value=>{stored=value;return true;}},$done:resolve,
    $httpClient:{get(options,callback){calls++;assert.equal(options.url,baseURL.replace('upos-hz-mirrorakam.akamaized.net',host));
@@ -36,13 +36,13 @@ test('expanded CDN menu is consumed by the published Loon business logic, includ
     callback(null,{status:206,headers:{'Content-Range':`bytes ${start}-${end}/2097152`}},new Uint8Array(end-start+1));}}}));
   assert.equal(calls,4);assert.equal(result.response.body.length,1048576);assert.ok(!stored.includes('upsig'));
   const saved=JSON.parse(stored);assert.equal(saved.measurements.samples[0].host,host);
-  let summary;vm.runInNewContext(readFileSync('dist/lab/diagnose.bundle.js','utf8'),{Uint8Array,Date,console:{log(){}},$persistentStore:{read:key=>key.endsWith('diagnoseBaseline')?null:stored,write(){return true;}},$done:r=>{summary=r.content;}});
+  let summary;vm.runInNewContext(readFileSync('dist/lab/diagnose-advanced.bundle.js','utf8'),{Uint8Array,Date,console:{log(){}},$persistentStore:{read:key=>key.endsWith('diagnoseBaseline')?null:stored,write(){return true;}},$done:r=>{summary=r.content;}});
   assert.ok(summary.includes(host));
  }
 });
 
 test('regional fallback reaches BTR overseas nodes while keeping the explicit preferred node',async()=>{
- let stored='{}';const seen=[],source=readFileSync('dist/lab/range.bundle.js','utf8');
+ let stored='{}';const seen=[],source=readFileSync('dist/lab/range-advanced.bundle.js','utf8');
  const execute=()=>new Promise(resolve=>vm.runInNewContext(source,{Uint8Array,Date,console:{log(){}},
   $argument:{AutoCDN:true,CDNGroup:'overseas',Connections:4,PreferredCDN:'upos-sz-mirror08c.bilivideo.com'},
   $request:{method:'GET',url:'https://upos-hz-mirrorakam.akamaized.net/upgcxcode/a.m4s?upsig=example',headers:{Range:'bytes=0-1048575'}},
@@ -57,7 +57,7 @@ test('regional fallback reaches BTR overseas nodes while keeping the explicit pr
 
 test('all group can reach its final Hong Kong candidate and invalid groups safely use baseline',async()=>{
  const context={Uint8Array,Date,console:{log(){}},$persistentStore:{read:()=>'{}'},$done(){}};
- vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),context);
+ vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),context);
  const {groups,pool}=context.BiliRangeCandidates,core=context.BiliRange,preferred='upos-sz-mirror08c.bilivideo.com';
  assert.equal(groups.all.length,15);assert.equal(groups.mainland.length,8);assert.equal(groups.overseas.length,4);
  assert.equal(pool(preferred,'overseas')[0],preferred);assert.equal(pool(preferred,'overseas').length,5);

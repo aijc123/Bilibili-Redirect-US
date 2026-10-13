@@ -64,7 +64,7 @@ test('published adapter compares existing requests on fixed preferred CDN withou
  let stored='{}';const counts=[];const mockMath=Object.create(Math);mockMath.random=()=>0.9;
  for(let i=0;i<4;i++){
   let count=0;
-  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,Math:mockMath,console,
+  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,Math:mockMath,console,
    $request:request,$argument:{TrialMode:'4vs8',Connections:32,AutoCDN:true,PreferredCDN:'upos-sz-mirrorali.bilivideo.com'},
    $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
    $httpClient:{get(o,cb){count++;assert.ok(o.url.startsWith('https://upos-sz-mirrorali.bilivideo.com/'));const r=ctx.BiliRange.parseRange(o.headers.Range);
@@ -79,7 +79,7 @@ test('published 8vs32 adapter actually runs 8/32/32/8 jobs on matched 1MiB with 
  let stored='{}';const counts=[];const mockMath=Object.create(Math);mockMath.random=()=>0.9;
  for(let i=0;i<4;i++){
   let count=0;
-  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,Math:mockMath,console,
+  const result=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,Math:mockMath,console,
    $request:request,$argument:{TrialMode:'8vs32',Connections:4,MinChunkKiB:32,GlobalJobs:32,AutoCDN:true,PreferredCDN:'upos-sz-mirror08c.bilivideo.com'},
    $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,
    $httpClient:{get(o,cb){count++;const r=ctx.BiliRange.parseRange(o.headers.Range);cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}}}));
@@ -105,7 +105,7 @@ test('published adapter recovers from a fixed refused trial node after its norma
  let clock=100000,stored=JSON.stringify({hosts:Object.fromEntries(ctx.BiliRange.DEFAULT_HOSTS.map(host=>[host,{at:clock,bps:host.includes('hwo1')?1e12:host.includes('08c')?1e7:0}]))});
  const mockMath=Object.create(Math);mockMath.random=()=>0.9;const Clock={now:()=>clock},counts=[];
  const run=fail=>new Promise(resolve=>{
-  let count=0;vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date:Clock,Math:mockMath,console,
+  let count=0;vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date:Clock,Math:mockMath,console,
    $request:request,$argument:{TrialMode:'8vs32',Connections:32,MinChunkKiB:32,GlobalJobs:32,AutoCDN:false,PreferredCDN:'upos-sz-mirrorhwo1.bilivideo.com'},
    $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:result=>{counts.push(count);resolve(result);},
    $httpClient:{get(o,cb){count++;clock++;
@@ -120,7 +120,7 @@ test('published adapter recovers from a fixed refused trial node after its norma
 });
 test('a failed trial completing after a network change cannot pause the new network',async()=>{
  let stored='{}';const callbacks=[];
- const done=new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console,
+ const done=new Promise(resolve=>vm.runInNewContext(readFileSync('dist/lab/range-advanced.bundle.js','utf8'),{Uint8Array,Date,console,
   $request:request,$argument:{TrialMode:'8vs32',PreferredCDN:'upos-sz-mirrorhwo1.bilivideo.com'},
   $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:resolve,$httpClient:{get(o,cb){callbacks.push(cb);}}}));
  await new Promise(resolve=>setImmediate(resolve));const reset=JSON.parse(stored);reset.epoch=1;reset.hosts={};stored=JSON.stringify(reset);
