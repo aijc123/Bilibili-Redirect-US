@@ -69,7 +69,7 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBil
 
 [0.1.4 候选版](NEXT-EXPERIMENT.md) 单独改进经过校验的 302 跳转与短退避，不自动替换正在使用的 0.1.3。
 
-[0.1.5 研发版](LAB-EXPERIMENT.md) 提供最高 32 路设置、全局子请求与缓冲预算、分层吞吐 / 尾延迟诊断，并修复网络变化脚本的日志输出。实际并发受 Range 大小限制；32 路更快和 4K / 1.5 倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
+[0.1.6 研发版](LAB-EXPERIMENT.md) 提供最高 32 路设置、全局子请求与缓冲预算、分层吞吐 / 尾延迟诊断、用原播放流量进行的交替并发对照，并修复网络变化脚本的日志输出。实际并发受 Range 大小限制；32 路更快和 4K / 1.5 倍速无卡顿尚未得到真机验证。它独立发布，保留已使用版本。
 
 使用 Node.js 24，无需安装 npm 依赖或配置 GitHub Packages 凭据：
 
@@ -90,6 +90,7 @@ node --test tests/us-bundle.test.mjs
 感谢 **VirgilClyne 与 Biliverse/Redirect 的贡献者**：本项目的 CDN 重定向核心建立在他们的开源成果之上。感谢 **chrisliu298** 分享公开测速方法与数据，为本次节点选择提供参考。
 
 - 原项目：[Biliverse/Redirect](https://github.com/Biliverse/Redirect)。
+- 多线程参考与 MIT 分块核心：[MrTangLuyao/Bilibili-thread-ripper](https://github.com/MrTangLuyao/Bilibili-thread-ripper)；本仓库的 Loon 适配、预算与诊断由 aijc123 实现。
 - 测速来源：[bilibili-cdn-fix / benchmarks.md](https://github.com/chrisliu298/bilibili-cdn-fix/blob/main/benchmarks.md)。
 - 本版本的上游反馈：[增加两节点的 Issue #12](https://github.com/Biliverse/Redirect/issues/12)，已提交，尚不代表上游采纳。
 - 沿用 **Apache License 2.0**，详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。

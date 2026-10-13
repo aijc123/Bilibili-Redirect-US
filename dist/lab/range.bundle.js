@@ -382,6 +382,11 @@ SOFTWARE.
   function rangeBucket(bytes) {
     return bytes<256*1024?'small':bytes<768*1024?'256-768KiB':bytes<=1280*1024?'near-1MiB':bytes<=2*1024*1024?'1.25-2MiB':'over-2MiB';
   }
+  function identity(state,request){
+    const u=root.BiliRange.parseURL(request.url);if(!u)return null;
+    const m=state.measurements ||= {salt:Math.random().toString(36).slice(2),samples:[]};
+    return hash(u.path,m.salt);
+  }
   function record(state, request, result, context={}) {
     const at=Number(result.metrics?.finishedAt)||Date.now();
     const m=state.measurements ||= {salt:Math.random().toString(36).slice(2),samples:[]};
@@ -395,11 +400,15 @@ SOFTWARE.
         (root.BiliRangeDiagnostics?.allowedReasons?.includes(result.reason)||/^status-\d{3}$/.test(result.reason||'')?result.reason:'other-failure'),
       bytes:result.kind==='response'?Number(r.bytes)||0:0,elapsedMs:Math.max(1,Number(r.elapsedMs)||1),
       mode:Number(r.connections)||Number(context.connections)||0,requestedMode:Number(r.configuredConnections)||Number(context.connections)||0,host:String(r.host||''),
-      epoch:Number(context.epoch)||0,content:hash(u.path,m.salt),bucket:rangeBucket(range.length),
+      epoch:Number(context.epoch)||0,content:identity(state,request),bucket:rangeBucket(range.length),rangeBytes:range.length,
       inflight:Number(context.inflight)||0,redirects:Number(r.redirects)||0,
       maxPieceMs:Number(r.maxPieceMs)||0,minPieceMs:Number(r.minPieceMs)||0};
     // Restrict the only stored hostname field. Invalid metrics cannot introduce other text.
     if(!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(sample.host))return;
+    const trial=context.trial;
+    if(trial&&/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(trial.block||'')&&
+      [0,1,2,3].includes(trial.slot)&&['A','B'].includes(trial.arm)&&trial.baseline===4&&[8,16,32].includes(trial.candidate))
+      sample.trial={block:trial.block,slot:trial.slot,arm:trial.arm,baseline:4,candidate:trial.candidate};
     m.samples.push(sample);m.samples=m.samples.slice(-MAX_SAMPLES);
   }
   function unionMs(intervals) {
@@ -431,9 +440,10 @@ SOFTWARE.
       [s.at,s.from,s.bytes,s.elapsedMs,s.mode,s.epoch,s.inflight].every(Number.isFinite);
     const samples=(Array.isArray(state.measurements?.samples)?state.measurements.samples:[]).filter(s=>valid(s)&&at-s.at<RETAIN_MS&&at>=s.at).slice(-MAX_SAMPLES);
     const recent=samples.filter(s=>s.epoch===(Number(state.epoch)||0)&&at-s.at<=30000),delivered=recent.filter(s=>s.ok);
-    const intervals=delivered.map(s=>[s.from,s.at]);
+    const intervals=recent.map(s=>[s.from,s.at]);
     const bytes=delivered.reduce((n,s)=>n+s.bytes,0);
-    const elapsed=delivered.length?Math.max(1000,Math.max(...delivered.map(s=>s.at))-Math.min(...delivered.map(s=>s.from))):0;
+    // Include failed attempt time: excluding it would inflate apparent delivery.
+    const elapsed=recent.length?Math.max(1000,Math.max(...recent.map(s=>s.at))-Math.min(...recent.map(s=>s.from))):0;
     const occupied=unionMs(intervals);
     const groups={};
     for(const s of samples){const key=[s.epoch,s.content,s.host,s.bucket,s.inflight,s.mode].join('|');(groups[key] ||= []).push(s);}
@@ -450,29 +460,95 @@ SOFTWARE.
           adequate:a.success>=8&&b.success>=8,causal:false,warning:'不同字节范围/缓存状态仍可能混杂；不是因果提速倍数'});
       }
     }
-    return {window:{n:recent.length,bytes,spanMs:elapsed,occupiedMs:occupied,
+    return {trials:root.BiliRangeTrials?root.BiliRangeTrials.analyze(samples):null,window:{n:recent.length,bytes,spanMs:elapsed,occupiedMs:occupied,
       deliveryMbps:elapsed?bytes*8/elapsed/1000:null,activeMbps:occupied?bytes*8/occupied/1000:null,
-      peakCompletedOverlap:peak(intervals),scope:'仅接管成功的已完成请求；不含放行流量，不能直接推断播放器缓冲'},
+      peakCompletedOverlap:peak(intervals),scope:'完成接管尝试的成功字节 / 含失败的时间区间；不含原请求放行流量，不能直接推断播放器缓冲'},
       groups:Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,summarize(v)])),contrasts:contrasts.slice(-12),samples:samples.length};
   }
   function report(state,at=Date.now()) {
     const a=analyze(state,at),w=a.window,fmt=n=>n===null?'未知':Number(n).toFixed(2);
     const lines=[`客观采样：保留 ${a.samples} 条 / 最近30秒 ${w.n} 条`,
-      `窗口交付率 ${fmt(w.deliveryMbps)} Mbps；活跃区间交付率 ${fmt(w.activeMbps)} Mbps；完成请求重叠峰值 ${w.peakCompletedOverlap}`,
+      `窗口交付率 ${fmt(w.deliveryMbps)} Mbps；尝试活跃区间交付率 ${fmt(w.activeMbps)} Mbps；完成尝试重叠峰值 ${w.peakCompletedOverlap}`,
       '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 实际并发',
       '下列为每请求分布，含连接/重定向/返回等待，API不提供真实TTFB或播放器卡顿计数：'];
     for(const [key,v] of Object.entries(a.groups).slice(-12))lines.push(`${key}: n=${v.n}, 错误=${(v.failureRate*100).toFixed(1)}%, p50=${fmt(v.p50Mbps)} Mbps, p10=${fmt(v.p10Mbps)} Mbps, p90=${fmt(v.p90Ms)} ms, ${v.noise}`);
     for(const c of a.contrasts)lines.push(`观察对照 ${c.baseline}→${c.candidate}路: 中位比=${c.medianRatio.toFixed(2)}, n=${c.baselineN}/${c.candidateN}, ${c.adequate?'样本达到最低门槛':'样本不足'}；不是因果倍数`);
     if(!a.contrasts.length)lines.push('暂无同层不同并发对照；累计字节/累计请求耗时不能替代此对照。');
+    if(a.trials){
+      lines.push(`交替块对照：未完成块 ${a.trials.incomplete}，条件不一致块 ${a.trials.mismatched}`);
+      for(const g of a.trials.groups.slice(-6))lines.push(`设置 ${g.baseline}→${g.candidate} / 实际 ${g.actualA}→${g.actualB}路，块 ${g.cleanBlocks}/${g.blocks}，错误 ${(g.failureA*100).toFixed(1)}%/${(g.failureB*100).toFixed(1)}%，比值 ${fmt(g.ratio)}，经验区间 ${g.interval?g.interval.map(fmt).join('～'):'样本不足'}${g.equivalent?'；实际并发相同，不能验证高路数效果':''}`);
+      if(a.trials.groups.length)lines.push('块重采样范围不是保证；仍有缓存、负载及样本依赖，不代表卡顿下降倍数。');
+    }
     lines.push(w.scope);return lines.join('\n');
   }
-  root.BiliRangeMeasurements={record,analyze,report,quantile,unionMs,rangeBucket};
+  root.BiliRangeMeasurements={record,identity,analyze,report,quantile,unionMs,rangeBucket};
+})(globalThis);
+
+/* Optional balanced existing-traffic comparison. No replay or background media GET.
+ * Blocks alternate ABBA/BAAB at random; not a fully controlled player experiment. */
+(function(root){
+  'use strict';
+  const MODES={'4vs8':[4,8],'4vs16':[4,16],'4vs32':[4,32]};
+  function plan(state,request,mode,at=Date.now(),random=Math.random){
+    const arms=MODES[mode];if(!arms)return null;
+    const identity=root.BiliRangeMeasurements.identity(state,request);if(!identity)return null;
+    const key=[Number(state.epoch)||0,identity,mode].join('|');
+    const groups=Object.fromEntries(Object.entries(state.trials?.groups||{}).filter(([,v])=>v&&at-v.at<15*60*1000).slice(-3));
+    const previous=groups[key];
+    const counter=previous&&Number.isSafeInteger(previous.counter)&&previous.counter>=0?previous.counter:0,slot=counter%4,block=Math.floor(counter/4);
+    const reverse=slot===0?random()<0.5:previous.reverse;
+    const arm=(reverse?[1,0,0,1]:[0,1,1,0])[slot];
+    groups[key]={at,counter:counter+1,reverse};
+    return {connections:arms[arm],trial:{block:key+'|'+block,slot,arm:arm?'B':'A',baseline:arms[0],candidate:arms[1]},next:{groups}};
+  }
+  function empiricalInterval(logRatios){
+    if(logRatios.length<5)return null;
+    let seed=0x1a2b3c4d;const estimates=[];
+    for(let i=0;i<600;i++){
+      let total=0;
+      for(let j=0;j<logRatios.length;j++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;total+=logRatios[seed%logRatios.length];}
+      estimates.push(Math.exp(total/logRatios.length));
+    }
+    return [root.BiliRangeMeasurements.quantile(estimates,0.025),root.BiliRangeMeasurements.quantile(estimates,0.975)];
+  }
+  function analyze(samples){
+    const blocks={};
+    for(const s of samples){
+      if(!s.trial||!/^\d+\|[0-9a-f]{8}\|4vs(?:8|16|32)\|\d+$/.test(s.trial.block||'')||
+        !['A','B'].includes(s.trial.arm)||![0,1,2,3].includes(s.trial.slot)||s.trial.baseline!==4||![8,16,32].includes(s.trial.candidate))continue;
+      (blocks[s.trial.block] ||= []).push(s);
+    }
+    let incomplete=0,mismatched=0;const groups={};
+    for(const block of Object.values(blocks)){
+      if(block.length!==4||new Set(block.map(s=>s.trial.slot)).size!==4){incomplete++;continue;}
+      const A=block.filter(s=>s.trial.arm==='A'),B=block.filter(s=>s.trial.arm==='B');
+      const condition=s=>[s.epoch,s.content,s.host,s.rangeBytes,s.inflight].join('|');
+      if(A.length!==2||B.length!==2||new Set(block.map(condition)).size!==1||
+        new Set(block.map(s=>s.trial.candidate)).size!==1||
+        new Set(A.map(s=>s.mode)).size!==1||new Set(B.map(s=>s.mode)).size!==1){mismatched++;continue;}
+      const key=condition(A[0])+'|'+A[0].mode+'|'+B[0].mode+'|'+A[0].trial.candidate;
+      const g=groups[key] ||= {baseline:A[0].trial.baseline,candidate:B[0].trial.candidate,actualA:A[0].mode,actualB:B[0].mode,blocks:0,cleanBlocks:0,failedA:0,failedB:0,logRatios:[]};
+      g.blocks++;g.failedA+=A.filter(s=>!s.ok).length;g.failedB+=B.filter(s=>!s.ok).length;
+      if(block.every(s=>s.ok)){
+        const median=values=>root.BiliRangeMeasurements.quantile(values,0.5);
+        const ratio=median(B.map(s=>s.bytes/s.elapsedMs))/median(A.map(s=>s.bytes/s.elapsedMs));
+        if(Number.isFinite(ratio)&&ratio>0){g.cleanBlocks++;g.logRatios.push(Math.log(ratio));}
+      }
+    }
+    return {incomplete,mismatched,groups:Object.entries(groups).map(([key,g])=>({key,baseline:g.baseline,candidate:g.candidate,
+      actualA:g.actualA,actualB:g.actualB,blocks:g.blocks,cleanBlocks:g.cleanBlocks,
+      failureA:g.failedA/(2*g.blocks),failureB:g.failedB/(2*g.blocks),
+      ratio:g.logRatios.length?Math.exp(g.logRatios.reduce((n,v)=>n+v,0)/g.logRatios.length):null,
+      interval:empiricalInterval(g.logRatios),equivalent:g.actualA===g.actualB,
+      caveat:'原有流量交替；不是完整播放实验；缓存、负载和依赖仍可混杂。区间是块重采样经验范围。'}))};
+  }
+  root.BiliRangeTrials={plan,analyze,empiricalInterval};
 })(globalThis);
 
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.5-experimental';
+  const VERSION = '0.1.6-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -557,6 +633,8 @@ SOFTWARE.
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
   const plan=core.eligible($request,options);
   const parsed=plan.range;
+  const trialPlan=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
+  if(trialPlan){options.connections=trialPlan.connections;options.auto=false;}
   const leases = globalThis.BiliRangeBudget.active(state.leases,Date.now());
   let inflight=Object.keys(leases).length;
   let lease;
@@ -572,7 +650,9 @@ SOFTWARE.
       save(); done({}); return;
     }
     lease=id;inflight=admission.inflight;options.allocatedConnections=admission.count;
-    state.leases=admission.leases;save();
+    if(trialPlan)state.trials=trialPlan.next;
+    state.leases=admission.leases;
+    if(save()===false){console.log('Bili Range 预算状态写入失败，放行原请求。');done({});return;}
   }
   core.accelerate({ request: $request, options, fetchRange, state }).then(result => {
     if (result.reason === 'internal') { done({}); return; }
@@ -583,9 +663,10 @@ SOFTWARE.
     state.diagnostics = diagnostics.record(latest.diagnostics, $request, result);
     if(globalThis.BiliRangeMeasurements){
       state.measurements=latest.measurements;
-      globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight});
+      globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight,trial:trialPlan?.trial});
     }
     state.lastNetworkReset=latest.lastNetworkReset;
+    state.trials=latest.trials;
     state.epoch = latest.epoch || 0;
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];

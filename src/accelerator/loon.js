@@ -27,6 +27,8 @@
     timeout: 2500, hosts: arg.PreferredCDN ? [arg.PreferredCDN, ...core.DEFAULT_HOSTS.filter(h => h !== arg.PreferredCDN)] : core.DEFAULT_HOSTS };
   const plan=core.eligible($request,options);
   const parsed=plan.range;
+  const trialPlan=plan.kind==='eligible'&&globalThis.BiliRangeTrials?globalThis.BiliRangeTrials.plan(state,$request,arg.TrialMode):null;
+  if(trialPlan){options.connections=trialPlan.connections;options.auto=false;}
   const leases = globalThis.BiliRangeBudget.active(state.leases,Date.now());
   let inflight=Object.keys(leases).length;
   let lease;
@@ -42,7 +44,9 @@
       save(); done({}); return;
     }
     lease=id;inflight=admission.inflight;options.allocatedConnections=admission.count;
-    state.leases=admission.leases;save();
+    if(trialPlan)state.trials=trialPlan.next;
+    state.leases=admission.leases;
+    if(save()===false){console.log('Bili Range 预算状态写入失败，放行原请求。');done({});return;}
   }
   core.accelerate({ request: $request, options, fetchRange, state }).then(result => {
     if (result.reason === 'internal') { done({}); return; }
@@ -53,9 +57,10 @@
     state.diagnostics = diagnostics.record(latest.diagnostics, $request, result);
     if(globalThis.BiliRangeMeasurements){
       state.measurements=latest.measurements;
-      globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight});
+      globalThis.BiliRangeMeasurements.record(state,$request,result,{epoch,connections:options.connections,inflight,trial:trialPlan?.trial});
     }
     state.lastNetworkReset=latest.lastNetworkReset;
+    state.trials=latest.trials;
     state.epoch = latest.epoch || 0;
     state.leases = latest.leases || {};
     if (lease) delete state.leases[lease];

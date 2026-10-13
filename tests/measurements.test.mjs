@@ -46,10 +46,23 @@ test('invalid persisted labels cannot leak into a report',()=>{
  const state={measurements:{samples:[{host:'https://secret.example',content:'token',bucket:'url',at:1000}]}};
  assert.equal(api.analyze(state,2000).samples,0);assert.ok(!api.report(state,2000).includes('secret'));
 });
+test('failed attempt time lowers cohort delivery instead of disappearing from the denominator',()=>{
+ const state={};api.record(state,req,result(1000,2000));
+ api.record(state,req,{kind:'pass',reason:'transport',metrics:{...result(2000,4500).metrics}});
+ const window=api.analyze(state,4500).window;assert.equal(window.spanMs,3500);assert.equal(window.occupiedMs,3500);
+ assert.equal(window.deliveryMbps,1048576*8/3500/1000);
+ const failed={};api.record(failed,req,{kind:'pass',reason:'transport',metrics:{...result(1000,3500).metrics}});
+ assert.equal(api.analyze(failed,3500).window.deliveryMbps,0);
+});
 test('network-change entry always logs the applied epoch and preserves in-flight leases',()=>{
  let stored=JSON.stringify({epoch:2,hosts:{a:{bps:1}},leases:{pending:12345}}),logged,done;
  const ctx={Date,console:{log:s=>{logged=s;}},$persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:v=>{done=v;},$request:{}};
  vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),ctx);
  const state=JSON.parse(stored);assert.equal(state.epoch,3);assert.deepEqual(state.hosts,{});assert.equal(state.leases.pending,12345);
  assert.ok(logged.includes('网络epoch 2 → 3'));assert.equal(done.content,logged);
+});
+test('network-change write failure explicitly reports that reset did not complete',()=>{
+ let logged,done;vm.runInNewContext(readFileSync('dist/lab/network-reset.bundle.js','utf8'),{Date,console:{log:s=>{logged=s;}},
+  $persistentStore:{read:()=>'{"epoch":2}',write:()=>false},$done:v=>{done=v;}});
+ assert.ok(logged.includes('未完成'));assert.ok(!logged.includes('处理完成'));assert.equal(done.content,logged);
 });

@@ -52,3 +52,22 @@ test('end-to-end shared storage admission permits four requests then releases al
  assert.equal(Object.keys(JSON.parse(stored).leases).length,0);
  assert.equal(JSON.parse(stored).diagnostics.reasons['budget-requests'],1);
 });
+test('failed persistent admission never starts uncoordinated media downloads',()=>{
+ let called=0,done=0,log;
+ vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),{Uint8Array,Date,console:{log:s=>{log=s;}},
+  $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},$argument:{},
+  $persistentStore:{read:()=>'{}',write:()=>false},$httpClient:{get(){called++;}},$done(){done++;}});
+ assert.equal(called,0);assert.equal(done,1);assert.ok(log.includes('写入失败'));
+});
+test('a local post-download exception releases the admission lease and finishes once',async()=>{
+ let stored='{}',doneCount=0;const callbacks=[];
+ const context={Uint8Array,Date,console,$argument:{},
+  $request:{method:'GET',url:'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/test.m4s',headers:{Range:'bytes=0-1048575'}},
+  $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$httpClient:{get(o,cb){callbacks.push({o,cb});}}};
+ const completed=new Promise(resolve=>{context.$done=r=>{doneCount++;resolve(r);};});
+ vm.runInNewContext(readFileSync('dist/lab/range.bundle.js','utf8'),context);
+ context.BiliRangeMeasurements.record=()=>{throw Error('local processing');};
+ await Promise.resolve();await Promise.resolve();
+ for(const {o,cb} of callbacks){const r=ctx.BiliRange.parseRange(o.headers.Range);cb(null,{status:206,headers:{'Content-Range':`bytes ${r.start}-${r.end}/2097152`}},new Uint8Array(r.length));}
+ const result=await completed;assert.equal(result.response,undefined);assert.equal(doneCount,1);assert.equal(Object.keys(JSON.parse(stored).leases).length,0);
+});

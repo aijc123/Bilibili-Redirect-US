@@ -9,6 +9,7 @@
   state.hosts={};state.epoch=epoch+1;state.lastNetworkReset={at:Date.now(),clearedHosts:count,epoch:state.epoch};
   // Keep in-flight leases so a network reset cannot silently double the socket budget.
   const saved=$persistentStore.write(JSON.stringify(state),KEY);
-  const message=`Bili Range 网络变化处理完成\n网络epoch ${epoch} → ${state.epoch}\n清除 CDN 评分 ${count} 项\n在途租约保留，旧请求不会复活旧评分\n写入：${saved===false?'失败':'已提交'}`;
+  const message=saved===false?'Bili Range 网络变化未完成：本地写入失败\n未保存新的网络轮次或清除评分，请重试。':
+    `Bili Range 网络变化处理完成\n网络epoch ${epoch} → ${state.epoch}\n清除 CDN 评分 ${count} 项\n在途租约保留，旧请求不会复活旧评分\n写入：已提交`;
   console.log(message);$done({title:'Bili Range 网络变化',content:message});
 })();
