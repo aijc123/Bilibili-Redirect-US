@@ -2,7 +2,7 @@
 #!desc = 有限 Range 并发下载与本机传输选 CDN；实验功能，需真机验证。请停用其他 B 站 CDN 复写插件。
 #!author = aijc123
 #!homepage = https://github.com/aijc123/Bilibili-Redirect-US
-#!version = 0.1.8-experimental
+#!version = 0.1.9-experimental
 #!loon_version = 3.5.1
 #!system = iOS,iPadOS
 
@@ -16,17 +16,17 @@ HTTPProtocol = select,"h1","h2",tag=HTTP 协议偏好（实际协商未知）
 PlaybackRate = select,1.5,1,1.25,2,type=number,tag=诊断假设倍速（不会改变播放）
 MaxMiB = select,4,2,8,type=number,tag=接管范围上限 MiB
 AutoCDN = switch,true,tag=根据本机传输选择 CDN
-PreferredCDN = select,"upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com",tag=初始候选 CDN
+PreferredCDN = select,"upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com","upos-sz-mirror08h.bilivideo.com","upos-sz-mirrorbos.bilivideo.com","upos-sz-mirroralib.bilivideo.com","upos-sz-mirrorcos.bilivideo.com",tag=初始候选 CDN
 Debug = switch,false,tag=诊断日志
 
 [General]
 force-http-engine-hosts = upos-sz-*.bilivideo.com:80, cn-hk-eq-*.bilivideo.com:80, upos-*-mirrorakam.akamaized.net:80
 
 [Script]
-http-request ^https?:\/\/(?:[a-z0-9-]+\.bilivideo\.com|[a-z0-9-]+\.mcdn\.bilivideo\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\/(?:upgcxcode|v1\/resource\/upgcxcode)\/ script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.8-experimental/dist/lab/range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MinChunkKiB},{GlobalJobs},{TrialMode},{HTTPProtocol},{PlaybackRate},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
-generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.8-experimental/dist/lab/diagnose.bundle.js, tag=Bili Range 诊断
-generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.8-experimental/dist/lab/dns-diagnose.bundle.js, timeout=20, tag=Bili DNS 诊断
-network-changed script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.8-experimental/dist/lab/network-reset.bundle.js, tag=Bili Range 网络变化
+http-request ^https?:\/\/(?:[a-z0-9-]+\.bilivideo\.com|[a-z0-9-]+\.mcdn\.bilivideo\.cn|upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net)(?::(?:80|443|4480|4483|8000|8082|9102))?\/(?:upgcxcode|v1\/resource\/upgcxcode)\/ script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.9-experimental/dist/lab/range.bundle.js, timeout=8, tag=Bili Range 下载, argument=[{Enabled},{Connections},{MinChunkKiB},{GlobalJobs},{TrialMode},{HTTPProtocol},{PlaybackRate},{MaxMiB},{AutoCDN},{PreferredCDN},{Debug}]
+generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.9-experimental/dist/lab/diagnose.bundle.js, tag=Bili Range 诊断
+generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.9-experimental/dist/lab/dns-diagnose.bundle.js, timeout=20, tag=Bili DNS 诊断
+network-changed script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.9-experimental/dist/lab/network-reset.bundle.js, tag=Bili Range 网络变化
 
 [MITM]
 hostname = *.bilivideo.com, *.mcdn.bilivideo.cn, upos-*-mirrorakam.akamaized.net

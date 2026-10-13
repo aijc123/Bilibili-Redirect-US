@@ -17,6 +17,9 @@ const measurements = readFileSync('src/accelerator/measurements.js','utf8');
 const budget=readFileSync('src/accelerator/budget.js','utf8');
 const trials=readFileSync('src/accelerator/trials.js','utf8');
 const media=readFileSync('src/accelerator/media-info.js','utf8');
+const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8'));
+if(!Array.isArray(inventory.hosts)||inventory.hosts.length>12||inventory.hosts.some(h=>!/^upos-sz-mirror[a-z0-9-]+\.bilivideo\.com$/.test(h)))throw new Error('Invalid CDN menu inventory');
+const candidateOptions=inventory.hosts.map(h=>JSON.stringify(h)).join(',');
 const out = 'dist/lab';
 mkdirSync(out,{recursive:true});
 const isolate = text => text.replaceAll('aijc123.BiliRange.v1','aijc123.BiliRange.lab.v1');
@@ -44,7 +47,7 @@ HTTPProtocol = select,"h1","h2",tag=HTTP 协议偏好（实际协商未知）
 PlaybackRate = select,1.5,1,1.25,2,type=number,tag=诊断假设倍速（不会改变播放）
 MaxMiB = select,4,2,8,type=number,tag=接管范围上限 MiB
 AutoCDN = switch,true,tag=根据本机传输选择 CDN
-PreferredCDN = select,"upos-sz-mirrorhwo1.bilivideo.com","upos-sz-mirror08c.bilivideo.com","upos-sz-mirrorhw.bilivideo.com","upos-sz-mirrorali.bilivideo.com",tag=初始候选 CDN
+PreferredCDN = select,${candidateOptions},tag=初始候选 CDN
 Debug = switch,false,tag=诊断日志
 
 [General]

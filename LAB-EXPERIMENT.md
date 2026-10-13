@@ -1,4 +1,4 @@
-# Loon 手机 Range 研发版 0.1.8
+# Loon 手机 Range 研发版 0.1.9
 
 由 **aijc123** 开发和发布 Loon 适配、并发预算、本机 CDN 评分与诊断。沿用 Biliverse 的项目基础，范围解析、切块和拼接直接复用 MrTangLuyao / Bilibili-thread-ripper 的 MIT 核心，固定源码和许可都保存在仓库内。
 
@@ -17,6 +17,8 @@ https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/Bil
 默认每片至少 128 KiB，所以 1 MiB 请求最多实际分为 8 片，2 MiB 最多 16 片，4 MiB 才能分为 32 片。仅把 Connections 设为32，不会产生32个小片。诊断分别记录设置的上限和实际片数；这些片数不等于已确认的同时活跃 TCP 连接数。
 
 0.1.8 新增 `MinChunkKiB`，默认128，可手动试64或32。**Connections=32、MinChunkKiB=32、GlobalJobs=32** 才允许一个1 MiB请求分成32个32 KiB子请求。如果预算已有占用，仍可能减小分片数或放行。也可用 `TrialMode=4vs32` 替代固定Connections做交替对照，MinChunkKiB和GlobalJobs仍需设为32。
+
+0.1.9 将首选菜单扩大到8个经过业务参数检查的候选。新增08h、bos、alib、cos，选择后确实传给下载脚本，路径与签名查询保持原样；它们尚无本项目的真机媒体测速证据。另有[每天自动更新的GitHub DNS/TLS快照](CANDIDATE-HEALTH.md)，明确不当作手机吞吐排名、不改变已验证的手机选择。
 
 32 KiB 是 BTR 原分块工具已支持的下限，分块计算继续直接复用原文件。小片可能减少单片传输时间，也会增加请求和连接调度，不能认定更快；因此默认128保持原样。先观察 p90、错误与放行成本，出现恶化时恢复128。
 
@@ -85,7 +87,7 @@ Loon 持久存储没有原子比较交换，因此跨脚本预算是尽力协调
 - [Biliverse/Redirect](https://github.com/Biliverse/Redirect)：原重定向项目与维护者 credit。
 - [公开 CDN 测速文档](https://github.com/chrisliu298/bilibili-cdn-fix/blob/main/benchmarks.md)：2026-06-11 美国单线路历史数据，作为 hwo1 / 08c 候选来源，不是本研发版的实测速度。
 
-本版本的字节一致性、真实32小片调用、预算、异常租约释放、存储写入失败处理、重定向安全、实体拒绝分类、隐私字段、精确长度对照、协议偏好、DNS入口、SIDX观察和诊断统计通过119项模拟运行检查；32小片、HTTP2偏好与DNS工具的真实播放效果仍待验证。仓库新增只读 CI，重复生成研发版并运行这些无需第三方依赖的检查。上游全套测试另外仍受未安装私有包依赖和原有模板断言限制，不宣称全套通过。
+本版本的字节一致性、真实32小片调用、预算、异常租约释放、存储写入失败处理、重定向安全、实体拒绝分类、隐私字段、精确长度对照、协议偏好、DNS入口、SIDX观察、八节点菜单与诊断统计通过123项模拟运行检查；32小片、HTTP2偏好与新增CDN的真实播放效果仍待验证。Range CI只读，重复生成研发版并运行这些无需第三方依赖的检查；候选健康工作流另外获准只更新探测快照。上游全套测试另外仍受未安装私有包依赖和原有模板断言限制，不宣称全套通过。
 
 另有 [真实本机 HTTP 并发夹具](benchmarks/concurrency-fixture.json)和[可重复执行工具](scripts/benchmark-concurrency.mjs)，对4 MiB响应运行1 / 2 / 4 / 8 / 16 / 32路并逐字节校验。2026-10-13 此机器的3轮中位耗时如下；夹具刻意设置120ms初始等待和限速，机器定时器误差也会影响数值：
 
