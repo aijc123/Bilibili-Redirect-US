@@ -2,7 +2,10 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const root='vendor/btr-0302b345/',bytes=readFileSync(root+'range-core.js'),provenance=JSON.parse(readFileSync(root+'provenance.json','utf8'));
 if(createHash('sha256').update(bytes).digest('hex')!==provenance.sha256)throw Error('BTR integrity mismatch');
-const common='/* BTR range-core.js, unchanged '+provenance.commit+'\n'+readFileSync(root+'LICENSE','utf8')+'\n*/\n'+bytes.toString('utf8')+'\n'+readFileSync('src/accelerator/range-core.js','utf8')+'\n'+readFileSync('src/gateway/core.js','utf8');
+// Preserve the published gateway's adapter until a deliberate gateway version update.
+const adapterRoot='vendor/loon-range-0.1.12/',adapter=readFileSync(adapterRoot+'range-core.js'),adapterProvenance=JSON.parse(readFileSync(adapterRoot+'provenance.json','utf8'));
+if(createHash('sha256').update(adapter).digest('hex')!==adapterProvenance.sha256)throw Error('Pinned gateway adapter integrity mismatch');
+const common='/* BTR range-core.js, unchanged '+provenance.commit+'\n'+readFileSync(root+'LICENSE','utf8')+'\n*/\n'+bytes.toString('utf8')+'\n'+adapter.toString('utf8')+'\n'+readFileSync('src/gateway/core.js','utf8');
 const out='dist/gateway',version='0.1.1-experimental',base='https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/gateway-v'+version+'/'+out+'/';
 mkdirSync(out,{recursive:true});
 writeFileSync(out+'/rewrite.bundle.js',common+'\n'+readFileSync('src/gateway/loon.js','utf8'));

@@ -1,0 +1,8 @@
+{
+  "source": "aijc123/Bilibili-Redirect-US",
+  "commit": "fde472d01090b1dd7476432580c173bdce439ae9",
+  "path": "src/accelerator/range-core.js",
+  "license": "Apache-2.0",
+  "sha256": "374ab29edb9a672e2817ee2d7012d9bed880d337134d60afe5bafbaab7539ce2",
+  "purpose": "Freeze the already published gateway 0.1.1 build independently from standalone Loon Lab changes."
+}
