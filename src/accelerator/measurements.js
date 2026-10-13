@@ -66,9 +66,11 @@
   }
   function summarize(samples) {
     const ok=samples.filter(s=>s.ok),rates=ok.map(s=>s.bytes*8/s.elapsedMs/1000),latencies=ok.map(s=>s.elapsedMs);
+    const spreads=ok.filter(s=>Number.isFinite(s.minPieceMs)&&Number.isFinite(s.maxPieceMs)&&s.minPieceMs>0&&s.maxPieceMs>=s.minPieceMs).map(s=>s.maxPieceMs-s.minPieceMs);
     return {n:samples.length,success:ok.length,failed:samples.length-ok.length,
       failureRate:samples.length?(samples.length-ok.length)/samples.length:0,
       p50Mbps:median(rates),p10Mbps:quantile(rates,0.1),p50Ms:median(latencies),p90Ms:quantile(latencies,0.9),
+      p90AttemptMs:quantile(samples.map(s=>s.elapsedMs),0.9),pieceSpreadN:spreads.length,p50PieceSpreadMs:median(spreads),p90PieceSpreadMs:quantile(spreads,0.9),
       bytes:ok.reduce((n,s)=>n+s.bytes,0),noise:ok.length<8?'样本不足':rates.length&&quantile(rates,0.9)/Math.max(0.001,quantile(rates,0.1))>2?'波动较大':'仍有缓存与时间噪音'};
   }
   function analyze(state, at=Date.now()) {
@@ -104,7 +106,10 @@
           adequate:a.success>=8&&b.success>=8,causal:false,warning:'不同字节范围/缓存状态仍可能混杂；不是因果提速倍数'});
       }
     }
-    return {trials:root.BiliRangeTrials?root.BiliRangeTrials.analyze(samples):null,window:{n:recent.length,bytes,spanMs:elapsed,occupiedMs:occupied,
+    const failureReasons={};for(const s of recent.filter(s=>!s.ok)){
+      const reason=root.BiliRangeDiagnostics?.allowedReasons?.includes(s.reason)||/^status-\d{3}$/.test(s.reason||'')?s.reason:'other-failure';failureReasons[reason]=(failureReasons[reason]||0)+1;
+    }
+    return {trials:root.BiliRangeTrials?root.BiliRangeTrials.analyze(samples):null,window:{n:recent.length,success:delivered.length,failed:recent.length-delivered.length,failureReasons,bytes,spanMs:elapsed,occupiedMs:occupied,
       deliveryMbps:elapsed?bytes*8/elapsed/1000:null,activeMbps:occupied?bytes*8/occupied/1000:null,
       peakCompletedOverlap:peak(intervals),scope:'完成接管尝试的成功字节 / 含失败的时间区间；不含原请求放行流量，不能直接推断播放器缓冲'},
       groups:Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,summarize(v)])),contrasts:contrasts.slice(-12),samples:samples.length};
@@ -113,10 +118,12 @@
     const a=analyze(state,at),w=a.window,fmt=n=>n===null?'未知':Number(n).toFixed(2);
     const lines=[`客观采样：保留 ${a.samples} 条 / 最近30秒 ${w.n} 条`,
       `窗口交付率 ${fmt(w.deliveryMbps)} Mbps；尝试活跃区间交付率 ${fmt(w.activeMbps)} Mbps；完成尝试重叠峰值 ${w.peakCompletedOverlap}`,
+      `最近尝试成功 ${w.success} / 失败 ${w.failed}；失败类别 ${JSON.stringify(w.failureReasons)}（只含已完成接管尝试）`,
       '分层条件：网络epoch / 临时表示组 / CDN / 请求大小 / 在途负载 / 请求ALPN / 分片下限KiB / 实际并发',
       'ALPN表示请求偏好；API未报告实际协商协议，也不提供实际TCP连接数。',
       '下列为每请求分布，含连接/重定向/返回等待，API不提供真实TTFB或播放器卡顿计数：'];
-    for(const [key,v] of Object.entries(a.groups).slice(-12))lines.push(`${key}: n=${v.n}, 错误=${(v.failureRate*100).toFixed(1)}%, p50=${fmt(v.p50Mbps)} Mbps, p10=${fmt(v.p10Mbps)} Mbps, p90=${fmt(v.p90Ms)} ms, ${v.noise}`);
+    for(const [key,v] of Object.entries(a.groups).slice(-12))lines.push(`${key}: n=${v.n}, 错误=${(v.failureRate*100).toFixed(1)}%, p50=${fmt(v.p50Mbps)} Mbps, p10=${fmt(v.p10Mbps)} Mbps, 成功p90=${fmt(v.p90Ms)} ms, 尝试p90=${fmt(v.p90AttemptMs)} ms（含失败）, ${v.noise}`+
+      (v.pieceSpreadN?`；片耗时差p50/p90=${fmt(v.p50PieceSpreadMs)}/${fmt(v.p90PieceSpreadMs)} ms，n=${v.pieceSpreadN}`:''));
     for(const c of a.contrasts)lines.push(`观察对照 设置${c.baselineSetting}→${c.candidateSetting} / 分片${c.baseline}→${c.candidate}: 中位比=${c.medianRatio.toFixed(2)}, n=${c.baselineN}/${c.candidateN}, ${c.adequate?'样本达到最低门槛':'样本不足'}；不是因果倍数`);
     if(!a.contrasts.length)lines.push('暂无相同精确字节数且设置确实不同的对照；自然分成6/8片不能当作调高并发收益，旧样本缺精确长度时不比较。');
     if(a.trials){

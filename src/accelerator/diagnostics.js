@@ -1,7 +1,7 @@
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.11-experimental';
+  const VERSION = '0.1.12-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -63,5 +63,22 @@
       (root.BiliRangeMedia?'\n\n'+root.BiliRangeMedia.report(state):'')+
       '\n最近网络重置：'+JSON.stringify(state.lastNetworkReset||{});
   }
-  root.BiliRangeDiagnostics = { VERSION, shape, record, report, allowedReasons:Object.keys(names) };
+  const count=value=>Number.isSafeInteger(value)&&value>=0?value:0;
+  function snapshot(state,at=Date.now()){
+    const d=state.diagnostics||{},reasons={};
+    for(const [key,value] of Object.entries(d.reasons||{}))if(Object.prototype.hasOwnProperty.call(names,key)||/^status-\d{3}$/.test(key))reasons[key]=count(value);
+    return {version:VERSION,epoch:count(state.epoch),at,accelerated:count(d.accelerated),passed:count(d.passed),reasons};
+  }
+  function deltaReport(current,previous){
+    if(!previous||previous.version!==VERSION||previous.epoch!==current.epoch||!Number.isFinite(previous.at)||previous.at>=current.at||current.at-previous.at>24*60*60*1000||
+      !Number.isSafeInteger(previous.accelerated)||!Number.isSafeInteger(previous.passed)||previous.accelerated<0||previous.passed<0||
+      current.accelerated<previous.accelerated||current.passed<previous.passed)return '本次建立手动诊断对照起点；下次显示同版本、同网络轮次的新增计数。';
+    const reasons=[];
+    for(const [key,value] of Object.entries(current.reasons)){
+      const before=count(previous.reasons?.[key]);if(value<before)return '累计计数已重置；本次重新建立手动诊断对照起点。';
+      if(value>before)reasons.push((names[key]||key)+': '+(value-before));
+    }
+    return `自上次手动诊断 ${Math.round((current.at-previous.at)/1000)} 秒：新增接管 ${current.accelerated-previous.accelerated} / 放行 ${current.passed-previous.passed}\n新增原因：${reasons.join('，')||'无'}\n计数差不是测速，也不含播放器卡顿计数。`;
+  }
+  root.BiliRangeDiagnostics = { VERSION, shape, record, report, snapshot,deltaReport,allowedReasons:Object.keys(names) };
 })(globalThis);

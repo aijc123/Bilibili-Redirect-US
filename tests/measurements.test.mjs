@@ -67,6 +67,26 @@ test('failed attempt time lowers cohort delivery instead of disappearing from th
  const failed={};api.record(failed,req,{kind:'pass',reason:'transport',metrics:{...result(1000,3500).metrics}});
  assert.equal(api.analyze(failed,3500).window.deliveryMbps,0);
 });
+test('ordinary strata separate success tails from all-attempt tails and retain measured piece spreads',()=>{
+ const state={};api.record(state,req,{...result(1000,2000),metrics:{...result(1000,2000).metrics,minPieceMs:100,maxPieceMs:800}});
+ api.record(state,req,{kind:'pass',reason:'transport',metrics:{...result(3000,7000).metrics}});
+ const analyzed=api.analyze(state,7000),stats=Object.values(analyzed.groups)[0];
+ assert.equal(stats.p90Ms,1000);assert.equal(stats.p90AttemptMs,3700);assert.equal(stats.pieceSpreadN,1);assert.equal(stats.p50PieceSpreadMs,700);
+ assert.equal(analyzed.window.failed,1);assert.equal(analyzed.window.failureReasons.transport,1);assert.ok(api.report(state,7000).includes('含失败'));
+});
+test('manual diagnostic snapshots compare aggregate increments without copying arbitrary state or reason text',()=>{
+ const d=context.BiliRangeDiagnostics;
+ const previous=d.snapshot({epoch:2,diagnostics:{accelerated:100,passed:20,reasons:{'small-range':15,transport:5}},privateURL:'https://private.example'},1000);
+ const current=d.snapshot({epoch:2,diagnostics:{accelerated:137,passed:30,reasons:{'small-range':24,transport:6,'https://secret.example':99}}},3000);
+ const report=d.deltaReport(current,previous);assert.ok(report.includes('新增接管 37 / 放行 10'));assert.ok(report.includes('范围小于 256 KiB: 9'));assert.ok(report.includes('子请求网络错误: 1'));
+ assert.ok(!JSON.stringify(current).includes('secret'));assert.ok(!JSON.stringify(previous).includes('private'));assert.ok(report.includes('不是测速'));
+});
+test('epoch, version, clock or counter resets cannot create an invalid manual increment comparison',()=>{
+ const d=context.BiliRangeDiagnostics,current=d.snapshot({epoch:2,diagnostics:{accelerated:10,passed:5}},2000),previous=d.snapshot({epoch:2,diagnostics:{accelerated:5,passed:2}},1000);
+ for(const altered of [{...previous,epoch:1},{...previous,version:'old'},{...previous,at:3000},{...previous,accelerated:100},{...previous,passed:-1}]){
+  const report=d.deltaReport(current,altered);assert.ok(report.includes('起点'));assert.ok(!report.includes('新增接管'));
+ }
+});
 test('network-change entry always logs the applied epoch and preserves in-flight leases',()=>{
  let stored=JSON.stringify({epoch:2,hosts:{a:{bps:1}},leases:{pending:12345}}),logged,done;
  const ctx={Date,console:{log:s=>{logged=s;}},$persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:v=>{done=v;},$request:{}};

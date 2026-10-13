@@ -137,7 +137,7 @@ test('diagnostic aggregates describe unsupported requests without retaining priv
  report=await execute();
  const saved=JSON.parse(value);
  assert.equal(saved.diagnostics.sources.MCDN,1);assert.equal(saved.diagnostics.shapes['open-ended'],2);
- assert.ok(report.content.includes('0.1.11-experimental'));
+ assert.ok(report.content.includes('0.1.12-experimental'));
  for(const secret of ['private-video','upsig','secret','abc','deadline']){assert.ok(!value.includes(secret));assert.ok(!report.content.includes(secret));}
 });
 test('generated plugin observes MCDN but does not take it over',()=>{
@@ -174,6 +174,15 @@ test('standalone diagnosis logs a result even when notification permission fails
   $notification:{post:()=>{throw Error('disabled');}},$done:()=>{finished++;}};
  vm.runInNewContext(readFileSync('dist/lab/diagnose.bundle.js','utf8'),ctx);
  assert.ok(logged.includes('暂无请求'));assert.equal(finished,1);
+});
+test('manual diagnosis writes only a separate aggregate baseline and leaves download state untouched',()=>{
+ const key='aijc123.BiliRange.lab.v1',baseline=key+'.diagnoseBaseline',store=new Map();let clock=1000,output;
+ const original=JSON.stringify({epoch:2,diagnostics:{accelerated:10,passed:2,reasons:{'small-range':2}},privateExtra:'https://private.example/?token=secret'});store.set(key,original);
+ const execute=()=>vm.runInNewContext(readFileSync('dist/lab/diagnose.bundle.js','utf8'),{Date:{now:()=>clock},console:{log(){}},
+  $httpClient:{get(){throw Error('No media fetch');}},$persistentStore:{read:k=>store.get(k),write:(v,k)=>{store.set(k,v);return true;}},$done:r=>{output=r.content;}});
+ execute();assert.equal(store.get(key),original);assert.ok(!store.get(baseline).includes('private'));assert.ok(!store.get(baseline).includes('secret'));
+ clock=3000;store.set(key,JSON.stringify({epoch:2,diagnostics:{accelerated:20,passed:4,reasons:{'small-range':4}}}));const second=store.get(key);
+ execute();assert.equal(store.get(key),second);assert.ok(output.includes('新增接管 10 / 放行 2'));assert.ok(output.includes('范围小于 256 KiB: 2'));
 });
 test('manual placeholder in the full adapter does not silently run the download path',()=>{
  let logged,finished;
