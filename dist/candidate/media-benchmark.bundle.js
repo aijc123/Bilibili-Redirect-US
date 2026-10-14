@@ -172,7 +172,7 @@ SOFTWARE.
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
-  function isTargetHost(value){return typeof value==='string'&&/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(value);}
+  function isTargetHost(value){return typeof value==='string'&&/^(?:(?:upos-(?:sz|hz|bstar1)-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com|upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net)$/.test(value);}
   function headers(h) {
     const out = {};
     for (const k of Object.keys(h || {})) out[k.toLowerCase()] = String(h[k]);
@@ -239,7 +239,7 @@ SOFTWARE.
     const minChunkKiB=[32,64,128].includes(Number(options.minChunkKiB))?Number(options.minChunkKiB):128;
     const allocated = Number.isSafeInteger(options.allocatedConnections) ? Math.max(1,options.allocatedConnections) : count;
     const parts = split(range, Math.min(count, allocated, Math.floor(range.length / (minChunkKiB * 1024))),minChunkKiB*1024);
-    const url = u.protocol + '://' + target + u.path + u.query;
+    const url = target === u.host ? request.url : u.protocol + '://' + target + u.path + u.query;
     const safeHeaders = { 'Accept-Encoding': 'identity', [INTERNAL]: '1' };
     for (const name of ['user-agent', 'referer', 'accept']) if (h[name]) safeHeaders[name] = h[name];
     const timeout = Math.max(500, Math.min(5000, Number(options.timeout) || 2500));
@@ -294,7 +294,7 @@ SOFTWARE.
       // retry delay for content/status failures; back off transient network failures.
       const integrity = ['entity-mismatch','range-mismatch','length-mismatch','encoded-body','content-range','content-length','non-media'].includes(reason);
       const statusFailure = /^status-/.test(reason) || reason.startsWith('redirect-');
-      const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
+      const cooldownMs = integrity || statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
       return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}),...(error.redirectFamily?{redirectFamily:error.redirectFamily}:{}) } };

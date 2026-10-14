@@ -1,0 +1,22 @@
+{
+  "scope": "User-reported iPhone fixed-media Range benchmark summary; NOT native App playback, verified video-track demand, causal speedup or DNS-IP ranking",
+  "source": "Bili 媒体测速 0.1.18 summary supplied by user on 2026-10-14",
+  "version": "0.1.18-experimental",
+  "rangeBytes": 897932,
+  "elapsedMs": 49430,
+  "requestedALPN": "h1",
+  "mediaType": "unknown",
+  "minChunkKiB": 128,
+  "rows": [
+    {"host":"upos-hz-mirrorakam.akamaized.net","original":true,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":20.92,"medianAttemptMs":349,"errors":{}},
+    {"host":"upos-hz-mirrorakam.akamaized.net","original":true,"configured":8,"actual":6,"success":2,"attempts":2,"medianMbps":27.21,"medianAttemptMs":265,"errors":{}},
+    {"host":"upos-sz-mirror08h.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.47,"medianAttemptMs":2909,"errors":{}},
+    {"host":"upos-sz-mirror08h.bilivideo.com","original":false,"configured":8,"actual":6,"success":2,"attempts":2,"medianMbps":2.03,"medianAttemptMs":3899,"errors":{}},
+    {"host":"upos-sz-mirror08c.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.71,"medianAttemptMs":2655,"errors":{}},
+    {"host":"upos-sz-mirror08c.bilivideo.com","original":false,"configured":8,"actual":6,"success":1,"attempts":2,"medianMbps":2.74,"medianAttemptMs":2223,"errors":{"redirect-untrusted":1}},
+    {"host":"upos-sz-mirrorbos.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.45,"medianAttemptMs":2928,"errors":{}},
+    {"host":"upos-sz-mirrorbos.bilivideo.com","original":false,"configured":8,"actual":6,"success":1,"attempts":2,"medianMbps":3.46,"medianAttemptMs":3752,"errors":{"transport":1}},
+    {"host":"upos-sz-mirrorcos.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.69,"medianAttemptMs":2679,"errors":{}},
+    {"host":"upos-sz-mirrorcos.bilivideo.com","original":false,"configured":8,"actual":6,"success":0,"attempts":2,"medianMbps":null,"medianAttemptMs":3049,"errors":{"entity-mismatch":2}}
+  ]
+}

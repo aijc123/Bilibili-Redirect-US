@@ -1,0 +1,66 @@
+{
+  "scope": "SYNTHETIC real-loopback HTTP routing regression only; not Bilibili, iPhone, TLS-to-CDN or playback evidence.",
+  "generatedAt": "2026-10-14T18:07:33.840Z",
+  "version": "0.1.19-experimental",
+  "parameters": {
+    "originDelayMs": 120,
+    "forcedCDNDelayMs": 800,
+    "bytes": 1048576,
+    "requests": 6
+  },
+  "peakJobs": 8,
+  "artifacts": {
+    "baseline": "d11fa1ae94d04202df1ad2484efc0eafeb512257210da3798950f8b38f47d6c7",
+    "candidate": "c31b7c501f9bb4573cd38761a44ca1a2c9a5b134252b7f0a3d366416cfa86837"
+  },
+  "rows": [
+    {
+      "mode": "baseline",
+      "selectedHost": "upos-sz-mirror08c.bilivideo.com",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 858
+    },
+    {
+      "mode": "candidate",
+      "selectedHost": "upos-hz-mirrorakam.akamaized.net",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 180
+    },
+    {
+      "mode": "candidate",
+      "selectedHost": "upos-hz-mirrorakam.akamaized.net",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 160
+    },
+    {
+      "mode": "baseline",
+      "selectedHost": "upos-sz-mirror08c.bilivideo.com",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 832
+    },
+    {
+      "mode": "baseline",
+      "selectedHost": "upos-sz-mirror08c.bilivideo.com",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 838
+    },
+    {
+      "mode": "candidate",
+      "selectedHost": "upos-hz-mirrorakam.akamaized.net",
+      "bytes": 1048576,
+      "httpJobs": 8,
+      "sockets": 8,
+      "elapsedMs": 142
+    }
+  ]
+}

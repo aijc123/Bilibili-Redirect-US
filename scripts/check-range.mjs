@@ -6,6 +6,6 @@ function run(command,args){
 }
 run(process.execPath,['scripts/check-docs.mjs']);
 for(const build of ['scripts/build-range.mjs','scripts/build-adaptive.mjs','scripts/build-gateway.mjs'])run(process.execPath,[build]);
-const suites=['adaptive','media-benchmark','automatic','range','loon-http','budget','measurements','trials','dns-diagnose','media-info','cdn-health','us-bundle','gateway','gateway-loon'];
+const suites=['adaptive','recovery','media-benchmark','automatic','range','loon-http','budget','measurements','trials','dns-diagnose','media-info','cdn-health','us-bundle','gateway','gateway-loon'];
 run(process.execPath,['--test',...suites.map(name=>'tests/'+name+'.test.mjs')]);
 if(process.argv.includes('--check-generated'))run('git',['diff','--exit-code','--','dist/lab','dist/candidate','dist/gateway']);

@@ -124,9 +124,9 @@
     policy.options.hosts=[host,...policy.options.hosts.filter(h=>h!==host)];
     policy.trialMode=stage;ctx.mode=stage;ctx.reason='compare';
   }
-  function plan(state,request,mode,at=Date.now(),random=Math.random){
+  function plan(state,request,mode,at=Date.now(),random=Math.random,hosts){
     const bytes=root.BiliRange.parseRange(root.BiliRange.headers(request.headers).range)?.length;
-    const host=root.BiliRange.chooseHost(state,root.BiliRangeCandidates.pool('upos-sz-mirror08c.bilivideo.com','all'),at);
+    const host=root.BiliRange.chooseHost(state,hosts||root.BiliRangeCandidates.pool('upos-sz-mirror08c.bilivideo.com','all'),at);
     const s=host&&scope(state,request,host,bytes);
     return s?T().plan(state,s.alias,mode,at,random):null;
   }

@@ -172,7 +172,7 @@ SOFTWARE.
   const DEFAULT_HOSTS = ['upos-sz-mirrorhwo1.bilivideo.com', 'upos-sz-mirror08c.bilivideo.com',
     'upos-sz-mirrorhw.bilivideo.com', 'upos-sz-mirrorali.bilivideo.com'];
   const INTERNAL = 'x-bili-range-internal';
-  function isTargetHost(value){return typeof value==='string'&&/^(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com$/.test(value);}
+  function isTargetHost(value){return typeof value==='string'&&/^(?:(?:upos-(?:sz|hz|bstar1)-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com|upos-(?:sz|hz|bstar1)-mirrorakam\.akamaized\.net)$/.test(value);}
   function headers(h) {
     const out = {};
     for (const k of Object.keys(h || {})) out[k.toLowerCase()] = String(h[k]);
@@ -239,7 +239,7 @@ SOFTWARE.
     const minChunkKiB=[32,64,128].includes(Number(options.minChunkKiB))?Number(options.minChunkKiB):128;
     const allocated = Number.isSafeInteger(options.allocatedConnections) ? Math.max(1,options.allocatedConnections) : count;
     const parts = split(range, Math.min(count, allocated, Math.floor(range.length / (minChunkKiB * 1024))),minChunkKiB*1024);
-    const url = u.protocol + '://' + target + u.path + u.query;
+    const url = target === u.host ? request.url : u.protocol + '://' + target + u.path + u.query;
     const safeHeaders = { 'Accept-Encoding': 'identity', [INTERNAL]: '1' };
     for (const name of ['user-agent', 'referer', 'accept']) if (h[name]) safeHeaders[name] = h[name];
     const timeout = Math.max(500, Math.min(5000, Number(options.timeout) || 2500));
@@ -294,7 +294,7 @@ SOFTWARE.
       // retry delay for content/status failures; back off transient network failures.
       const integrity = ['entity-mismatch','range-mismatch','length-mismatch','encoded-body','content-range','content-length','non-media'].includes(reason);
       const statusFailure = /^status-/.test(reason) || reason.startsWith('redirect-');
-      const cooldownMs = integrity ? 60000 : statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
+      const cooldownMs = integrity || statusFailure ? 1500 : Math.min(10000, 1500 * 2 ** (failures - 1));
       (state.hosts ||= {})[target] = { ...old, failures, at: now(), blockedUntil: now() + cooldownMs, lastError: reason };
       const finishedAt=now();
       return { kind: 'pass', reason, metrics: { host: target, elapsedMs: finishedAt - at, cooldownMs,connections:parts.length,startedAt:at,finishedAt,requestedALPN,minChunkKiB,...(integrityField?{integrityField}:{}),...(error.redirectField?{redirectField:error.redirectField}:{}),...(error.redirectFamily?{redirectFamily:error.redirectFamily}:{}) } };
@@ -585,7 +585,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.18-experimental';
+  const VERSION = '0.1.19-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -713,7 +713,7 @@ SOFTWARE.
  * Does not invent BTR buffer/stall/progress signals or issue extra media GETs. */
 (function(root){
   'use strict';
-  const C={"version":"0.1.18-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
+  const C={"version":"0.1.19-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
   const reasons=['warmup','size-cap','baseline','learned','pushback','rest','load','network-errors','recent-failure','regression','busy','inconclusive','compare','probe-loss','probe-spacing'];
   const M=()=>root.BiliRangeMeasurements,T=()=>root.BiliRangeTrials;
   const last=values=>values?.[values.length-1];
@@ -833,9 +833,9 @@ SOFTWARE.
     policy.options.hosts=[host,...policy.options.hosts.filter(h=>h!==host)];
     policy.trialMode=stage;ctx.mode=stage;ctx.reason='compare';
   }
-  function plan(state,request,mode,at=Date.now(),random=Math.random){
+  function plan(state,request,mode,at=Date.now(),random=Math.random,hosts){
     const bytes=root.BiliRange.parseRange(root.BiliRange.headers(request.headers).range)?.length;
-    const host=root.BiliRange.chooseHost(state,root.BiliRangeCandidates.pool('upos-sz-mirror08c.bilivideo.com','all'),at);
+    const host=root.BiliRange.chooseHost(state,hosts||root.BiliRangeCandidates.pool('upos-sz-mirror08c.bilivideo.com','all'),at);
     const s=host&&scope(state,request,host,bytes);
     return s?T().plan(state,s.alias,mode,at,random):null;
   }
@@ -893,6 +893,75 @@ SOFTWARE.
   root.BiliRangeAdaptive={configure:safeConfigure,plan,observe,report,evidence,scope,config:C};
   const diag=root.BiliRangeDiagnostics;
   if(diag)for(const name of ['summary','report']){const original=diag[name];diag[name]=(state,...args)=>original(state,...args)+'\n'+report(state,...args);}
+})(globalThis);
+
+/* Preserve the official media source; scope negative evidence to one signed
+ * representation/node/network instead of confusing another track's success. */
+(function(root){
+ 'use strict';
+ const allowed=['transport','redirect-untrusted','redirect-limit','entity-mismatch','range-mismatch','length-mismatch',
+  'content-range','content-length','encoded-body','non-media','status-403','status-404','status-410'];
+ const fresh=(v,at,ttl)=>Number.isFinite(v)&&v<=at&&at-v<ttl;
+ const epoch=state=>Number(state.epoch)||0;
+ function entries(state,at){
+  return Object.fromEntries(Object.entries(state.recovery?.entries||{}).filter(([key,v])=>{
+   const parts=key.split('|');return parts.length===4&&parts[0]===String(epoch(state))&&/^[a-f0-9]{8}$/.test(parts[1])&&
+    ['http','https'].includes(parts[2])&&root.BiliRange.isTargetHost(parts[3])&&v&&fresh(v.at,at,120000)&&
+    Number.isInteger(v.failures)&&v.failures>=1&&v.failures<=5&&allowed.includes(v.reason)&&
+    Number.isFinite(v.until)&&v.until>=v.at&&v.until<=v.at+60000;
+  }).slice(-16).map(([key,v])=>[key,{at:v.at,until:v.until,failures:v.failures,reason:v.reason}]));
+ }
+ function key(state,request,host){
+  const u=root.BiliRange.parseURL(request?.url);if(!u||!root.BiliRange.isTargetHost(host))return;
+  // The existing identity intentionally omits authority for cross-CDN samples.
+  // A refusal cache must also distinguish the donor host and explicit port.
+  const alias={url:'https://'+u.host+'/upgcxcode/recovery-'+encodeURIComponent(u.authority.toLowerCase())+u.path+u.query};
+  const content=root.BiliRangeMeasurements.identity(state,alias,true);
+  return content?[epoch(state),content,u.protocol,host].join('|'):undefined;
+ }
+ function pool(state,request,base,at=Date.now()){
+  const p=root.BiliRange.eligible(request,{maxBytes:4*1024*1024},at);
+  if(p.kind!=='eligible')return base;
+  const prior=entries(state,at),blocked=host=>Number(prior[key(state,request,host)]?.until)>at;
+  const source=p.u.host;
+  const pushback=(Array.isArray(state.measurements?.samples)?state.measurements.samples:[]).some(s=>
+   s&&s.epoch===epoch(state)&&s.host===source&&!s.ok&&['status-412','status-429'].includes(s.reason)&&fresh(s.at,at,180000));
+  // Respect origin load refusal; keep the existing shrink/rest policy instead
+  // of treating a throttle as a reason to race another hostname.
+  if(pushback)return [source];
+  // The actual source can be faster than every forced CDN. Do not discard it
+  // merely because a different node has once delivered some other media.
+  if(!blocked(source)&&!(Number(state.hosts?.[source]?.blockedUntil)>at))return [source];
+  return base.filter(host=>host!==source&&!blocked(host));
+ }
+ function observe(state,request,result,context,latest,at=Date.now()){
+  state.recovery={schema:1,entries:entries(latest,at)};
+  const previous=latest.recovery?.last;
+  if(previous&&previous.epoch===epoch(state)&&fresh(previous.at,at,120000)&&
+   root.BiliRange.isTargetHost(previous.source)&&root.BiliRange.isTargetHost(previous.selected))
+   state.recovery.last={at:previous.at,epoch:previous.epoch,source:previous.source,selected:previous.selected};
+  if(epoch(state)!==Number(context.epoch||0)||!result.metrics?.host)return;
+  const host=result.metrics.host,k=key(state,request,host),u=root.BiliRange.parseURL(request.url);
+  if(!k||!u)return;
+  state.recovery.last={at,epoch:epoch(state),source:u.host,selected:host};
+  if(result.kind==='response')delete state.recovery.entries[k];
+  else if(allowed.includes(result.reason)){
+   const old=state.recovery.entries[k],failures=old&&fresh(old.at,at,30000)?Math.min(5,old.failures+1):1;
+   // A single network error may be transient; repeated ones rest this pair.
+   const delay=result.reason==='transport'?(failures>=2?12000:0):60000;
+   state.recovery.entries[k]={at,until:at+delay,failures,reason:result.reason};
+  }
+  state.recovery.entries=Object.fromEntries(Object.entries(state.recovery.entries).slice(-16));
+ }
+ function report(state,at=Date.now()){
+  const v=state.recovery?.last;
+  if(!v||v.epoch!==epoch(state)||!fresh(v.at,at,120000)||!root.BiliRange.isTargetHost(v.source)||!root.BiliRange.isTargetHost(v.selected))
+   return '媒体选路：暂无近期结果；优先官方原地址，异常时才用CDN回退。';
+  return `媒体选路：${v.source===v.selected?'保留官方原地址':'原地址异常后的CDN回退'} ${v.selected}。不代表已测出全局最快节点。`;
+ }
+ root.BiliRangeRecovery={pool,observe,report,entries,key};
+ const diagnostics=root.BiliRangeDiagnostics;
+ if(diagnostics)for(const name of ['summary','report']){const original=diagnostics[name];diagnostics[name]=(state,...args)=>original(state,...args)+'\n'+report(state,...args);}
 })(globalThis);
 
 globalThis.BiliRangeProfile="automatic";

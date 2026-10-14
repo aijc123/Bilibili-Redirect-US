@@ -8,9 +8,9 @@
 
 aijc123 为 Bilibili 官方 App 开发的 Loon 自动加速适配。
 
-[![自动版](https://img.shields.io/badge/Loon-0.1.14%20experimental-fb7299?style=flat-square)](CHANGELOG.md) [![检查](https://img.shields.io/github/actions/workflow/status/aijc123/Bilibili-Redirect-US/range-lab.yml?branch=main&label=checks&style=flat-square)](https://github.com/aijc123/Bilibili-Redirect-US/actions/workflows/range-lab.yml) [![许可](https://img.shields.io/badge/license-Apache--2.0%20%2B%20MIT-60a5fa?style=flat-square)](NOTICE)
+[![体验候选](https://img.shields.io/badge/Loon-0.1.19%20experimental-fb7299?style=flat-square)](CHANGELOG.md) [![检查](https://img.shields.io/github/actions/workflow/status/aijc123/Bilibili-Redirect-US/range-lab.yml?branch=main&label=checks&style=flat-square)](https://github.com/aijc123/Bilibili-Redirect-US/actions/workflows/range-lab.yml) [![许可](https://img.shields.io/badge/license-Apache--2.0%20%2B%20MIT-60a5fa?style=flat-square)](NOTICE)
 
-### [导入 Loon 自动版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin)
+### [导入 Loon 当前体验候选](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/candidate/BiliBili.Range.Adaptive.plugin)
 
 [安装](#安装) · [确认生效](#确认生效) · [效果记录](#效果记录) · [原理](#原理) · [常见问题](#常见问题) · [反馈](#反馈) · [更新日志](CHANGELOG.md)
 
@@ -21,8 +21,8 @@ aijc123 为 Bilibili 官方 App 开发的 Loon 自动加速适配。
 海外宽带测速正常，B站某些视频仍会加载慢。换CDN有时有帮助，但逐个选节点、猜线程数和读长日志并不方便。Bili Range把节点回退、有限Range并发和本机诊断放进已有的Loon，让你继续使用官方App。
 
 - **一个开关**：日常只保留“启用加速”，旧高级参数不会继续控制自动版。
-- **本机选路**：15个候选包含大陆、海外与香港节点，先复用成功节点，再失败回退。
-- **适量并发**：常规上限8个HTTP任务，按请求大小、在途负载和近期网络错误收缩；小请求直接放行。
+- **保留原地址**：先使用官方下发的服务器，异常时再回退到大陆、海外与香港候选；不默认替换到大陆CDN。
+- **适量并发**：常规8个HTTP任务，按大小、负载和错误收缩，有同条件证据才试更高档；小请求直接放行。
 - **短诊断**：看实际请求处理版本、近期成功/失败和是否有新样本；完整统计按需打开。
 - **长期维护**：订阅地址固定，脚本固定到版本标签，源码、许可和验证可追溯。
 
@@ -34,7 +34,7 @@ Loon适配、调度预算、自动策略、诊断和独立发布由 **[aijc123](
 2. 按[Loon官方MitM说明](https://nsloon.app/docs/category/mitm/)完成证书安装与信任，只启用这一份B站CDN/Range插件。
 3. 保持“启用加速”打开，回到官方App看视频。
 
-不用填写CDN、线程、DNS或倍速。当前运行版本 **0.1.14-experimental**，要求Loon3.5.1；DNS诊断要求Build988+。[手机详细步骤](docs/USAGE.md)
+不用填写CDN、线程、DNS或倍速。当前体验候选 **0.1.19-experimental**，要求Loon3.5.1；DNS诊断要求Build988+。已修正默认替换原地址的策略，连续播放效果仍待验证；0.1.14及0.1.18固定版本保留回退。[手机详细步骤](docs/USAGE.md)
 
 | 使用场景 | 当前范围 |
 | --- | --- |
@@ -55,7 +55,7 @@ Loon适配、调度预算、自动策略、诊断和独立发布由 **[aijc123](
 | 同视频、同清晰度、同Wi-Fi的iPhone对照 | 用户反馈比原Redirect更流畅、加载更快；未量化因果倍数 |
 | 8路与32路请求层观察 | 当前更支持8路/128 KiB策略；缓存、时间及分片条件未完全控制 |
 | 最新候选版实际体验 | 0.1.17在1080高帧率、1倍速下仍有播放停顿；当前方案未达到该场景目标 |
-| 自动检查与发布验证 | 167项检查及构建复现通过；不等于真机4K/1.5倍速性能证据 |
+| 自动检查与发布验证 | 当前候选206项检查通过；原地址优先的连续播放及4K/1.5倍速效果仍待验证 |
 
 **0.1.17的诊断修复没有解决全部播放卡顿；不能宣称全链路最优或持续无卡顿。** 新自动策略的实际净收益、4K/1.5倍速能力仍待验证。我们展示本项目自己的证据，不把参考项目的速度图当作手机版成绩。[方法、观察数据与限制](docs/EVIDENCE.md)
 
@@ -72,9 +72,9 @@ Loon适配、调度预算、自动策略、诊断和独立发布由 **[aijc123](
 flowchart TD
   A[官方App需要一段媒体字节] --> B{范围和请求是否合格}
   B -->|小请求等| O[放行原请求]
-  B -->|合格| D[自动选CDN并分配共享预算]
+  B -->|合格| D[保留原地址或失败回退<br/>分配共享预算]
   D --> S[切成不重叠的Range分片]
-  subgraph P[同一个CDN · 并发多任务同时下载]
+  subgraph P[同一媒体服务器 · 并发多任务同时下载]
     direction LR
     T1[任务1<br/>字节0–131071]
     T2[任务2<br/>字节131072–262143]
@@ -101,6 +101,12 @@ flowchart TD
 
 ### 并发能带来多少速度收益？
 
+![iPhone相同媒体范围实测，原地址在本轮快于替换节点，每档最多两次且保留失败](pics/phone-media-observed.png)
+
+这张图来自用户0.1.18的实际iPhone测速摘要：相同897,932字节，原地址Akamai约20.92/27.21Mbps，替换节点多为2–3.5Mbps。配置8在本轮实际是6任务，失败没有变成虚假的速度。原地址同样由脚本下载，**不是原生App对照，也不是长期节点排名或无卡顿证明**；媒体轨类型未知，每档最多两次。未取得原始单次数据，因此不画误差线。[观察数据](benchmarks/phone-media-2026-10-14.json)
+
+据此，0.1.19候选优先保留官方下发的原地址，在原地址上做有限并发，异常时才用其他节点回退；不再默认强制替换到大陆CDN。它没有硬编码“所有视频走Akamai”，新版连续播放还待验证。[全链路进度](docs/END-TO-END.md)
+
 ![本机受控HTTP回环实验的并发速度对比，不是手机或B站CDN实测](pics/concurrency-fixture.png)
 
 本图使用本机HTTP回环服务器，真实下载并校验相同4 MiB数据，1/2/4/8/16/32任务每条件3轮、交替顺序。左图仅每任务限速，右图另加总出口配额；柱为中位数，误差线为最小—最大值，两图使用同一纵轴。
@@ -122,7 +128,7 @@ Loon不能像浏览器BTR一样读播放器buffer/stall或边下载边交付。�
 <details>
 <summary><b>为什么只有一个开关？还要选大陆或海外节点吗？</b></summary>
 
-日常版自动使用15节点候选池，08c为初始候选，优先复用近期成功节点，再失败回退。无需挑地区。高级参数在独立研发对照工具中，日常不需要安装它。
+当前候选优先保留官方原地址，出现异常时才使用15节点候选池回退，并记住近期拒绝过同一媒体地址的节点。无需挑地区；旧0.1.14的08c优先策略作为回退保留。高级参数在独立研发对照工具中，日常不需要安装它。
 
 </details>
 
@@ -194,7 +200,7 @@ npm run build
 npm test
 ```
 
-生成与提交产物一致性由 `npm run check`核对。本次源码目录及打包清单整理，生成的9个手机版文件逐一保持一致，运行版本仍为0.1.14。[结构与发布](docs/ARCHITECTURE.md) · [参与贡献](CONTRIBUTING.md) · [完整文档](docs/README.md)
+生成与提交产物一致性由 `npm run check`核对。原0.1.14产物逐一保留，当前候选由独立版本配置和标签构建。[结构与发布](docs/ARCHITECTURE.md) · [参与贡献](CONTRIBUTING.md) · [完整文档](docs/README.md)
 
 ## 来源与credit
 

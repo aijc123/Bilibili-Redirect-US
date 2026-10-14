@@ -4,8 +4,8 @@
 
 | 入口 | 状态与用途 |
 | --- | --- |
-| [当前自动版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin) | 0.1.14；日常一个启用开关，长期更新地址 |
-| [自动调优候选](ADAPTIVE.md) | 独立0.1.18；增加手动真实媒体测速，日常仍一个开关，手机提速与卡顿改善待验证 |
+| [保留自动版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin) | 0.1.14回退基线；旧长期地址与产物保留，不含原地址优先修正 |
+| [自动调优候选](ADAPTIVE.md) | 独立0.1.19；原地址优先、同媒体失败记忆及真实媒体测速，日常一个开关，连续播放效果待验证 |
 | [固定0.1.13](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.13-experimental/dist/lab/BiliBili.Range.Lab.plugin) | 保留旧参数与行为，可用于回退 |
 | [研发对照工具](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Advanced.plugin) | 同版本单独入口，保留高级参数；只供受控对照，与自动版不同时启用 |
 | [0.1.3实验版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Range.Experimental.plugin) | 已有同条件真机提速反馈；固定旧文件，[原说明](legacy/RANGE-0.1.3.md) |

@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const bundle=readFileSync('dist/candidate/range.bundle.js','utf8');
 const version=JSON.parse(readFileSync('src/loon/adaptive.json','utf8')).version;
-const host='upos-sz-mirror08c.bilivideo.com',MiB=1024*1024;
+const host='upos-hz-mirrorakam.akamaized.net',MiB=1024*1024;
 const req=bytes=>({method:'GET',url:'https://upos-hz-mirrorakam.akamaized.net/upgcxcode/private-representation.m4s?upsig=private-token',headers:{Range:`bytes=0-${bytes-1}`}});
 function harness({bytes=MiB,initial={}}={}){
  let stored=JSON.stringify(initial),clock=100000,context;
@@ -20,7 +20,7 @@ function harness({bytes=MiB,initial={}}={}){
    afterStart?.(JSON.parse(stored),v=>{stored=JSON.stringify(v);},start);
    clock=start+elapsed(tasks.length);
    for(const {o,cb} of tasks){
-    assert.match(o.url,/^https?:\/\/(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com\//);
+    assert.match(o.url,/^https?:\/\/(?:(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com|upos-hz-mirrorakam\.akamaized\.net)\//);
     assert.equal(new URL(o.url).pathname+new URL(o.url).search,new URL(request.url).pathname+new URL(request.url).search);
     const [,a,b]=/bytes=(\d+)-(\d+)/.exec(o.headers.Range),from=Number(a),to=Number(b);
     if(fail){cb('network failure',null,null);continue;}

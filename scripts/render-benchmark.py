@@ -151,11 +151,11 @@ def flow_figure():
     fig.suptitle("一个媒体请求，多个 Range 任务并发下载", fontsize=21, fontweight="bold", y=.97)
     fig.text(.5, .912, "1 MiB / 8任务示意：每片128 KiB，只下载自己的字节区间，不重复下载8份", ha="center", color="#475569", fontsize=12)
     box(.015, .77, .17, .10, "官方 App 发出\n1 MiB 媒体请求", "#f1f5f9")
-    box(.015, .48, .17, .18, "检查是否适合接管\n自动选一个 CDN\n分配共享任务预算", "#fce7f3")
+    box(.015, .48, .17, .18, "检查是否适合接管\n保留原地址或失败回退\n分配共享任务预算", "#fce7f3", 10)
     arrow(.095, .765, .095, .67)
     ax.plot([.22, .22], [.19, .845], color="#0891b2", linewidth=2)
     arrow(.19, .57, .22, .57, "#0891b2")
-    ax.text(.465, .865, "以下8个任务同时进行 · 同一个 CDN", ha="center", color="#0e7490", fontweight="bold")
+    ax.text(.465, .865, "以下8个任务同时进行 · 同一媒体服务器", ha="center", color="#0e7490", fontweight="bold")
     for i in range(8):
         y = .805-i*.087
         start, end = i*131072, (i+1)*131072-1
@@ -181,23 +181,86 @@ def flow_figure():
     return fig
 
 
+def phone_media_figure(path):
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if "user-reported" not in data.get("scope", "").lower():
+        raise ValueError("Phone media chart requires explicitly attributed observed data")
+    rows = data["rows"]
+    hosts = list(dict.fromkeys(row["host"] for row in rows))
+    if len(hosts) != 5 or len(rows) != 10 or data["rangeBytes"] != 897932:
+        raise ValueError("Unexpected observed dataset; do not invent missing measurements")
+    for row in rows:
+        if (row["configured"] not in [1, 8] or row["attempts"] != 2
+                or row["success"] + sum(row["errors"].values()) != row["attempts"]
+                or (row["medianMbps"] is None) != (row["success"] == 0)):
+            raise ValueError("Invalid success/error or unavailable-speed observation")
+    fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+    labels = ["原地址\nAkamai", "替换 08h", "替换 08c", "替换 bos", "替换 cos"]
+    colors = {1: "#0ea5e9", 8: "#ec4899"}
+    for configured, offset in [(1, -.19), (8, .19)]:
+        selected = [next(r for r in rows if r["host"] == h and r["configured"] == configured) for h in hosts]
+        x = [i + offset for i in range(len(hosts))]
+        rates = [r["medianMbps"] or 0 for r in selected]
+        bars = axes[0].bar(x, rates, width=.34, color=colors[configured],
+                           label="配置1任务 · 实际1" if configured == 1 else "配置8任务 · 实际6")
+        for bar, row in zip(bars, selected):
+            if row["medianMbps"] is None:
+                axes[0].scatter([bar.get_x()+bar.get_width()/2], [.45], marker="x", color="#b91c1c", s=50)
+                value = "无成功速度"
+            else:
+                value = f'{row["medianMbps"]:.2f}'
+            axes[0].annotate(value+f'\n{row["success"]}/2成功',
+                             (bar.get_x()+bar.get_width()/2, bar.get_height()), xytext=(0, 7),
+                             textcoords="offset points", ha="center", fontsize=9,
+                             color="#0f172a" if row["success"] else "#b91c1c")
+        bars = axes[1].bar(x, [r["medianAttemptMs"] for r in selected], width=.34, color=colors[configured])
+        for bar, row in zip(bars, selected):
+            if row["errors"]:
+                bar.set_hatch("//")
+            axes[1].annotate(str(row["medianAttemptMs"]),
+                             (bar.get_x()+bar.get_width()/2, bar.get_height()), xytext=(0, 5),
+                             textcoords="offset points", ha="center", fontsize=9)
+    for ax in axes:
+        ax.grid(axis="y", color="#e2e8f0", linewidth=.7)
+        ax.set_axisbelow(True)
+        for side in ["top", "right"]:
+            ax.spines[side].set_visible(False)
+    axes[0].set_ylim(0, 34)
+    axes[0].set_ylabel("成功请求中位速度 · Mbps")
+    axes[0].legend(loc="upper right", frameon=False, fontsize=10)
+    axes[1].set_ylim(0, 4700)
+    axes[1].set_ylabel("完整尝试中位耗时 · ms\n含失败；斜线表示有失败")
+    axes[1].set_xticks(range(len(hosts)), labels)
+    fig.suptitle("iPhone 真实媒体范围对照：原地址在本轮更快", fontsize=19, fontweight="bold", y=.97)
+    fig.text(.5, .917, "用户报告 · 2026-10-14 · 0.1.18 · 相同897,932字节 · h1偏好 · 每档最多2次", ha="center", fontsize=10, color="#475569")
+    fig.text(.5, .13, "速度只统计成功请求；原地址也是脚本下载，不是原生App对照。无原始单次数据，不画误差线或置信区间。", ha="center", fontsize=9.5, color="#475569")
+    fig.text(.5, .091, "媒体轨类型未知；缓存、时间顺序与小样本仍有影响。当前路由的观察，不是长期节点排名、因果提速倍数或无卡顿证明。", ha="center", fontsize=9.5, color="#475569")
+    fig.text(.5, .052, "跨节点已做逐字节比对。08c并发1次跳转拒绝；bos并发1次网络错误；cos并发2次实体校验失败。", ha="center", fontsize=9.5, color="#475569")
+    fig.subplots_adjust(top=.86, bottom=.22, left=.10, right=.98, hspace=.22)
+    return fig
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--fixture", type=Path)
     source.add_argument("--phone", type=Path)
+    source.add_argument("--phone-media", type=Path)
     source.add_argument("--flow", action="store_true")
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
     try:
         configure_font()
-        fig = flow_figure() if args.flow else fixture_figure(args.fixture) if args.fixture else phone_figure(args.phone)
+        fig = phone_media_figure(args.phone_media) if args.phone_media else flow_figure() if args.flow else fixture_figure(args.fixture) if args.fixture else phone_figure(args.phone)
     except (OSError, ValueError, KeyError, TypeError) as error:
         parser.error("无法绘图："+str(error))
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    name = "parallel-range-flow" if args.flow else "concurrency-fixture" if args.fixture else "phone-experience"
+    name = "phone-media-observed" if args.phone_media else "parallel-range-flow" if args.flow else "concurrency-fixture" if args.fixture else "phone-experience"
     for ext in ["svg", "png"]:
-        fig.savefig(args.out_dir/(name+"."+ext), dpi=180, facecolor="white")
+        target = args.out_dir/(name+"."+ext)
+        fig.savefig(target, dpi=180, facecolor="white")
+        if ext == "svg":
+            target.write_text("\n".join(line.rstrip() for line in target.read_text(encoding="utf-8").splitlines())+"\n", encoding="utf-8")
     plt.close(fig)
     print(str(args.out_dir/(name+".png")))
 

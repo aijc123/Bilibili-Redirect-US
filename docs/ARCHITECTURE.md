@@ -8,6 +8,7 @@
 | --- | --- |
 | src/loon/policy.js | 自动参数及保留的研发参数解析；与传输、统计分离 |
 | src/loon/adaptive.js / adaptive.json | 独立候选的完成请求反馈、收益/尾部判断及阈值；复用已有交替比较 |
+| src/loon/recovery.js | 候选的原地址优先、同地址/协议/节点失败隔离及安全状态摘要 |
 | src/loon/candidates.js | 从统一JSON清单生成节点组，不重复硬编码15节点 |
 | src/loon/range-download.js | Loon范围资格、安全校验、同节点并发；调用BTR基础工具 |
 | src/loon/loon-http.js | Loon回调、二进制和严格重定向处理 |

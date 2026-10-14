@@ -1,5 +1,7 @@
 # Bili Range 自动版 0.1.14
 
+这是保留的0.1.14回退基线。当前体验候选0.1.19已根据手机对照改为原地址优先，见[候选说明](ADAPTIVE.md)与[全链路状态](END-TO-END.md)。下面的旧选路规则不代表当前候选。
+
 日常使用只有“启用加速”开关。使用[长期订阅](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin)，不需要挑节点或调线程。[安装与反馈](USAGE.md)
 
 ## 自动策略
