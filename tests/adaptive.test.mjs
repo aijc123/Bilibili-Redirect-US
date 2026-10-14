@@ -34,6 +34,28 @@ function harness({bytes=MiB,initial={}}={}){
 }
 async function warm(h,elapsed){for(let i=0;i<8;i++)assert.equal((await h.run({elapsed})).count,8);}
 
+test('small passed requests preserve the last adaptive result without refreshing its age',async()=>{
+ const h=harness();await h.run();const previous=h.state().adaptive.last;
+ assert.equal(previous.reason,'warmup');
+ const small=await h.run({request:req(128*1024)});
+ assert.equal(small.count,0);assert.equal(small.result.response,undefined);
+ assert.deepEqual(small.state.adaptive.last,previous);
+ assert.match(h.context().BiliRangeAdaptive.report(small.state,small.clock),/积累普通请求/);
+ const expired=await h.run({request:req(128*1024),gap:121000});
+ assert.equal(expired.state.adaptive.last,undefined);
+ assert.match(h.context().BiliRangeAdaptive.report(expired.state,expired.clock),/近2分钟没有可用状态/);
+});
+
+test('a passed request cannot restore another network epoch or untrusted adaptive status',async()=>{
+ const h=harness();await h.run();const s=h.state();s.epoch=1;h.set(s);
+ const changed=await h.run({request:req(128*1024)});
+ assert.equal(changed.state.adaptive.last,undefined);
+ const invalid=changed.state;invalid.adaptive.last={at:changed.clock,epoch:1,choice:64,reason:'private-value'};h.set(invalid);
+ const rejected=await h.run({request:req(128*1024)});
+ assert.equal(rejected.state.adaptive.last,undefined);
+ assert.ok(!JSON.stringify(rejected.state.adaptive).includes('private-value'));
+});
+
 test('candidate retains one switch, pinned own scripts, independent state and unchanged cold start',async()=>{
  const p=readFileSync('dist/candidate/BiliBili.Range.Adaptive.plugin','utf8');
  assert.equal(p.split('[Argument]')[1].split('[General]')[0].trim().split('\n').length,1);

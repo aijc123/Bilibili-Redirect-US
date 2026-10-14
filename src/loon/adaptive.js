@@ -5,10 +5,18 @@
 (function(root){
   'use strict';
   const C=__BILI_ADAPTIVE_CONFIG__;
+  const reasons=['warmup','size-cap','baseline','learned','pushback','rest','load','network-errors','recent-failure','regression','busy','inconclusive','compare','probe-loss','probe-spacing'];
   const M=()=>root.BiliRangeMeasurements,T=()=>root.BiliRangeTrials;
   const last=values=>values?.[values.length-1];
   const median=values=>M().quantile(values,0.5);
   const goodTime=(value,at,ttl)=>Number.isFinite(value)&&value<=at&&at-value<ttl;
+  function recentStatus(state,at){
+    const value=state.adaptive?.last;
+    if(!value||value.epoch!==(Number(state.epoch)||0)||!goodTime(value.at,at,120000)||
+      ![4,8,16,32].includes(value.choice)||!reasons.includes(value.reason))return;
+    return {at:value.at,epoch:value.epoch,choice:value.choice,reason:value.reason,
+      mode:['4vs8','8vs16','16vs32'].includes(value.mode)?value.mode:null};
+  }
   function entries(state,at){
     return Object.fromEntries(Object.entries(state.adaptive?.entries||{}).filter(([key,v])=>
       /^\d+\|[a-f0-9]{8}\|[^|]+\|\d+$/.test(key)&&key.startsWith((Number(state.epoch)||0)+'|')&&
@@ -124,6 +132,10 @@
   }
   function observe(state,request,result,context,latest,at=Date.now()){
     state.adaptive={schema:1,entries:entries(latest,at)};
+    // Ineligible/small requests share the store with downloads. Preserve the
+    // newest valid status; they neither erase it nor make old evidence fresh.
+    const previous=recentStatus(latest,at);
+    if(previous)state.adaptive.last=previous;
     const ctx=context.policy?.adaptive;
     if(!ctx||Number(state.epoch||0)!==Number(context.epoch||0))return;
     const sample=last(state.measurements?.samples);
@@ -154,13 +166,12 @@
       }
     }
     state.adaptive.entries=Object.fromEntries(Object.entries(state.adaptive.entries).slice(-8));
-    const reasons=['warmup','size-cap','baseline','learned','pushback','rest','load','network-errors','recent-failure','regression','busy','inconclusive','compare','probe-loss','probe-spacing'];
     state.adaptive.last={at,epoch:ctx.epoch,choice:[4,8,16,32].includes(ctx.choice)?ctx.choice:8,
       reason:reasons.includes(ctx.reason)?ctx.reason:'baseline',mode:['4vs8','8vs16','16vs32'].includes(ctx.mode)?ctx.mode:null};
   }
   function report(state,at=Date.now()){
-    const last=state.adaptive?.last;
-    if(!last||last.epoch!==(Number(state.epoch)||0)||!goodTime(last.at,at,120000))return '并发调优：暂无当前网络的新结果；冷启动保持原8路策略。';
+    const last=recentStatus(state,at);
+    if(!last)return '并发调优：近2分钟没有可用状态；下载沿用原策略，不能据此判断是否启动过比较。';
     const labels={warmup:'积累普通请求', 'size-cap':'请求较小，不试高并发',baseline:'原8路策略',learned:'同条件观察选择',pushback:'服务端拒绝负载，暂用4路',
       rest:'调优冷却',load:'负载收缩','network-errors':'网络错误收缩','recent-failure':'近期失败，暂停比较',regression:'变慢后恢复8路',busy:'在途负载，不比较',
       inconclusive:'比较预算用完，证据不足，保留原策略',compare:'原有请求交替比较','probe-loss':'比较明显变慢，恢复已有策略并冷却','probe-spacing':'比较间隔，使用已有策略'};
