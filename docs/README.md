@@ -5,6 +5,7 @@
 - [安装与反馈](USAGE.md)：导入、更新、运行短诊断。
 - [自动策略](AUTOMATIC.md)：节点、并发、预算与诊断范围。
 - [自动调优候选](ADAPTIVE.md)：根据同条件完成请求比较收益，保留原自动版。
+- [独立研发候选](PREVIEW.md)：错误密集时让出下载、小范围调优及网络状态隔离；尚待真机验收。
 - [手机真实媒体测速](MEDIA-BENCHMARK.md)：手动采样、暂停播放、同一范围下载与字节校验。
 - [效果证据](EVIDENCE.md)：实际反馈、观察数据和尚未验证的部分。
 - [全链路优化](END-TO-END.md)：目标、各环节证据与尚未通过的播放验收。
@@ -16,6 +17,7 @@
 - [代码结构与构建](ARCHITECTURE.md)：源码、打包清单、产物与发布过程。
 - [BTR参考与适配边界](BTR-REFERENCE.md)：这次参考了哪些文件，哪些能力适用于Loon。
 - [CDN健康探测](CDN-HEALTH.md)：GitHub DNS/TLS快照的范围。
+- [固定IP能力研究](DNS-RESEARCH.md)：尚未真机验证的Custom节点公开网页探针，不作为媒体测速成绩。
 - [参与贡献](../CONTRIBUTING.md)与[更新日志](../CHANGELOG.md)。
 
 ## 其他路线与历史

@@ -1,3 +1,4 @@
+import {artifact,namespace} from './helpers/channel.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -108,10 +109,10 @@ test('published manual bundle executes over real loopback HTTP with byte-correct
  try{
   const at=Date.now(),sample={...h.sample,at,until:at+120000,headers:{Range:`bytes=0-${size-1}`}};
   h.store.write(JSON.stringify(sample),h.api.CAPTURE);let doneCalls=0,summary,calls=0;
-  const response=await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/candidate/media-benchmark.bundle.js','utf8'),{
+  const response=await new Promise(resolve=>vm.runInNewContext(artifact('media-benchmark.bundle.js'),{
    Date,Uint8Array,console:{log:s=>{summary=s;}},$persistentStore:{
-    read:key=>h.store.read(key.replace('aijc123.BiliRange.adaptive.v1',h.api.KEY)),
-    write:(v,key)=>h.store.write(v,key.replace('aijc123.BiliRange.adaptive.v1',h.api.KEY))},
+    read:key=>h.store.read(key.replace(namespace,h.api.KEY)),
+    write:(v,key)=>h.store.write(v,key.replace(namespace,h.api.KEY))},
    $httpClient:{get(o,cb){calls++;fixture.fetchRange(o).then(r=>cb(null,{status:r.status,headers:r.headers},r.body),e=>cb(e.message,null,null));}},
    $done:r=>{doneCalls++;resolve(r);}
   }));
@@ -121,17 +122,17 @@ test('published manual bundle executes over real loopback HTTP with byte-correct
  }finally{await fixture.close();}
 });
 test('published downloader captures only when armed and network reset clears the local sample',async()=>{
- const h=setup(),ns='aijc123.BiliRange.adaptive.v1',map=new Map();
+ const h=setup(),ns=namespace,map=new Map();
  const store={read:k=>map.get(k),write:(v,k)=>{v===null?map.delete(k):map.set(k,v);return true;}};
  store.write(JSON.stringify({phase:'armed',at:1000,until:121000,epoch:0}),ns+'.mediaCapture');
  let done=0;
- await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/candidate/range.bundle.js','utf8'),{
+ await new Promise(resolve=>vm.runInNewContext(artifact('range.bundle.js'),{
   Uint8Array,Date:{now:()=>1100},Math,console:{log(){}},$argument:{Enabled:true},$request:request,$persistentStore:store,$httpClient:h.client,
   $done:r=>{done++;assert.equal(r.response.status,206);resolve();}
  }));
  assert.equal(done,1);assert.equal(JSON.parse(map.get(ns+'.mediaCapture')).url,url);
  assert.ok(!map.get(ns).includes('private-signature'));
- vm.runInNewContext(readFileSync('dist/candidate/network-reset.bundle.js','utf8'),{
+ vm.runInNewContext(artifact('network-reset.bundle.js'),{
   Uint8Array,Date:{now:()=>1200},$argument:{Enabled:false},$persistentStore:store,console:{log(){}},$done(){}
  });
  assert.equal(map.has(ns+'.mediaCapture'),false);assert.equal(JSON.parse(map.get(ns)).epoch,1);

@@ -1,38 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import vm from 'node:vm';
-import {readFileSync} from 'node:fs';
-const bundle=readFileSync('dist/candidate/range.bundle.js','utf8');
-const version=JSON.parse(readFileSync('src/loon/adaptive.json','utf8')).version;
-const host='upos-hz-mirrorakam.akamaized.net',MiB=1024*1024;
-const req=bytes=>({method:'GET',url:'https://upos-hz-mirrorakam.akamaized.net/upgcxcode/private-representation.m4s?upsig=private-token',headers:{Range:`bytes=0-${bytes-1}`}});
-function harness({bytes=MiB,initial={}}={}){
- let stored=JSON.stringify(initial),clock=100000,context;
- const entity=Uint8Array.from({length:bytes},(_,i)=>i%251);
- return {state:()=>JSON.parse(stored),context:()=>context,set:s=>{stored=JSON.stringify(s);},
-  async run({elapsed=()=>500,fail=false,request=req(bytes),afterStart,arg={Enabled:true},gap=2000,responseHeaders={},status=206,noAt=false}={}){
-   clock+=gap;const start=clock,tasks=[];let doneCalls=0;
-   let finish;const completed=new Promise(r=>finish=r),math=Object.create(Math);math.random=()=>0.9;
-   context={Uint8Array,Date:{now:()=>clock},Math:math,console:{log(){}},$argument:arg,$request:request,
-    $persistentStore:{read:()=>stored,write:v=>{stored=v;return true;}},$done:o=>{doneCalls++;finish(o);},
-    $httpClient:{get(o,cb){tasks.push({o,cb});}}};
-   vm.runInNewContext((noAt?'Array.prototype.at=undefined;\n':'')+bundle,context);await new Promise(r=>setImmediate(r));
-   afterStart?.(JSON.parse(stored),v=>{stored=JSON.stringify(v);},start);
-   clock=start+elapsed(tasks.length);
-   for(const {o,cb} of tasks){
-    assert.match(o.url,/^https?:\/\/(?:(?:upos-sz-[a-z0-9-]+|cn-hk-eq-[a-z0-9-]+)\.bilivideo\.com|upos-hz-mirrorakam\.akamaized\.net)\//);
-    assert.equal(new URL(o.url).pathname+new URL(o.url).search,new URL(request.url).pathname+new URL(request.url).search);
-    const [,a,b]=/bytes=(\d+)-(\d+)/.exec(o.headers.Range),from=Number(a),to=Number(b);
-    if(fail){cb('network failure',null,null);continue;}
-    cb(null,{status,headers:{'Content-Range':`bytes ${from}-${to}/${8*MiB}`,...responseHeaders}},
-     entity.subarray(from,to+1));
-   }
-   const result=await completed;assert.equal(doneCalls,1);
-   if(result.response)assert.deepEqual(result.response.body,entity);
-   return {count:tasks.length,result,state:JSON.parse(stored),clock};
-  }};
-}
-async function warm(h,elapsed){for(let i=0;i<8;i++)assert.equal((await h.run({elapsed})).count,8);}
+import {artifact,directory,namespace,plugin,version} from './helpers/channel.mjs';
+const bundle=artifact('range.bundle.js');
+import {host,MiB,req,harness,warm} from './helpers/adaptive-harness.mjs';
 
 test('small passed requests preserve the last adaptive result without refreshing its age',async()=>{
  const h=harness();await h.run();const previous=h.state().adaptive.last;
@@ -57,10 +27,10 @@ test('a passed request cannot restore another network epoch or untrusted adaptiv
 });
 
 test('candidate retains one switch, pinned own scripts, independent state and unchanged cold start',async()=>{
- const p=readFileSync('dist/candidate/BiliBili.Range.Adaptive.plugin','utf8');
+ const p=artifact(plugin);
  assert.equal(p.split('[Argument]')[1].split('[General]')[0].trim().split('\n').length,1);
- assert.ok(p.includes('range-v'+version+'/dist/candidate/'));
- assert.ok(bundle.includes('aijc123.BiliRange.adaptive.v1'));assert.ok(!bundle.includes('aijc123.BiliRange.lab.v1'));
+ assert.ok(p.includes('range-v'+version+'/'+directory+'/'));
+ assert.ok(bundle.includes(namespace));assert.ok(!bundle.includes('aijc123.BiliRange.lab.v1'));
  const h=harness();await warm(h,()=>500);
  assert.equal(h.state().trials,undefined);assert.ok(!JSON.stringify(h.state()).includes('private-token'));
  assert.ok(!JSON.stringify(h.state()).includes('private-representation'));

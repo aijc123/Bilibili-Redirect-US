@@ -1,0 +1,22 @@
+{
+  "scope": "User-reported iPhone fixed-media Range benchmark summary; NOT native App playback, verified video-track demand, causal speedup or DNS-IP ranking",
+  "source": "Second Bili 媒体测速 summary supplied by user on 2026-10-14; report does not include a version header",
+  "version": null,
+  "rangeBytes": 1048576,
+  "elapsedMs": 47497,
+  "requestedALPN": "h1",
+  "mediaType": "unknown",
+  "minChunkKiB": 128,
+  "rows": [
+    {"host":"upos-hz-mirrorakam.akamaized.net","original":true,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":20.35,"medianAttemptMs":435,"errors":{}},
+    {"host":"upos-hz-mirrorakam.akamaized.net","original":true,"configured":8,"actual":8,"success":2,"attempts":2,"medianMbps":33.43,"medianAttemptMs":254,"errors":{}},
+    {"host":"upos-sz-mirror08c.bilivideo.com","original":false,"configured":1,"actual":1,"success":1,"attempts":2,"medianMbps":2.20,"medianAttemptMs":3443,"errors":{"redirect-untrusted":1}},
+    {"host":"upos-sz-mirror08c.bilivideo.com","original":false,"configured":8,"actual":8,"success":2,"attempts":2,"medianMbps":3.28,"medianAttemptMs":2603,"errors":{}},
+    {"host":"upos-sz-mirrorbos.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.77,"medianAttemptMs":3383,"errors":{}},
+    {"host":"upos-sz-mirrorbos.bilivideo.com","original":false,"configured":8,"actual":8,"success":2,"attempts":2,"medianMbps":2.15,"medianAttemptMs":3920,"errors":{}},
+    {"host":"upos-sz-mirrorcos.bilivideo.com","original":false,"configured":1,"actual":1,"success":2,"attempts":2,"medianMbps":2.38,"medianAttemptMs":3522,"errors":{}},
+    {"host":"upos-sz-mirrorcos.bilivideo.com","original":false,"configured":8,"actual":8,"success":2,"attempts":2,"medianMbps":2.51,"medianAttemptMs":3373,"errors":{}},
+    {"host":"upos-sz-mirrorhwo1.bilivideo.com","original":false,"configured":1,"actual":1,"success":0,"attempts":2,"medianMbps":null,"medianAttemptMs":1243,"errors":{"redirect-untrusted":2}},
+    {"host":"upos-sz-mirrorhwo1.bilivideo.com","original":false,"configured":8,"actual":8,"success":0,"attempts":2,"medianMbps":null,"medianAttemptMs":1564,"errors":{"redirect-untrusted":2}}
+  ]
+}

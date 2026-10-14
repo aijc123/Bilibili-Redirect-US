@@ -1,0 +1,5859 @@
+{
+  "scope": "Real loopback HTTP only. NOT iPhone, Bilibili, DNS, TLS or playback evidence.",
+  "startedAt": "2026-10-14T20:17:18.334Z",
+  "updatedAt": "2026-10-14T20:28:15.507Z",
+  "complete": true,
+  "version": "0.1.20-experimental",
+  "artifactSHA256": "8baf45983020c20bb5a97998f8faf09f7a7b7916f8a57ba307789122cdd0bfb9",
+  "environment": {
+    "node": "v24.12.0",
+    "platform": "win32"
+  },
+  "parameters": {
+    "initialDelayMs": 120,
+    "tickMs": 16,
+    "perTaskBytesPerTick": 16384,
+    "requestsPerCondition": 32,
+    "minimumTrialSpacingMs": 1550
+  },
+  "results": [
+    {
+      "bytes": 262161,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 2,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 262161,
+          "elapsedMs": 356,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 306,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 338,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 390,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 326,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 361,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 368,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 362,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 532,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 400,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 374,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 569,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 628,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 396,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 380,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 553,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 601,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 378,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 351,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 567,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 561,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 335,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 411,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 598,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 662,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 395,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 364,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 626,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|41a16b12|1vs2|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 347,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 409,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 402,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 371,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 262161,
+      "profile": "shared-link-quota",
+      "perTickTokens": 1,
+      "chosen": 1,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 262161,
+          "elapsedMs": 584,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 622,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 576,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 548,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 557,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 609,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 653,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 648,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 641,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 522,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 632,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 609,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 584,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 611,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 586,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 628,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 557,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 554,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 608,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 582,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 644,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 580,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 583,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 595,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 572,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 626,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 599,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 553,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 2,
+          "reason": "compare",
+          "trial": {
+            "block": "0|10a7860d|1vs2|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 1,
+            "candidate": 2
+          }
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 586,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 1,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 570,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 1,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 623,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 1,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 262161,
+          "elapsedMs": 593,
+          "actualJobs": 1,
+          "peakJobs": 1,
+          "choice": 1,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 393233,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 3,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 393233,
+          "elapsedMs": 352,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 419,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 392,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 343,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 359,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 336,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 359,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 342,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 355,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 401,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 474,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 361,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 472,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 365,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 398,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 458,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 387,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 445,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 503,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 382,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 430,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 354,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 365,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 458,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 413,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 351,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 380,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 494,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d66647a2|2vs3|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 383,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 372,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 361,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 393,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 393233,
+      "profile": "shared-link-quota",
+      "perTickTokens": 2,
+      "chosen": 2,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 393233,
+          "elapsedMs": 507,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 510,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 542,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 501,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 472,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 496,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 483,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 481,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 454,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 520,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 502,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 522,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 487,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 460,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 454,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 473,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 550,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 492,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 410,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 490,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 489,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 436,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 493,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 491,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 433,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 487,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 504,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 519,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 3,
+          "reason": "compare",
+          "trial": {
+            "block": "0|c2a5a1e2|2vs3|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 3
+          }
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 491,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 463,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 482,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 393233,
+          "elapsedMs": 502,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 524305,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 4,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 524305,
+          "elapsedMs": 361,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 348,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 417,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 374,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 398,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 374,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 359,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 344,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 642,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 340,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 348,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 611,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 581,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 354,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 369,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 586,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 323,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 549,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 554,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 398,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 579,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 369,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 352,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 600,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 325,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 535,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 601,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 352,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|0f52e1e0|2vs4|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 381,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 394,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 398,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 377,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 524305,
+      "profile": "shared-link-quota",
+      "perTickTokens": 2,
+      "chosen": 2,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 524305,
+          "elapsedMs": 535,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 579,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 602,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 580,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 574,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 533,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 652,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 544,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 563,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 568,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 612,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 616,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 597,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 631,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 599,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 567,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 594,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 613,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 604,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 613,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 615,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 598,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 602,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 598,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 538,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 557,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 618,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 615,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "compare",
+          "trial": {
+            "block": "0|112ddc13|2vs4|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 2,
+            "candidate": 4
+          }
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 553,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 580,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 559,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 524305,
+          "elapsedMs": 573,
+          "actualJobs": 2,
+          "peakJobs": 2,
+          "choice": 2,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 655377,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 5,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 655377,
+          "elapsedMs": 404,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 345,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 373,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 374,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 406,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 374,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 362,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 328,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 350,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 523,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 491,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 336,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 519,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 338,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 365,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 462,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 352,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 445,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 495,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 352,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 522,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 371,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 354,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 473,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 415,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 473,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 490,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 418,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|56ff7d2f|3vs5|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 401,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 384,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 424,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 400,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 655377,
+      "profile": "shared-link-quota",
+      "perTickTokens": 3,
+      "chosen": 3,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 655377,
+          "elapsedMs": 509,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 571,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 511,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 563,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 495,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 470,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 527,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 545,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 532,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 553,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 458,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 566,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 491,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 535,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 506,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 536,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 524,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 522,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 554,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 504,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 550,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 506,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 490,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 523,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 525,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 508,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 467,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 506,
+          "actualJobs": 5,
+          "peakJobs": 5,
+          "choice": 5,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bbb39470|3vs5|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 5
+          }
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 511,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 437,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 489,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 655377,
+          "elapsedMs": 500,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 897932,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 6,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 897932,
+          "elapsedMs": 383,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 414,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 350,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 419,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 431,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 446,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 369,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 441,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 626,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 367,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 357,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 645,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 370,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 576,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 618,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 448,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 429,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 649,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 586,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 371,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 428,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 652,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 660,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 412,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 589,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 432,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 366,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 683,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f027556d|3vs6|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 459,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 371,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 401,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 396,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 897932,
+      "profile": "shared-link-quota",
+      "perTickTokens": 3,
+      "chosen": 3,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 897932,
+          "elapsedMs": 608,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 631,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 720,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 668,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 686,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 611,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 668,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 624,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 672,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 618,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 647,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 669,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 632,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 664,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 678,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 561,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 687,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 633,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 621,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 599,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 681,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 670,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 544,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 724,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 606,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 615,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 696,
+          "actualJobs": 6,
+          "peakJobs": 6,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 629,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 6,
+          "reason": "compare",
+          "trial": {
+            "block": "0|68e1fd23|3vs6|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 3,
+            "candidate": 6
+          }
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 615,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 597,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 667,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 897932,
+          "elapsedMs": 640,
+          "actualJobs": 3,
+          "peakJobs": 3,
+          "choice": 3,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 917521,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 7,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 917521,
+          "elapsedMs": 363,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 344,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 421,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 377,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 420,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 356,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 349,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 362,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 360,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 492,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 508,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 334,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 385,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 533,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 553,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 379,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 397,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 536,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 508,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 399,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 370,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 539,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 508,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 401,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 393,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 491,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 524,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 398,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|a3865402|4vs7|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 400,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 406,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 409,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 402,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 917521,
+      "profile": "shared-link-quota",
+      "perTickTokens": 4,
+      "chosen": 4,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 917521,
+          "elapsedMs": 581,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 549,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 577,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 547,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 560,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 548,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 545,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 578,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 555,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 572,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 590,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 544,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 537,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 582,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 520,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 601,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 583,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 540,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 491,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 566,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 587,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 521,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 526,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 603,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 512,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 599,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 566,
+          "actualJobs": 7,
+          "peakJobs": 7,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 522,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 7,
+          "reason": "compare",
+          "trial": {
+            "block": "0|39b82dea|4vs7|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 7
+          }
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 518,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 548,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 550,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 917521,
+          "elapsedMs": 549,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 1048576,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 8,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 1048576,
+          "elapsedMs": 376,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 343,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 326,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 362,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 355,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 378,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 377,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 364,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 554,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 342,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 309,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 615,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 386,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 540,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 525,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 343,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 385,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 556,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 520,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 369,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 537,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 353,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 400,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 566,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 371,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 588,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 555,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 403,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|bcca9141|4vs8|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 341,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 398,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 366,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 340,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 1048576,
+      "profile": "shared-link-quota",
+      "perTickTokens": 4,
+      "chosen": 4,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 1048576,
+          "elapsedMs": 517,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 609,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 590,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 587,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 574,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 550,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 571,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 582,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 539,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 567,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 595,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 558,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 536,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|1",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 556,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|1",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 512,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|1",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 599,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|1",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 524,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 539,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 586,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 544,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 479,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 540,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 567,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 499,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 539,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 496,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 571,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 574,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|d85e01f2|4vs8|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 558,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 544,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 581,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 1048576,
+          "elapsedMs": 571,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "scope": "User-reported completed-takeover windows and counter deltas, not all App media traffic, native-buffer telemetry or independent playback trials. Do not pool the two diagnostic windows.",
+  "reportedDate": "2026-10-14",
+  "version": "0.1.19-experimental",
+  "qualityAndRate": {"quality":"Dolby Vision, uncertain user recollection (好像)","playbackRate":1,"source":"User follow-up; not read from App or inferred from SIDX"},
+  "playbackExperience": "User reports severe stuttering (超级卡)",
+  "windows": [
+    {"label":"earlier","recentSeconds":30,"attempts":32,"success":23,"failed":9,"failures":{"transport":8,"entity-mismatch":1},"takeoverDeliveryMbps":4.56,"completedAttemptOverlapPeak":5},
+    {"label":"later","recentSeconds":30,"attempts":19,"success":10,"failed":9,"failures":{"transport":9},"takeoverDeliveryMbps":2.80,"completedAttemptOverlapPeak":4}
+  ],
+  "sameEpochDelta": {"seconds":59,"successfulTakeovers":27,"passedRequests":21,"passReasons":{"small-range":2,"transport":17,"budget-requests":2}},
+  "officialSourceHostsObserved": ["upos-hz-mirrorakam.akamaized.net","upos-sz-mirrorcosov.bilivideo.com"],
+  "interpretation": "Fast isolated source-media tests coexist with repeated transport failures during ordinary takeover. This supports testing failure backoff and load handling; it does not establish the network root cause or prove a remedy. No content hashes, signed URLs, original Range offsets or IPs retained."
+}

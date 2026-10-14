@@ -1,0 +1,1458 @@
+{
+  "scope": "Real loopback HTTP only. NOT iPhone, Bilibili, DNS, TLS or playback evidence.",
+  "startedAt": "2026-10-14T20:29:21.273Z",
+  "updatedAt": "2026-10-14T20:33:29.863Z",
+  "complete": true,
+  "version": "0.1.20-experimental",
+  "artifactSHA256": "8baf45983020c20bb5a97998f8faf09f7a7b7916f8a57ba307789122cdd0bfb9",
+  "environment": {
+    "node": "v24.12.0",
+    "platform": "win32"
+  },
+  "parameters": {
+    "initialDelayMs": 120,
+    "tickMs": 16,
+    "perTaskBytesPerTick": 16384,
+    "requestsPerCondition": {
+      "perTaskQuota": 72,
+      "sharedLinkQuota": 32
+    },
+    "minimumTrialSpacingMs": 1550
+  },
+  "results": [
+    {
+      "bytes": 4194304,
+      "profile": "per-task-quota",
+      "perTickTokens": 32,
+      "chosen": 32,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 4194304,
+          "elapsedMs": 881,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 798,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 873,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1134,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1256,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1302,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1259,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1282,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 2191,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1277,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1200,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1958,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 2200,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 919,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1143,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1686,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 912,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1734,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1891,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1025,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 932,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|3",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1749,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|3",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1786,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|3",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1025,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|3",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1013,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1875,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1847,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 992,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|4vs8|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1041,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 515,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 614,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 985,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1031,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 647,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 668,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1008,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1045,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 641,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 577,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1050,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 994,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 619,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 618,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1009,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 564,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 953,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 994,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 622,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|8vs16|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 8,
+            "candidate": 16
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 430,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|0",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 625,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|0",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 562,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|0",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 393,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|0",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 538,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 424,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 433,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 615,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 436,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|2",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 575,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|2",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 611,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|2",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 433,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|2",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 607,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 457,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 449,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 541,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 389,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|4",
+            "slot": 0,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 630,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|4",
+            "slot": 1,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 573,
+          "actualJobs": 16,
+          "peakJobs": 16,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|4",
+            "slot": 2,
+            "arm": "A",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 434,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 16,
+          "reason": "compare",
+          "trial": {
+            "block": "0|f7d93e29|16vs32|4",
+            "slot": 3,
+            "arm": "B",
+            "baseline": 16,
+            "candidate": 32
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 466,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 32,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 432,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 32,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 435,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 32,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 444,
+          "actualJobs": 32,
+          "peakJobs": 32,
+          "choice": 32,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    },
+    {
+      "bytes": 4194304,
+      "profile": "shared-link-quota",
+      "perTickTokens": 4,
+      "chosen": 4,
+      "reason": "learned",
+      "rows": [
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1756,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1835,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1880,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1864,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1799,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1865,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1869,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1844,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "warmup",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1822,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|0",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1841,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|0",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1843,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|0",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1847,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|0",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1741,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|1",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1791,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|1",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1768,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|1",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1844,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|1",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1877,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|2",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1870,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|2",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1783,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|2",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1803,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|2",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1909,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|3",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1723,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|3",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1919,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|3",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1811,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|3",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1797,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|4",
+            "slot": 0,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1665,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|4",
+            "slot": 1,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1810,
+          "actualJobs": 8,
+          "peakJobs": 8,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|4",
+            "slot": 2,
+            "arm": "B",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1852,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 8,
+          "reason": "compare",
+          "trial": {
+            "block": "0|5a2c7c42|4vs8|4",
+            "slot": 3,
+            "arm": "A",
+            "baseline": 4,
+            "candidate": 8
+          }
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1796,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1915,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1824,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        },
+        {
+          "bytes": 4194304,
+          "elapsedMs": 1792,
+          "actualJobs": 4,
+          "peakJobs": 4,
+          "choice": 4,
+          "reason": "learned",
+          "trial": null
+        }
+      ]
+    }
+  ]
+}

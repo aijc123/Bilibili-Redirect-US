@@ -1,14 +1,16 @@
 /* Shared, deliberately throttled real HTTP fixture. No external media requests. */
 import http from 'node:http';
-export async function createFixture({size=4*1024*1024,parseRange,initialDelayMs=120,tickMs=16}={}){
+export async function createFixture({size=4*1024*1024,parseRange,initialDelayMs=120,tickMs=16,responseForRequest}={}){
  const entity=Buffer.alloc(size);for(let i=0;i<size;i++)entity[i]=i%251;
  const jobs=new Map();let sequence=0,cursor=0,peak=0,sharedPieces=32;
  const server=http.createServer((req,res)=>{
   const range=parseRange(req.headers.range);
   if(!range||range.start<0||range.end>=size){res.writeHead(400);res.end();return;}
-  const id=++sequence,job={id,res,range,offset:range.start,ready:Date.now()+initialDelayMs};
+  const id=++sequence,metadata=responseForRequest?.({id,range})||{};
+  if(metadata.disconnect){req.socket.destroy();return;}
+  const job={id,res,range,offset:range.start,ready:Date.now()+initialDelayMs+(metadata.delayMs||0)};
   jobs.set(id,job);peak=Math.max(peak,jobs.size);
-  res.writeHead(206,{'Content-Range':`bytes ${range.start}-${range.end}/${size}`,'Content-Type':'video/mp4',ETag:'"bounded-fixture"'});
+  res.writeHead(metadata.status||206,{'Content-Range':`bytes ${range.start}-${range.end}/${size}`,'Content-Type':'video/mp4',ETag:metadata.etag||'"bounded-fixture"'});
   res.on('close',()=>jobs.delete(id));
  });
  const timer=setInterval(()=>{

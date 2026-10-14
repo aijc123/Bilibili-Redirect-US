@@ -6,6 +6,7 @@
 | --- | --- |
 | [保留自动版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin) | 0.1.14回退基线；旧长期地址与产物保留，不含原地址优先修正 |
 | [自动调优候选](ADAPTIVE.md) | 独立0.1.19；原地址优先、同媒体失败记忆及真实媒体测速，日常一个开关，连续播放效果待验证 |
+| [新功能验证](PREVIEW.md) | 独立0.1.20；错误密集退让、单任务恢复及小范围比较，不覆盖0.1.19，不混用统计 |
 | [固定0.1.13](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v0.1.13-experimental/dist/lab/BiliBili.Range.Lab.plugin) | 保留旧参数与行为，可用于回退 |
 | [研发对照工具](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Advanced.plugin) | 同版本单独入口，保留高级参数；只供受控对照，与自动版不同时启用 |
 | [0.1.3实验版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/BiliBili.Range.Experimental.plugin) | 已有同条件真机提速反馈；固定旧文件，[原说明](legacy/RANGE-0.1.3.md) |

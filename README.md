@@ -101,11 +101,15 @@ flowchart TD
 
 ### 并发能带来多少速度收益？
 
-![iPhone相同媒体范围实测，原地址在本轮快于替换节点，每档最多两次且保留失败](pics/phone-media-observed.png)
+![Bili Range第二轮iPhone同1MiB范围实测，原地址实际8任务33.43Mbps；每档两次并保留失败](pics/phone-media-observed-run2.png)
 
-这张图来自用户0.1.18的实际iPhone测速摘要：相同897,932字节，原地址Akamai约20.92/27.21Mbps，替换节点多为2–3.5Mbps。配置8在本轮实际是6任务，失败没有变成虚假的速度。原地址同样由脚本下载，**不是原生App对照，也不是长期节点排名或无卡顿证明**；媒体轨类型未知，每档最多两次。未取得原始单次数据，因此不画误差线。[观察数据](benchmarks/phone-media-2026-10-14.json)
+这张图来自用户第二轮实际iPhone测速摘要：相同1 MiB，原地址Akamai单任务20.35Mbps、实际8任务33.43Mbps，均2/2成功；替换节点约2–3.3Mbps，hwo1两档均无成功。失败没有变成虚假的速度。[本轮数据](benchmarks/phone-media-2026-10-14-run2.json)没有版本头，明确保留版本未知。原地址同样由脚本下载，**不是原生App对照，也不是长期节点排名或无卡顿证明**；媒体轨类型未知，每档最多两次。未取得原始单次数据，因此不画误差线。
+
+[第一轮图](pics/phone-media-observed.png)与[数据](benchmarks/phone-media-2026-10-14.json)另行保留：897,932字节、实际1/6任务，原地址20.92/27.21Mbps。两轮范围和节点不同，不合并统计。[0.1.19普通播放诊断](benchmarks/phone-playback-0.1.19-2026-10-14.json)随后仍出现密集网络错误，说明暂停时的短测峰值不能替代连续播放验收。
 
 据此，0.1.19候选优先保留官方下发的原地址，在原地址上做有限并发，异常时才用其他节点回退；不再默认强制替换到大陆CDN。它没有硬编码“所有视频走Akamai”，新版连续播放还待验证。[全链路进度](docs/END-TO-END.md)
+
+用户对0.1.19补充“好像是杜比视界1倍速，超级卡”，本轮连续播放未达标，清晰度与实际码率尚未由App确认。独立[0.1.20研发候选](docs/PREVIEW.md)针对错误爆发增加暂时放行与单任务恢复，并补上不足1 MiB请求的并发比较。0.1.19订阅保持原状；新候选的真机效果尚未确认。
 
 ![本机受控HTTP回环实验的并发速度对比，不是手机或B站CDN实测](pics/concurrency-fixture.png)
 
@@ -189,6 +193,8 @@ data/          公共候选及健康快照
 scripts/       构建、验证与探测
 tests/         本机与模拟回归检查
 dist/lab/      生成的插件和bundle，勿手改
+dist/candidate/ 保留的0.1.19体验候选
+dist/preview/   独立新功能验证，不覆盖旧订阅
 docs/          使用、原理、证据、维护与历史
 icons/         本项目的图标
 ```
@@ -200,7 +206,7 @@ npm run build
 npm test
 ```
 
-生成与提交产物一致性由 `npm run check`核对。原0.1.14产物逐一保留，当前候选由独立版本配置和标签构建。[结构与发布](docs/ARCHITECTURE.md) · [参与贡献](CONTRIBUTING.md) · [完整文档](docs/README.md)
+`npm run build`共用构建入口，生成保留自动版、0.1.19、独立研发候选与中转适配；`npm run check`核对生成与提交产物一致性。原0.1.14和历史0.1.4产物逐一保留，各候选使用独立配置、统计空间和固定标签。[结构与发布](docs/ARCHITECTURE.md) · [参与贡献](CONTRIBUTING.md) · [完整文档](docs/README.md)
 
 ## 来源与credit
 

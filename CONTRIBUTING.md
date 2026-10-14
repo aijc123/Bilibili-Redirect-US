@@ -4,7 +4,7 @@
 
 ## 改代码前看哪里
 
-先看[结构说明](docs/ARCHITECTURE.md)与[src/loon/bundle.json](src/loon/bundle.json)。Loon源码在src/loon，生成文件在dist/lab；编辑源码后重新构建，不直接修生成bundle。BTR固定模块保留原文件、MIT许可、来源和SHA，适配逻辑放在自己的模块中。
+先看[结构说明](docs/ARCHITECTURE.md)与[src/loon/bundle.json](src/loon/bundle.json)。Loon源码在src/loon，生成文件在dist/lab、candidate与preview；编辑源码后重新构建，不直接修生成bundle。BTR固定模块保留原文件、MIT许可、来源和SHA，适配逻辑放在自己的模块中。
 
 ## 验证
 

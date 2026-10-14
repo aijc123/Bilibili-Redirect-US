@@ -1,13 +1,17 @@
 /* Reuse the normal builder and adapter; add explicit checked candidate hooks.
  * Main/tagged 0.1.14 artifacts must remain byte-identical. */
 import {readFileSync,writeFileSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {resolve} from 'node:path';
 import {buildProfiles,readModule} from './build-range.mjs';
-const config=JSON.parse(readFileSync('src/loon/adaptive.json','utf8'));
-const adaptive=readModule('adaptive.js').replace('__BILI_ADAPTIVE_CONFIG__',JSON.stringify(config));
-function once(text,from,to){
+export function once(text,from,to){
  if(text.split(from).length!==2)throw new Error('Candidate integration anchor missing/ambiguous: '+from);
  return text.replace(from,to);
 }
+export function buildAdaptive({config=JSON.parse(readFileSync('src/loon/adaptive.json','utf8')),
+ namespace='aijc123.BiliRange.adaptive.v1',out='dist/candidate',plugin='BiliBili.Range.Adaptive.plugin',
+ title='BiliBili Range 自动调优候选 · aijc123',transform=(name,text)=>text,extra=[]}={}){
+const adaptive=transform('adaptive.js',readModule('adaptive.js')).replace('__BILI_ADAPTIVE_CONFIG__',JSON.stringify(config));
 function read(name){
  let text=readModule(name);
  if(name==='diagnostics.js')text=once(text,"const VERSION = '0.1.14-experimental';","const VERSION = '"+config.version+"';");
@@ -49,14 +53,15 @@ function read(name){
   text=once(text,'const hosts=globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup).slice(0,4);',
    'const hosts=[...new Set([...knownSources,...globalThis.BiliRangeCandidates.pool(arg.PreferredCDN,arg.CDNGroup)])].slice(0,4);');
  }
- return text;
+ return transform(name,text);
 }
-const namespace='aijc123.BiliRange.adaptive.v1',out='dist/candidate';
-buildProfiles({out,releaseVersion:config.version,namespace,read,extra:[adaptive,read('recovery.js')],
- profiles:[{mode:'automatic',suffix:'',plugin:'BiliBili.Range.Adaptive.plugin',title:'BiliBili Range 自动调优候选 · aijc123'}]});
+buildProfiles({out,releaseVersion:config.version,namespace,read,extra:[...extra,adaptive,read('recovery.js')],
+ profiles:[{mode:'automatic',suffix:'',plugin,title}]});
 const mediaModules=['btr','range-download.js','loon-http.js','budget.js','measurements.js','media-benchmark.js','media-benchmark-entry.js'];
 writeFileSync(out+'/media-benchmark.bundle.js',mediaModules.map(read).join('\n').replaceAll('aijc123.BiliRange.v1',namespace));
-const pluginPath=out+'/BiliBili.Range.Adaptive.plugin';
+const pluginPath=out+'/'+plugin;
 writeFileSync(pluginPath,once(readFileSync(pluginPath,'utf8'),'\n[MITM]',
  'generic script-path=https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/range-v'+config.version+'/'+out+'/media-benchmark.bundle.js, timeout=90, tag=Bili 媒体测速\n\n[MITM]'));
-console.log('Built isolated adaptive candidate; published automatic version preserved.');
+console.log('Built '+config.version+' in '+out+'; other release channels preserved.');
+}
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1]))buildAdaptive();

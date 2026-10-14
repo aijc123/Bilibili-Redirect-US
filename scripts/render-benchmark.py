@@ -187,26 +187,34 @@ def phone_media_figure(path):
         raise ValueError("Phone media chart requires explicitly attributed observed data")
     rows = data["rows"]
     hosts = list(dict.fromkeys(row["host"] for row in rows))
-    if len(hosts) != 5 or len(rows) != 10 or data["rangeBytes"] != 897932:
+    if not 1 <= len(hosts) <= 5 or len(rows) != 2*len(hosts) or not 262144 <= data["rangeBytes"] <= 1048576:
         raise ValueError("Unexpected observed dataset; do not invent missing measurements")
     for row in rows:
         if (row["configured"] not in [1, 8] or row["attempts"] != 2
                 or row["success"] + sum(row["errors"].values()) != row["attempts"]
-                or (row["medianMbps"] is None) != (row["success"] == 0)):
+                or (row["medianMbps"] is None) != (row["success"] == 0)
+                or row["actual"] != min(row["configured"], data["rangeBytes"]//(128*1024))
+                or not 0 <= row["success"] <= row["attempts"]
+                or row["medianAttemptMs"] <= 0
+                or (row["medianMbps"] is not None and row["medianMbps"] <= 0)):
             raise ValueError("Invalid success/error or unavailable-speed observation")
+    if any(sum(row["host"] == host and row["configured"] == arm for row in rows) != 1
+           for host in hosts for arm in [1, 8]):
+        raise ValueError("Each observed host needs one single-task and one parallel summary")
     fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
-    labels = ["原地址\nAkamai", "替换 08h", "替换 08c", "替换 bos", "替换 cos"]
+    short = lambda host: "Akamai" if host.endswith(".akamaized.net") else host.removeprefix("upos-sz-mirror").removesuffix(".bilivideo.com")
+    labels = [("原地址\n" if next(row for row in rows if row["host"] == host)["original"] else "替换 ")+short(host) for host in hosts]
     colors = {1: "#0ea5e9", 8: "#ec4899"}
     for configured, offset in [(1, -.19), (8, .19)]:
         selected = [next(r for r in rows if r["host"] == h and r["configured"] == configured) for h in hosts]
         x = [i + offset for i in range(len(hosts))]
         rates = [r["medianMbps"] or 0 for r in selected]
         bars = axes[0].bar(x, rates, width=.34, color=colors[configured],
-                           label="配置1任务 · 实际1" if configured == 1 else "配置8任务 · 实际6")
+                           label=f'配置{configured}任务 · 实际{selected[0]["actual"]}')
         for bar, row in zip(bars, selected):
             if row["medianMbps"] is None:
                 axes[0].scatter([bar.get_x()+bar.get_width()/2], [.45], marker="x", color="#b91c1c", s=50)
-                value = "无成功速度"
+                value = "无成功"
             else:
                 value = f'{row["medianMbps"]:.2f}'
             axes[0].annotate(value+f'\n{row["success"]}/2成功',
@@ -225,17 +233,21 @@ def phone_media_figure(path):
         ax.set_axisbelow(True)
         for side in ["top", "right"]:
             ax.spines[side].set_visible(False)
-    axes[0].set_ylim(0, 34)
+    axes[0].set_ylim(0, max(row["medianMbps"] or 0 for row in rows)*1.28)
     axes[0].set_ylabel("成功请求中位速度 · Mbps")
     axes[0].legend(loc="upper right", frameon=False, fontsize=10)
-    axes[1].set_ylim(0, 4700)
+    axes[1].set_ylim(0, max(row["medianAttemptMs"] for row in rows)*1.22)
     axes[1].set_ylabel("完整尝试中位耗时 · ms\n含失败；斜线表示有失败")
     axes[1].set_xticks(range(len(hosts)), labels)
-    fig.suptitle("iPhone 真实媒体范围对照：原地址在本轮更快", fontsize=19, fontweight="bold", y=.97)
-    fig.text(.5, .917, "用户报告 · 2026-10-14 · 0.1.18 · 相同897,932字节 · h1偏好 · 每档最多2次", ha="center", fontsize=10, color="#475569")
+    fig.suptitle("Bili Range · iPhone 真实媒体范围下载对照", fontsize=19, fontweight="bold", y=.97)
+    version = data.get("version") or "版本未附"
+    fig.text(.5, .917, f'用户报告 · 2026-10-14 · {version} · 相同{data["rangeBytes"]:,}字节 · h1偏好 · 每档最多2次', ha="center", fontsize=10, color="#475569")
     fig.text(.5, .13, "速度只统计成功请求；原地址也是脚本下载，不是原生App对照。无原始单次数据，不画误差线或置信区间。", ha="center", fontsize=9.5, color="#475569")
     fig.text(.5, .091, "媒体轨类型未知；缓存、时间顺序与小样本仍有影响。当前路由的观察，不是长期节点排名、因果提速倍数或无卡顿证明。", ha="center", fontsize=9.5, color="#475569")
-    fig.text(.5, .052, "跨节点已做逐字节比对。08c并发1次跳转拒绝；bos并发1次网络错误；cos并发2次实体校验失败。", ha="center", fontsize=9.5, color="#475569")
+    error_names = {"redirect-untrusted": "跳转拒绝", "transport": "网络错误", "entity-mismatch": "实体校验失败"}
+    failures = [f'{short(row["host"])} {row["actual"]}任务 {count}次{error_names.get(reason, reason)}'
+                for row in rows for reason, count in row["errors"].items()]
+    fig.text(.5, .052, "成功响应跨节点逐字节比对。"+"；".join(failures)+"。", ha="center", fontsize=9, color="#475569")
     fig.subplots_adjust(top=.86, bottom=.22, left=.10, right=.98, hspace=.22)
     return fig
 
@@ -248,6 +260,7 @@ def main():
     source.add_argument("--phone-media", type=Path)
     source.add_argument("--flow", action="store_true")
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--name", help="Optional output basename; preserve earlier observed figures")
     args = parser.parse_args()
     try:
         configure_font()
@@ -256,6 +269,10 @@ def main():
         parser.error("无法绘图："+str(error))
     args.out_dir.mkdir(parents=True, exist_ok=True)
     name = "phone-media-observed" if args.phone_media else "parallel-range-flow" if args.flow else "concurrency-fixture" if args.fixture else "phone-experience"
+    if args.name:
+        if not args.name.replace("-", "").isalnum() or len(args.name) > 80:
+            parser.error("Output basename must contain only letters, digits and hyphens")
+        name = args.name
     for ext in ["svg", "png"]:
         target = args.out_dir/(name+"."+ext)
         fig.savefig(target, dpi=180, facecolor="white")

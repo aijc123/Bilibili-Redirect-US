@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
-const source=readFileSync('dist/candidate/range.bundle.js','utf8'),MiB=1024*1024;
+import {artifact,namespace} from './helpers/channel.mjs';
+const source=artifact('range.bundle.js'),MiB=1024*1024;
 const preferred='upos-sz-mirror08c.bilivideo.com',alternate='upos-sz-mirrorbos.bilivideo.com';
 const inventory=JSON.parse(readFileSync('data/cdn-candidates.json','utf8')).hosts;
 function harness(){
@@ -14,8 +15,8 @@ function harness(){
    const completed=new Promise(resolve=>finish=resolve);
    context={Uint8Array,Date:{now:()=>clock},Math,console:{log(){}},$argument:{Enabled:true},
     $request:{method:'GET',url:sourceURL||`https://${sourceHost}/upgcxcode/${name}.m4s?upsig=private-token`,headers:{Range:`bytes=0-${MiB-1}`}},
-    $persistentStore:{read:k=>k==='aijc123.BiliRange.adaptive.v1'?JSON.stringify(stored):null,
-     write:(v,k)=>{assert.equal(k,'aijc123.BiliRange.adaptive.v1');stored=JSON.parse(v);return true;}},
+    $persistentStore:{read:k=>k===namespace?JSON.stringify(stored):null,
+     write:(v,k)=>{assert.equal(k,namespace);stored=JSON.parse(v);return true;}},
     $httpClient:{get(o,callback){tasks.push({o,callback});}},$done:finish};
    vm.runInNewContext(source,context);await new Promise(r=>setImmediate(r));
    afterStart?.(stored);clock=started+100;
@@ -100,7 +101,7 @@ test('origin load refusals retain origin routing so the adaptive pushback policy
 test('network change DNS warming includes the actual recent source without retaining stale media-pair evidence',async()=>{
  const h=harness(),origin='upos-hz-mirrorakam.akamaized.net',good=await h.run({kind:'ok',name:'good-media',sourceHost:origin}),domains=[];
  const store=h.context().$persistentStore;
- await new Promise(resolve=>vm.runInNewContext(readFileSync('dist/candidate/network-reset.bundle.js','utf8'),{
+ await new Promise(resolve=>vm.runInNewContext(artifact('network-reset.bundle.js'),{
   Uint8Array,Date:{now:()=>good.clock+100},$argument:{Enabled:true},$persistentStore:store,console:{log(){}},
   $dns:{query(options,callback){domains.push(options.domain);setImmediate(()=>callback(null,{answers:[{type:'A'}]}));}},$done:resolve
  }));

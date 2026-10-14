@@ -21,6 +21,10 @@ The isolated 0.1.15 candidate adds completion-only gain/tail evaluation,
 bounded adjacent-rung trials and regression recovery, reusing the existing local
 balanced comparator. BTR's trial/backoff/rest principles inform this separate
 Apache-2.0 Loon implementation; its player-only signals are not fabricated.
+The isolated 0.1.20 preview reuses that controller/comparator for achievable
+sub-MiB task pairs, endpoint isolation and transport-failure circuit recovery.
+These additions are aijc123's Apache-2.0 adaptation, not a port of BTR's player
+buffer/stall controller and not a verified iPhone playback improvement.
 The design also references nishuodedui1145-del/PiliPlus and MyTVB-Speed-Boost;
 their source is not copied. See RANGE-EXPERIMENT.md for details and limits.
 
