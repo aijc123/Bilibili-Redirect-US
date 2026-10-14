@@ -2,6 +2,8 @@
 
 当前体验入口只需要[这一条Loon订阅](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/candidate/BiliBili.Range.Adaptive.plugin)。0.1.19候选优先保留官方原地址，只有“启用加速”开关，连续播放效果仍待验证。[旧版本与回退](VERSIONS.md)保留。
 
+0.1.19已收到疑似杜比视界1倍速严重卡顿反馈。排查这轮问题使用[独立0.1.20候选](PREVIEW.md)，按同样步骤安装，只启用一份；原订阅保留供回退。新版仍待手机验收。
+
 ## 安装或更新
 
 1. 在Loon插件列表添加订阅地址；已有该地址则更新它。
