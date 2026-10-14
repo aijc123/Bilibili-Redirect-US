@@ -1,8 +1,10 @@
-# 自动调优候选 · 0.1.17
+# 自动调优候选 · 0.1.18
 
 **原自动版0.1.14继续保留，本候选不替换它。** 候选也只有一个启用开关，使用独立本地统计空间；不要同时启用两份下载插件。
 
 [候选长期订阅](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/candidate/BiliBili.Range.Adaptive.plugin) · [原自动版](https://raw.githubusercontent.com/aijc123/Bilibili-Redirect-US/main/dist/lab/BiliBili.Range.Lab.plugin)
+
+0.1.18增加手动[手机真实媒体测速](MEDIA-BENCHMARK.md)：先启用本机临时采样，再在播放暂停时比较原地址与CDN、配置1/8任务，逐字节校验。没有增加日常设置，也不自动把短测结果写成DNS或节点偏好；0.1.17已反馈的1080高帧率卡顿尚未解决。
 
 ## 为什么不能从图里直接选4路
 

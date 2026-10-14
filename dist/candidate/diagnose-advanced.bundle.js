@@ -585,7 +585,7 @@ SOFTWARE.
 /* Aggregate request shapes only. No path, query, range offset, token or cookie values. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.17-experimental';
+  const VERSION = '0.1.18-experimental';
   const names = {
     internal: '内部请求', 'not-media-get': '暂不支持的媒体请求',
     'conditional-or-auth': '带条件或认证请求头', disabled: '实验下载已关闭',
@@ -713,7 +713,7 @@ SOFTWARE.
  * Does not invent BTR buffer/stall/progress signals or issue extra media GETs. */
 (function(root){
   'use strict';
-  const C={"version":"0.1.17-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
+  const C={"version":"0.1.18-experimental","warmSamples":8,"cleanBlocks":5,"maxProbeRequests":20,"sampleTTL":600000,"warmTTL":120000,"blockMaxMs":60000,"probeGapMs":1500,"pauseMs":180000,"gainMargin":1.15,"plateauMargin":1.1,"maxTailRegression":1.05};
   const reasons=['warmup','size-cap','baseline','learned','pushback','rest','load','network-errors','recent-failure','regression','busy','inconclusive','compare','probe-loss','probe-spacing'];
   const M=()=>root.BiliRangeMeasurements,T=()=>root.BiliRangeTrials;
   const last=values=>values?.[values.length-1];

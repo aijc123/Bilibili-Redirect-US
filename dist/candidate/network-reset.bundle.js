@@ -327,7 +327,7 @@ globalThis.BiliRangeProfile="automatic";
   try{state=JSON.parse($persistentStore.read(KEY)||'{}');}catch{}
   if(!state||typeof state!=='object'||Array.isArray(state))state={};
   const count=Object.keys(state.hosts||{}).length,epoch=Number(state.epoch)||0;
-  state.hosts={};state.epoch=epoch+1;state.adaptive={schema:1,entries:{}};state.trials={groups:{}};state.trialSafety={};state.lastNetworkReset={at:Date.now(),clearedHosts:count,epoch:state.epoch};
+  state.hosts={};state.epoch=epoch+1;state.adaptive={schema:1,entries:{}};state.trials={groups:{}};state.trialSafety={};try{$persistentStore.write(null,KEY+".mediaCapture");}catch{}state.lastNetworkReset={at:Date.now(),clearedHosts:count,epoch:state.epoch};
   // Keep in-flight leases so a network reset cannot silently double the socket budget.
   const saved=$persistentStore.write(JSON.stringify(state),KEY);
   const message=saved===false?'Bili Range 网络变化未完成：本地写入失败\n未保存新的网络轮次或清除评分，请重试。':

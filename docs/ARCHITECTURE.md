@@ -13,6 +13,7 @@
 | src/loon/loon-http.js | Loon回调、二进制和严格重定向处理 |
 | src/loon/budget.js | 尽力共享的任务/请求/缓冲租约；存储无原子CAS，不保证严格全局上限 |
 | src/loon/measurements.js | 有界传输样本、时间区间和观察对照 |
+| src/loon/media-benchmark.js / media-benchmark-entry.js | 候选的手动本机采样与真实媒体对比；复用现有下载器，临时样本与报告分离 |
 | src/loon/diagnostics.js | 累计计数、有限事件、请求版本标记、短摘要与完整报告 |
 | src/loon/loon.js | 接入请求、调度、持久化与完成回调 |
 | src/loon/bundle.json | 下载/诊断/网络模块顺序、入口和自动/对照profile的声明清单 |
